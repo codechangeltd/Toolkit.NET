@@ -33,11 +33,7 @@
                 );
             }
 
-            var contentType = "image/{0}".With
-            (
-                image.ImageFormat
-            );
-
+            var contentType = "image/{image.ImageFormat}";
             var imageContents = image.GetBytes();
 
             return new ImageFileContainer
