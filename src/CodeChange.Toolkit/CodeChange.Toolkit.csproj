@@ -12,7 +12,7 @@
 		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
-		<PackageIconUrl>https://github.com/codechangeltd/Toolkit.NET/tree/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
