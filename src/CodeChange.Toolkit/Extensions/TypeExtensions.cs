@@ -270,6 +270,7 @@
             return null;
         }
 
+
         /// <summary>
         /// Determines if a type is a simple type
         /// </summary>
@@ -285,8 +286,7 @@
         {
             Validate.IsNotNull(type);
 
-            if (type.IsGenericType 
-                && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Nullable type, check if the nested type is simple.
                 return IsSimple
@@ -298,9 +298,9 @@
             {
                 return
                 (
-                    type.IsPrimitive 
-                        || type.IsEnum 
-                        || type.Equals(typeof(string)) 
+                    type.IsPrimitive
+                        || type.IsEnum
+                        || type.Equals(typeof(string))
                         || type.Equals(typeof(decimal))
                 );
             }
@@ -325,6 +325,28 @@
             (
                 interfaceType
             );
+        }
+
+        /// <summary>
+        /// Determines if the type is a date time type
+        /// </summary>
+        /// <param name="type">The type to check</param>
+        /// <returns>True, if it is a date time; otherwise false</returns>
+        public static bool IsDateTime
+            (
+                this Type type
+            )
+        {
+            Validate.IsNotNull(type);
+
+            if (type == typeof(DateTime) || type == typeof(DateTime?))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

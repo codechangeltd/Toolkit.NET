@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.WebApi", "CodeChange.Toolkit.WebApi\CodeChange.Toolkit.WebApi.csproj", "{49D3FB52-1753-4437-9DD6-C34DBFC253B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.Domain", "CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj", "{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
