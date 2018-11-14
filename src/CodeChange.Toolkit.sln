@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.EF6", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.Azure", "CodeChange.Toolkit.Azure\CodeChange.Toolkit.Azure.csproj", "{D0F4A657-15BE-4E49-A056-02CF14327833}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.Autofac", "CodeChange.Toolkit.Autofac\CodeChange.Toolkit.Autofac.csproj", "{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{D0F4A657-15BE-4E49-A056-02CF14327833}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0F4A657-15BE-4E49-A056-02CF14327833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0F4A657-15BE-4E49-A056-02CF14327833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
