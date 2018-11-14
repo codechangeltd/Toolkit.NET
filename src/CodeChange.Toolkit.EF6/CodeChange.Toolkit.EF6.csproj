@@ -7,14 +7,14 @@
 		<Description>A library containing Entity Framework 6 tools, base classes and interface implementations.</Description>
 		<Copyright>Copyright © Code Change Ltd 2018</Copyright>
 		<Authors>Code Change Ltd</Authors>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<Version>1.0.0</Version>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+		<Version>1.1.0</Version>
 		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.EF6/Icon.png</PackageIconUrl>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageReleaseNotes>Added plugins</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit Entity Framework EntityFramework EF EF6 .NET DOTNET C#</Tags>
 	</PropertyGroup>
 
