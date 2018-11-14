@@ -4,7 +4,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Product>Toolkit.NET</Product>
-		<Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
+		<Description>A library containing Azure tools and interface implementations.</Description>
 		<Copyright>Copyright © Code Change Ltd 2018</Copyright>
 		<Authors>Code Change Ltd</Authors>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
@@ -12,14 +12,19 @@
 		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Domain/Icon.png</PackageIconUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Azure/Icon.png</PackageIconUrl>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageReleaseNotes></PackageReleaseNotes>
-		<Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
+		<Tags>CodeChange Toolkit Azure .NET DOTNET C#</Tags>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.ApplicationInsights" Version="2.8.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj" />
+		<ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
+	</ItemGroup>
 
 </Project>
