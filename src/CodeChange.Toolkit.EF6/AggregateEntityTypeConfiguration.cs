@@ -19,6 +19,11 @@
         public AggregateEntityTypeConfiguration()
             : base()
         {
+            this.Property(m => m.ID).HasDatabaseGeneratedOption
+            (
+                DatabaseGeneratedOption.Identity
+            );
+
             var indexAttribute = new IndexAttribute()
             {
                 IsUnique = true

@@ -1,6 +1,7 @@
 ﻿namespace CodeChange.Toolkit.EF6.Plugins
 {
     using CodeChange.Toolkit.Domain.Plugins;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
     /// Represents a database schema configuration for an installed plug-in type infos
@@ -11,11 +12,14 @@
         public InstalledPluginTypeInfoConfiguration()
             : base()
         {
-            this.HasKey(m => new
-            {
-                m.ID,
-                m.InstalledPluginId
-            });
+            this.HasKey
+            (
+                m => new
+                {
+                    m.ID,
+                    m.InstalledPluginId
+                }
+            );
 
             this.HasRequired(m => m.InstalledPlugin)
                 .WithMany(m => m.AssemblyTypes)
