@@ -6,8 +6,6 @@
     /// <typeparam name="TFrom">The convert from type</typeparam>
     /// <typeparam name="TTo">The convert to type</typeparam>
     internal class TypeConverterChecker<TFrom, TTo>
-        where TFrom : class
-        where TTo : class
     {
         public bool CanConvert { get; private set; }
 
