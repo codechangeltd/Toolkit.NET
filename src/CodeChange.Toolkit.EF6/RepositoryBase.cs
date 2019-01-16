@@ -183,9 +183,10 @@
 
                 if (entity == default(TRoot))
                 {
-                    throw new KeyNotFoundException
+                    throw new EntityNotFoundException
                     (
-                        $"The key '{key}' did not match any entities in the repository."
+                        key,
+                        $"The key supplied doesn't match any items in the repository."
                     );
                 }
             }
@@ -212,9 +213,10 @@
 
             if (entity == default(TRoot))
             {
-                throw new KeyNotFoundException
+                throw new EntityNotFoundException
                 (
-                    $"The ID '{id}' did not match any entities in the repository."
+                    id.ToString(),
+                    $"The ID supplied doesn't match any items in the repository."
                 );
             }
 

@@ -1,5 +1,6 @@
 ﻿namespace CodeChange.Toolkit.EF6.Plugins
 {
+    using CodeChange.Toolkit.Domain.Aggregate;
     using CodeChange.Toolkit.Domain.Plugins;
     using CodeChange.Toolkit.Plugins;
     using System;
@@ -90,9 +91,10 @@
 
             if (plugin == null)
             {
-                throw new KeyNotFoundException
+                throw new EntityNotFoundException
                 (
-                    $"No installed plug-in was found with the name '{pluginName}'."
+                    pluginName,
+                    $"No installed plug-in was found with the name specified."
                 );
             }
 
@@ -105,9 +107,10 @@
         /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetAllInstallations()
         {
-            var query = this.GetAll();
-
-            return query.OrderBy(a => a.PluginName);
+            return this.GetAll().OrderBy
+            (
+                a => a.PluginName
+            );
         }
 
         /// <summary>
@@ -148,9 +151,12 @@
         /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetDisabledInstallations()
         {
-            var query = this.GetAll().Where(m => m.Disabled);
+            var plugins = this.GetAll().Where
+            (
+                m => m.Disabled
+            );
 
-            return query.OrderBy(a => a.PluginName);
+            return plugins.OrderBy(a => a.PluginName);
         }
 
         /// <summary>
@@ -162,8 +168,6 @@
                 InstalledPlugin plugin
             )
         {
-            Validate.IsNotNull(plugin);
-
             this.UpdateEntity(plugin);
         }
 
@@ -176,8 +180,6 @@
                 string pluginName
             )
         {
-            Validate.IsNotEmpty(pluginName);
-
             var plugin = GetInstallation(pluginName);
 
             this.RemoveEntity(plugin);
