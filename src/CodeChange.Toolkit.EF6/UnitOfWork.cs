@@ -80,6 +80,7 @@
             var success = false;
             var preEventQueue = GenerateEventQueue(true);
             var postEventQueue = GenerateEventQueue();
+            var aggregates = GetPendingAggregates();
             var rows = default(int);
 
             ProcessEventQueue
@@ -130,6 +131,11 @@
 
             if (success)
             {
+                foreach (var aggregate in aggregates)
+                {
+                    aggregate.UnpublishedEvents.Clear();
+                }
+
                 ProcessEventQueue(postEventQueue);
             }
 
@@ -171,7 +177,7 @@
         }
 
         /// <summary>
-        /// Generates a new queue of unpublished domain events
+        /// Generates a queue of unpublished domain events
         /// </summary>
         /// <param name="preTransaction">True, if pre-transaction events are required</param>
         /// <returns>A collection of domain events</returns>
@@ -180,32 +186,22 @@
                 bool preTransaction = false
             )
         {
-            var changeTracker = _context.ChangeTracker;
+            var aggregates = GetPendingAggregates();
             var queue = new EventQueue();
 
-            // Find all pending entities of the type TEntity so we can move them
-            var entries = changeTracker.Entries().Where
-            (
-                x => x.Entity.GetType().ImplementsInterface
-                (
-                    typeof(IAggregateRoot)
-                )
-            );
-
-            foreach (var entry in entries.ToList())
+            foreach (var aggregate in aggregates)
             {
-                var entity = (IAggregateRoot)entry.Entity;
-                var aggregateKey = entity.GetKeyValue();
-                var aggregateType = entity.GetType();
+                var aggregateKey = aggregate.GetKeyValue();
+                var aggregateType = aggregate.GetType();
                 var nextEvents = default(IList<IDomainEvent>);
 
                 if (preTransaction)
                 {
-                    nextEvents = entity.GetPreTransactionEvents();
+                    nextEvents = aggregate.GetPreTransactionEvents();
                 }
                 else
                 {
-                    nextEvents = entity.GetPostTransactionEvents();
+                    nextEvents = aggregate.GetPostTransactionEvents();
                 }
 
                 if (nextEvents != null && nextEvents.Any())
@@ -219,12 +215,39 @@
                             @event
                         );
                     }
-
-                    entity.UnpublishedEvents.Clear();
                 }
             }
 
             return queue;
+        }
+
+        /// <summary>
+        /// Gets all aggregates that are pending saving
+        /// </summary>
+        /// <returns>A collection of aggregate roots</returns>
+        private IEnumerable<IAggregateRoot> GetPendingAggregates()
+        {
+            var changeTracker = _context.ChangeTracker;
+            
+            var entries = changeTracker.Entries().Where
+            (
+                x => x.Entity.GetType().ImplementsInterface
+                (
+                    typeof(IAggregateRoot)
+                )
+            );
+
+            var aggregates = new List<IAggregateRoot>();
+
+            foreach (var entry in entries.ToList())
+            {
+                aggregates.Add
+                (
+                    (IAggregateRoot)entry.Entity
+                );
+            }
+
+            return aggregates;
         }
 
         /// <summary>
