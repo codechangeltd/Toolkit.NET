@@ -351,9 +351,14 @@
                 int? defaultValue = null
             )
         {
-            Validate.IsNotEmpty(value);
-
-            return value.IsNumeric() ? Int32.Parse(value) : defaultValue;
+            if (value == null)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return value.IsNumeric() ? Int32.Parse(value) : defaultValue;
+            }
         }
 
         /// <summary>
@@ -366,8 +371,6 @@
                 this string input
             )
         {
-            Validate.IsNotEmpty(input);
-
             if (false == String.IsNullOrEmpty(input))
             {
                 input = _htmlRegex.Replace
@@ -410,14 +413,19 @@
                 this string url
             )
         {
-            Validate.IsNotEmpty(url);
-            
-            return Uri.TryCreate
-            (
-                url,
-                UriKind.Absolute,
-                out var result
-            );
+            if (String.IsNullOrEmpty(url))
+            {
+                return false;
+            }
+            else
+            {
+                return Uri.TryCreate
+                (
+                    url,
+                    UriKind.Absolute,
+                    out var result
+                );
+            }
         }
 
         /// <summary>
@@ -430,33 +438,38 @@
                 this string urlToEncode
             )
         {
-            Validate.IsNotEmpty(urlToEncode);
+            if (urlToEncode == null)
+            {
+                return null;
+            }
+            else
+            {
+                // Remove side spaces and convert to lower
+                urlToEncode = (urlToEncode + "").ToLower();
 
-            // Remove side spaces and convert to lower
-            urlToEncode = (urlToEncode + "").ToLower();
+                // Remove apostrophes from words
+                urlToEncode = _apostropheRegex.Replace
+                (
+                    urlToEncode,
+                    String.Empty
+                );
 
-            // Remove apostrophes from words
-            urlToEncode = _apostropheRegex.Replace
-            (
-                urlToEncode,
-                String.Empty
-            );
+                // Replace invalid characters with a space
+                urlToEncode = _urlBadCharRegex.Replace
+                (
+                    urlToEncode,
+                    " "
+                );
 
-            // Replace invalid characters with a space
-            urlToEncode = _urlBadCharRegex.Replace
-            (
-                urlToEncode,
-                " "
-            );
+                // Convert multiple spaces into one dash
+                urlToEncode = _multiSpaceRegex.Replace
+                (
+                    urlToEncode,
+                    "-"
+                );
 
-            // Convert multiple spaces into one dash
-            urlToEncode = _multiSpaceRegex.Replace
-            (
-                urlToEncode,
-                "-"
-            );
-
-            return urlToEncode.Trim();
+                return urlToEncode.Trim();
+            }
         }
 
         /// <summary>
@@ -471,8 +484,6 @@
                 string separator = " "
             )
         {
-            Validate.IsNotEmpty(value);
-
             if (String.IsNullOrEmpty(value) || value.Contains(separator))
             {
                 return value;
@@ -533,7 +544,10 @@
                 this string value
             )
         {
-            Validate.IsNotEmpty(value);
+            if (String.IsNullOrEmpty(value))
+            {
+                return new string[] { };
+            }
 
             // Trim and remove double spaces to avoid empty words
             value = value.Trim().Replace("  ", " ");
@@ -629,8 +643,6 @@
                 string alternative
             )
         {
-            Validate.IsNotEmpty(input);
-
             if (String.IsNullOrEmpty(input))
             {
                 return alternative;
@@ -746,8 +758,6 @@
                 char separator
             )
         {
-            Validate.IsNotEmpty(value);
-
             if (String.IsNullOrEmpty(value))
             {
                 return new string[0];

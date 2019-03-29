@@ -7,14 +7,14 @@
 		<Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
 		<Copyright>Copyright © Code Change Ltd 2018</Copyright>
 		<Authors>Code Change Ltd</Authors>
-		<AssemblyVersion>1.2.2</AssemblyVersion>
-		<Version>1.2.2</Version>
+		<AssemblyVersion>1.3.0</AssemblyVersion>
+		<Version>1.3.0</Version>
 		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Domain/Icon.png</PackageIconUrl>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-		<PackageReleaseNotes>Added UserFlowException and StateTransitionException.</PackageReleaseNotes>
+		<PackageReleaseNotes>Created culture specific entity to DTO mapper.</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
 	</PropertyGroup>
 

@@ -1,5 +1,6 @@
 ﻿namespace CodeChange.Toolkit.Domain.Mapping
 {
+    using CodeChange.Toolkit.Culture;
     using CodeChange.Toolkit.Domain.Aggregate;
     using System;
     using System.Collections;
@@ -18,13 +19,26 @@
     /// - Nested collections of DTOs must be of type List<>
     /// - Properties named "Key" will be mapped to the entities lookup key
     /// </remarks>
-    public sealed class SimpleEntityToDtoMapper : IEntityToDtoMapper
+    public class SimpleEntityToDtoMapper : IEntityToDtoMapper
     {
         private static Dictionary<Type, PropertyInfo[]> _propertyCache
             = new Dictionary<Type, PropertyInfo[]>();
 
         private static Dictionary<Type, MethodInfo[]> _methodCache
             = new Dictionary<Type, MethodInfo[]>();
+
+        /// <summary>
+        /// Constructs the mapper with default configuration
+        /// </summary>
+        public SimpleEntityToDtoMapper()
+        {
+            this.LocaleConfiguration = new DefaultLocaleConfiguration();
+        }
+
+        /// <summary>
+        /// Gets the locale configuration for the culture
+        /// </summary>
+        protected ILocaleConfiguration LocaleConfiguration { get; set; }
 
         /// <summary>
         /// Maps a single entity to a DTO
@@ -62,7 +76,7 @@
         /// <param name="dto">The DTO to map to</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
-        private void Map
+        protected virtual void Map
             (
                 IAggregateEntity entity,
                 ref object dto,
@@ -147,7 +161,7 @@
         /// <param name="entityProperty">The entity property</param>
         /// <param name="dtoProperty">The DTO property</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
-        private void TryMapProperty
+        protected virtual void TryMapProperty
             (
                 IAggregateEntity entity,
                 ref object dto,
@@ -171,7 +185,7 @@
 
                     if (date.HasTime())
                     {
-                        entityPropertyValue = date.ToLocalTime();
+                        entityPropertyValue = ToLocalTime(date);
                     }
                 }
 
@@ -181,7 +195,7 @@
 
                     if (date.HasTime())
                     {
-                        entityPropertyValue = date.ToLocalTime();
+                        entityPropertyValue = ToLocalTime(date);
                     }
                 }
 
@@ -305,13 +319,77 @@
         }
 
         /// <summary>
+        /// Converts a date to local time
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <returns>The date in local time</returns>
+        protected virtual DateTime ToLocalTime
+            (
+                DateTime date
+            )
+        {
+            if (date.HasTime())
+            {
+                var locale = this.LocaleConfiguration;
+
+                if (locale.TimeZoneOffset.HasValue)
+                {
+                    date = date.AddMinutes
+                    (
+                        locale.TimeZoneOffset.Value
+                    );
+                }
+                else if (locale.DefaultTimeZone != null)
+                {
+                    date = TimeZoneInfo.ConvertTimeFromUtc
+                    (
+                        date,
+                        locale.DefaultTimeZone
+                    );
+                }
+                else
+                {
+                    date = date.ToLocalTime();
+                }
+            }
+
+            date = DateTime.SpecifyKind
+            (
+                date,
+                DateTimeKind.Local
+            );
+
+            return date;
+        }
+
+        /// <summary>
+        /// Converts a nullable date to local time
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <returns>The date in local time</returns>
+        protected virtual DateTime? ToLocalTime
+            (
+                DateTime? date
+            )
+        {
+            if (date.HasValue)
+            {
+                return ToLocalTime(date.Value);
+            }
+            else
+            {
+                return date;
+            }
+        }
+
+        /// <summary>
         /// Tries to map a property on a DTO to a method on an entity
         /// </summary>
         /// <param name="entity">The entity</param>
         /// <param name="dto">The DTO</param>
         /// <param name="dtoProperty">The DTO property</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
-        private void TryMapToMethod
+        protected virtual void TryMapToMethod
             (
                 IAggregateEntity entity,
                 ref object dto,
@@ -420,7 +498,7 @@
         /// <param name="dtoPropertyType">The DTo property type to check</param>
         /// <param name="entityPropertyType">The matching entity type</param>
         /// <returns>True, if the type is a valid DTO type; otherwise false</returns>
-        private bool IsValidDtoType
+        protected virtual bool IsValidDtoType
             (
                 Type dtoPropertyType,
                 Type entityPropertyType
@@ -498,7 +576,7 @@
         /// </summary>
         /// <param name="o">The object</param>
         /// <returns>A collection of matching properties</returns>
-        private IEnumerable<PropertyInfo> GetMappableProperties
+        protected virtual IEnumerable<PropertyInfo> GetMappableProperties
             (
                 object o
             )
@@ -533,7 +611,7 @@
         /// </summary>
         /// <param name="o">The object</param>
         /// <returns>A collection of matching methods</returns>
-        private IEnumerable<MethodInfo> GetMappableMethods
+        protected virtual IEnumerable<MethodInfo> GetMappableMethods
             (
                 object o
             )
