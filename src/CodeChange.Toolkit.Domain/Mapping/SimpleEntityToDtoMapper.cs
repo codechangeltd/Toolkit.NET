@@ -356,7 +356,7 @@
             date = DateTime.SpecifyKind
             (
                 date,
-                DateTimeKind.Local
+                DateTimeKind.Unspecified
             );
 
             return date;
