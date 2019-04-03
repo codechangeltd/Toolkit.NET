@@ -183,20 +183,20 @@
                 {
                     var date = (DateTime)entityPropertyValue;
 
-                    if (date.HasTime())
-                    {
-                        entityPropertyValue = ToLocalTime(date);
-                    }
+                    entityPropertyValue = date.ToLocalTime
+                    (
+                        this.LocaleConfiguration
+                    );
                 }
 
                 if (dtoPropertyType == typeof(DateTime?))
                 {
                     var date = (DateTime?)entityPropertyValue;
 
-                    if (date.HasTime())
-                    {
-                        entityPropertyValue = ToLocalTime(date);
-                    }
+                    entityPropertyValue = date.ToLocalTime
+                    (
+                        this.LocaleConfiguration
+                    );
                 }
 
                 dtoProperty.SetValue
@@ -315,70 +315,6 @@
                         );
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Converts a date to local time
-        /// </summary>
-        /// <param name="date">The date convert</param>
-        /// <returns>The date in local time</returns>
-        protected virtual DateTime ToLocalTime
-            (
-                DateTime date
-            )
-        {
-            if (date.HasTime())
-            {
-                var locale = this.LocaleConfiguration;
-
-                if (locale.TimeZoneOffset.HasValue)
-                {
-                    date = date.AddMinutes
-                    (
-                        locale.TimeZoneOffset.Value
-                    );
-                }
-                else if (locale.DefaultTimeZone != null)
-                {
-                    date = TimeZoneInfo.ConvertTimeFromUtc
-                    (
-                        date,
-                        locale.DefaultTimeZone
-                    );
-                }
-                else
-                {
-                    date = date.ToLocalTime();
-                }
-            }
-
-            date = DateTime.SpecifyKind
-            (
-                date,
-                DateTimeKind.Unspecified
-            );
-
-            return date;
-        }
-
-        /// <summary>
-        /// Converts a nullable date to local time
-        /// </summary>
-        /// <param name="date">The date convert</param>
-        /// <returns>The date in local time</returns>
-        protected virtual DateTime? ToLocalTime
-            (
-                DateTime? date
-            )
-        {
-            if (date.HasValue)
-            {
-                return ToLocalTime(date.Value);
-            }
-            else
-            {
-                return date;
             }
         }
 

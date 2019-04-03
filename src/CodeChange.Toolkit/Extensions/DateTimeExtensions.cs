@@ -1,5 +1,7 @@
 ﻿namespace System
 {
+    using CodeChange.Toolkit.Culture;
+
     /// <summary>
     /// Various extension methods for manipulating date time values
     /// </summary>
@@ -49,6 +51,76 @@
             )
         {
             return dateTime.HasValue ? dateTime.Value.ToLocalTime() : dateTime;
+        }
+
+        /// <summary>
+        /// Converts a date to local time
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime ToLocalTime
+            (
+                this DateTime date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            if (date.HasTime())
+            {
+                if (localeConfiguration.TimeZoneOffset.HasValue)
+                {
+                    date = date.AddMinutes
+                    (
+                        localeConfiguration.TimeZoneOffset.Value
+                    );
+                }
+                else if (localeConfiguration.DefaultTimeZone != null)
+                {
+                    date = TimeZoneInfo.ConvertTimeFromUtc
+                    (
+                        date,
+                        localeConfiguration.DefaultTimeZone
+                    );
+                }
+                else
+                {
+                    date = date.ToLocalTime();
+                }
+            }
+
+            date = DateTime.SpecifyKind
+            (
+                date,
+                DateTimeKind.Unspecified
+            );
+
+            return date;
+        }
+
+        /// <summary>
+        /// Converts a nullable date to local time
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime? ToLocalTime
+            (
+                this DateTime? date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            if (date.HasValue)
+            {
+                return ToLocalTime
+                (
+                    date.Value,
+                    localeConfiguration
+                );
+            }
+            else
+            {
+                return date;
+            }
         }
 
         /// <summary>
