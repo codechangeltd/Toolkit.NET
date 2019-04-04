@@ -69,10 +69,12 @@
             {
                 if (localeConfiguration.TimeZoneOffset.HasValue)
                 {
-                    date = date.AddMinutes
+                    var offset =
                     (
-                        localeConfiguration.TimeZoneOffset.Value
+                        localeConfiguration.TimeZoneOffset.Value * -1
                     );
+
+                    date = date.AddMinutes(offset);
                 }
                 else if (localeConfiguration.DefaultTimeZone != null)
                 {
