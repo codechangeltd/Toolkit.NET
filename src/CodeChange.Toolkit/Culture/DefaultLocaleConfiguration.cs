@@ -37,11 +37,11 @@
                 int offset
             )
         {
-            if (offset < -720 || offset > 840)
+            if (offset < -840 || offset > 720)
             {
                 throw new ArgumentException
                 (
-                    "The timezone offset must be between -12 and 14 hours."
+                    "The timezone offset must be between -14 and 12 hours."
                 );
             }
 
