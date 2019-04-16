@@ -80,7 +80,11 @@
                 {
                     date = TimeZoneInfo.ConvertTimeFromUtc
                     (
-                        date,
+                        new DateTime
+                        (
+                            date.Ticks,
+                            DateTimeKind.Utc
+                        ),
                         localeConfiguration.DefaultTimeZone
                     );
                 }
