@@ -1027,5 +1027,38 @@
                 return pagePathWithoutQueryString;
             }
         }
+
+        /// <summary>
+        /// Tries to parse a date from a date expression string
+        /// </summary>
+        /// <param name="dateExpression">The date expression</param>
+        /// <returns>The date, if it was parsed, otherwise null</returns>
+        public static DateTime? TryParseDate
+            (
+                this string dateExpression
+            )
+        {
+            if (String.IsNullOrWhiteSpace(dateExpression))
+            {
+                return null;
+            }
+            else
+            {
+                var success = DateTime.TryParse
+                (
+                    dateExpression,
+                    out DateTime date
+                );
+
+                if (success)
+                {
+                    return date;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
     }
 }
