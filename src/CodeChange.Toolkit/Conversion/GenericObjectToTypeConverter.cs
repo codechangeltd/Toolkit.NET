@@ -19,7 +19,7 @@
         {
             if (value == null)
             {
-                return default(T);
+                return default;
             }
             else
             {
