@@ -171,10 +171,9 @@
             )
         {
             var dtoPropertyType = dtoProperty.PropertyType;
-
-            object entityPropertyValue = null;
+            var entityPropertyValue = default(object);
             
-            if (false == dtoPropertyType.IsEnumerable() && dtoPropertyType.GetType().Namespace.StartsWith("System"))
+            if (false == dtoPropertyType.IsEnumerable() && dtoPropertyType.Namespace.StartsWith("System"))
             {
                 entityPropertyValue = entityProperty.GetValue
 	            (
@@ -260,7 +259,7 @@
 
                         throw new InvalidOperationException
                         (
-                            $"{typeName} on {propertyName} does not implement IAggregateEntity."
+                            $"{typeName} on {propertyName} does not implement {nameof(IAggregateEntity)}."
                         );
                     }
 
