@@ -172,10 +172,15 @@
         {
             var dtoPropertyType = dtoProperty.PropertyType;
 
-            var entityPropertyValue = entityProperty.GetValue
-            (
-                entity
-            );
+            object entityPropertyValue = null;
+            
+            if (false == dtoPropertyType.IsEnumerable() && dtoPropertyType.GetType().Namespace.StartsWith("System"))
+            {
+                entityPropertyValue = entityProperty.GetValue
+	            (
+	                entity
+	            );
+            }
 
             if (dtoPropertyType == entityProperty.PropertyType)
             {
