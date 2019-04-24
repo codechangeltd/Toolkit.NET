@@ -173,7 +173,7 @@
             var dtoPropertyType = dtoProperty.PropertyType;
             var entityPropertyValue = default(object);
             
-            if (false == dtoPropertyType.IsEnumerable() && dtoPropertyType.Namespace.StartsWith("System"))
+            if (false == (dtoPropertyType == typeof(ICollection<>)))
             {
                 entityPropertyValue = entityProperty.GetValue
 	            (
