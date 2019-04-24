@@ -170,10 +170,12 @@
                 bool mapNestedDtos
             )
         {
+            var entityPropertyType = entityProperty.PropertyType;
             var dtoPropertyType = dtoProperty.PropertyType;
+            var isNestedType = IsNestedPropertyType(entityPropertyType);
             var entityPropertyValue = default(object);
             
-            if (false == (dtoPropertyType == typeof(ICollection<>)))
+            if (false == isNestedType)
             {
                 entityPropertyValue = entityProperty.GetValue
 	            (
@@ -320,6 +322,32 @@
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines if a property type is a nested data type
+        /// </summary>
+        /// <param name="propertyType">The property type</param>
+        /// <returns>True, if the property type is nested; otherwise false</returns>
+        private bool IsNestedPropertyType
+            (
+                Type propertyType
+            )
+        {
+            var interfaces = propertyType.GetInterfaces();
+
+            var isCollection = interfaces.Any
+            (
+                x => x == typeof(ICollection) | x == typeof(IList)
+                    ||
+                    (
+                        x.IsGenericType
+                            && x.GetGenericTypeDefinition() == typeof(ICollection<>)
+                            | x.GetGenericTypeDefinition() == typeof(IList<>)
+                    )
+            );
+
+            return isCollection;
         }
 
         /// <summary>
