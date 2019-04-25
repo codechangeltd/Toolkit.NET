@@ -97,7 +97,13 @@
 
                 foreach (var dtoProperty in dtoProperties)
                 {
-                    if (dtoProperty.Name == "Key")
+                    var isKeyProperty = dtoProperty.Name.Equals
+                    (
+                        "Key",
+                        StringComparison.InvariantCultureIgnoreCase
+                    );
+
+                    if (isKeyProperty)
                     {
                         dtoProperty.SetValue
                         (
@@ -154,7 +160,7 @@
         }
 
         /// <summary>
-        /// Tries to map a property on a DTO to a property on an entity
+        /// Tries to map a property on an entity to a property on a DTO
         /// </summary>
         /// <param name="entity">The entity</param>
         /// <param name="dto">The DTO</param>
@@ -173,18 +179,14 @@
             var entityPropertyType = entityProperty.PropertyType;
             var dtoPropertyType = dtoProperty.PropertyType;
             var isNestedType = IsNestedPropertyType(entityPropertyType);
-            var entityPropertyValue = default(object);
             
-            if (false == isNestedType)
+            if (dtoPropertyType == entityPropertyType)
             {
-                entityPropertyValue = entityProperty.GetValue
-	            (
-	                entity
-	            );
-            }
+                var entityPropertyValue = entityProperty.GetValue
+                (
+                    entity
+                );
 
-            if (dtoPropertyType == entityProperty.PropertyType)
-            {
                 if (dtoPropertyType == typeof(DateTime))
                 {
                     var date = (DateTime)entityPropertyValue;
@@ -213,6 +215,11 @@
             }
             else if (dtoPropertyType == typeof(string))
             {
+                var entityPropertyValue = entityProperty.GetValue
+                (
+                    entity
+                );
+
                 if (entityPropertyValue != null)
                 {
                     dtoProperty.SetValue
@@ -221,105 +228,146 @@
                         entityPropertyValue.ToString()
                     );
                 }
+                else
+                {
+                    dtoProperty.SetValue(dto, null);
+                }
             }
             else if (mapNestedDtos)
             {
-                var isList =
+                MapNestedProperty
                 (
-                    dtoPropertyType.IsGenericType
-                        && dtoPropertyType.GetGenericTypeDefinition() == typeof(List<>)
+                    entity,
+                    ref dto,
+                    entityProperty,
+                    dtoProperty
+                );
+            }
+        }
+
+        /// <summary>
+        /// Maps a nested property on an entity to a property on a DTO
+        /// </summary>
+        /// <param name="entity">The entity</param>
+        /// <param name="dto">The DTO</param>
+        /// <param name="entityProperty">The entity property</param>
+        /// <param name="dtoProperty">The DTO property</param>
+        protected virtual void MapNestedProperty
+            (
+                IAggregateEntity entity,
+                ref object dto,
+                PropertyInfo entityProperty,
+                PropertyInfo dtoProperty
+            )
+        {
+            var entityPropertyType = entityProperty.PropertyType;
+            var dtoPropertyType = dtoProperty.PropertyType;
+
+            var isList =
+            (
+                dtoPropertyType.IsGenericType
+                    && dtoPropertyType.GetGenericTypeDefinition() == typeof(List<>)
+            );
+
+            if (isList)
+            {
+                var dtoListType = dtoPropertyType.GetGenericArguments()[0];
+                var entityListType = entityPropertyType.GetGenericArguments()[0];
+
+                var isValidDto = IsValidDtoType
+                (
+                    dtoListType,
+                    entityListType
                 );
 
-                if (isList)
+                if (false == isValidDto)
                 {
-                    var dtoListType = dtoPropertyType.GetGenericArguments()[0];
-                    var entityListType = entityProperty.PropertyType.GetGenericArguments()[0];
-
-                    var isValidDto = IsValidDtoType
+                    throw new InvalidOperationException
                     (
-                        dtoListType,
-                        entityListType
+                        "The list type is not a valid DTO."
+                    );
+                }
+
+                var isValidEntityCollection = entityListType.ImplementsInterface
+                (
+                    typeof(IAggregateEntity)
+                );
+
+                if (false == isValidEntityCollection)
+                {
+                    var typeName = entityListType.Name;
+                    var propertyName = entityProperty.Name;
+
+                    throw new InvalidOperationException
+                    (
+                        $"{typeName} on {propertyName} does not implement {nameof(IAggregateEntity)}."
+                    );
+                }
+
+                var dtoList = (IList)Activator.CreateInstance
+                (
+                    dtoPropertyType
+                );
+
+                var entityCollection = (IEnumerable)entityProperty.GetValue
+                (
+                    entity
+                );
+
+                foreach (IAggregateEntity childEntity in entityCollection)
+                {
+                    var childDto = Activator.CreateInstance
+                    (
+                        dtoListType
                     );
 
-                    if (false == isValidDto)
-                    {
-                        throw new InvalidOperationException
-                        (
-                            "The list type is not a valid DTO."
-                        );
-                    }
-
-                    var isValidEntityCollection = entityListType.ImplementsInterface
+                    Map
                     (
-                        typeof(IAggregateEntity)
+                        childEntity,
+                        ref childDto,
+                        true
                     );
 
-                    if (false == isValidEntityCollection)
-                    {
-                        var typeName = entityListType.Name;
-                        var propertyName = entityProperty.Name;
+                    dtoList.Add(childDto);
+                }
 
-                        throw new InvalidOperationException
-                        (
-                            $"{typeName} on {propertyName} does not implement {nameof(IAggregateEntity)}."
-                        );
-                    }
+                dtoProperty.SetValue(dto, dtoList);
+            }
+            else
+            {
+                var isValidDto = IsValidDtoType
+                (
+                    dtoPropertyType,
+                    entityPropertyType
+                );
 
-                    var dtoList = (IList)Activator.CreateInstance
-                    (
-                        dtoPropertyType
-                    );
-
-                    var entityCollection = (IEnumerable)entityProperty.GetValue
+                if (isValidDto)
+                {
+                    var childEntity = (IAggregateEntity)entityProperty.GetValue
                     (
                         entity
                     );
 
-                    foreach (IAggregateEntity childEntity in entityCollection)
-                    {
-                        var childDto = Activator.CreateInstance
-                        (
-                            dtoListType
-                        );
+                    var childDto = Activator.CreateInstance
+                    (
+                        dtoPropertyType
+                    );
 
-                        Map(childEntity, ref childDto, mapNestedDtos);
+                    Map
+                    (
+                        childEntity,
+                        ref childDto,
+                        true
+                    );
 
-                        dtoList.Add(childDto);
-                    }
-
-                    dtoProperty.SetValue(dto, dtoList);
+                    dtoProperty.SetValue(dto, childDto);
                 }
                 else
                 {
-                    var isValidDto = IsValidDtoType
+                    throw new InvalidOperationException
                     (
-                        dtoPropertyType,
-                        entityProperty.PropertyType
+                        $"The property {dtoProperty.Name} could not be mapped."
                     );
-
-                    if (isValidDto)
-                    {
-                        var childEntity = (IAggregateEntity)entityProperty.GetValue
-                        (
-                            entity
-                        );
-
-                        var childDto = Activator.CreateInstance
-                        (
-                            dtoPropertyType
-                        );
-
-                        Map(childEntity, ref childDto, mapNestedDtos);
-
-                        dtoProperty.SetValue(dto, childDto);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException
-                        (
-                            $"The property {dtoProperty.Name} could not be mapped."
-                        );
-                    }
                 }
             }
         }
@@ -342,8 +390,11 @@
                     ||
                     (
                         x.IsGenericType
-                            && x.GetGenericTypeDefinition() == typeof(ICollection<>)
-                            | x.GetGenericTypeDefinition() == typeof(IList<>)
+                            &&
+                            (
+                                x.GetGenericTypeDefinition() == typeof(ICollection<>)
+                                    | x.GetGenericTypeDefinition() == typeof(IList<>)
+                            )
                     )
             );
 
