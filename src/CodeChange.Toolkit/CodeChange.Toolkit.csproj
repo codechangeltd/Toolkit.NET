@@ -16,6 +16,7 @@
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageReleaseNotes>Added TryParseDate string extension method.</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
+		<LangVersion>7.1</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

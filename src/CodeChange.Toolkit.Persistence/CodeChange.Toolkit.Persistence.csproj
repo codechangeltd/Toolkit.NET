@@ -16,6 +16,7 @@
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<Tags>CodeChange Toolkit Persistence .NET DOTNET C#</Tags>
+		<LangVersion>7.1</LangVersion>
 	</PropertyGroup>
 
 </Project>

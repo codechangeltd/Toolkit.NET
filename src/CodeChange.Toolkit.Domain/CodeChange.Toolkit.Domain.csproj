@@ -16,6 +16,7 @@
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageReleaseNotes>Improved entity to DTO mapping logic.</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
+		<LangVersion>7.1</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
