@@ -118,6 +118,51 @@
         }
 
         /// <summary>
+        /// Adds or updates an entity in the repository
+        /// </summary>
+        /// <param name="entity">The entity to add or update</param>
+        protected virtual void AddOrUpdateEntity
+            (
+                TRoot entity
+            )
+        {
+            var context = this.WriteContext;
+
+            var attached = context.Set<TRoot>().Local.Any
+            (
+                q => q.LookupKey == entity.LookupKey
+            );
+
+            if (attached)
+            {
+                var entry = context.Entry<TRoot>
+                (
+                    entity
+                );
+
+                entry.State = EntityState.Modified;
+            }
+            else
+            {
+                var set = context.Set<TRoot>().AsNoTracking();
+
+                var usedCount = set.Count
+                (
+                    m => m.LookupKey.ToLower() == entity.LookupKey.ToLower()
+                );
+
+                if (usedCount == 0)
+                {
+                    AddEntity(entity);
+                }
+                else
+                {
+                    UpdateEntity(entity);
+                }
+            }
+        }
+
+        /// <summary>
         /// Determines if the key specified has already been used by another entity of the same type
         /// </summary>
         /// <param name="key">The key value to check</param>
@@ -132,14 +177,26 @@
                 return false;
             }
 
-            var set = this.ReadContext.Set<TRoot>().AsNoTracking();
+            var context = this.WriteContext;
 
-            var hasBeenUsed = set.Any
+            var attached = context.Set<TRoot>().Local.Any
+            (
+                q => q.LookupKey == key
+            );
+
+            if (attached)
+            {
+                return true;
+            }
+
+            var set = context.Set<TRoot>().AsNoTracking();
+
+            var usedCount = set.Count
             (
                 m => m.LookupKey.ToLower() == key.ToLower()
             );
 
-            return hasBeenUsed;
+            return usedCount > 0;
         }
 
         /// <summary>
@@ -254,10 +311,10 @@
             )
         {
             Validate.IsNotNull(entity);
-            Validate.IsNotNull(this.WriteContext);
 
             var key = entity.GetKeyValue();
             var lookupEntity = GetEntityByLookupKey(key);
+            var context = this.WriteContext;
 
             if (lookupEntity != null && lookupEntity.ID != entity.ID)
             {
@@ -269,7 +326,7 @@
 
             entity.DateModified = DateTime.UtcNow;
 
-            var entry = this.WriteContext.Entry<TRoot>
+            var entry = context.Entry<TRoot>
             (
                 entity
             );
@@ -277,7 +334,7 @@
             // Ensure the entity has been attached to the object state manager
             if (entry.State == EntityState.Detached)
             {
-                this.WriteContext.Set<TRoot>().Attach
+                context.Set<TRoot>().Attach
                 (
                     entity
                 );

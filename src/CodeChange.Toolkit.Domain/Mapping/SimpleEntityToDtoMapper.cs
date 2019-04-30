@@ -178,7 +178,6 @@
         {
             var entityPropertyType = entityProperty.PropertyType;
             var dtoPropertyType = dtoProperty.PropertyType;
-            //var isNestedType = IsNestedPropertyType(entityPropertyType);
             
             if (dtoPropertyType == entityPropertyType)
             {

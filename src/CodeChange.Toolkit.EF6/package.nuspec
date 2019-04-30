@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 	<id>CodeChange.Toolkit.EF6</id>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 	<title>CodeChange.Toolkit.EF6</title>
 	<authors>Code Change Ltd</authors>
 	<owners>Code Change Ltd</owners>
@@ -11,7 +11,7 @@
 	<iconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.EF6/Icon.png</iconUrl>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<description>A library containing Entity Framework 6 tools, base classes and interface implementations.</description>
-	<releaseNotes>Fixed domain event dispatching bug.</releaseNotes>
+	<releaseNotes>Created AddOrUpdateEntity method in RepositoryBase.</releaseNotes>
 	<copyright>Copyright 2018</copyright>
 	<tags>Toolkit CodeChange EF6 .NET</tags>
 	<dependencies>
