@@ -97,7 +97,8 @@
         public static string Truncate
             (
                 this string input,
-                int length
+                int length,
+                string appendWith = "..."
             )
         {
             if (String.IsNullOrEmpty(input))
@@ -106,15 +107,23 @@
             }
             else
             {
+                if (length < 0)
+                {
+                    throw new ArgumentOutOfRangeException
+                    (
+                        "The length must be greater than zero."
+                    );
+                }
+
                 if (input.Length > length)
                 {
                     var truncated = input.Substring
                     (
                         0,
-                        (length + 3)
+                        length
                     );
 
-                    return truncated + "...";
+                    return $"{truncated}{appendWith}";
                 }
                 else
                 {
@@ -823,6 +832,60 @@
             var indexes = input.IndexesOf(search);
 
             return indexes == null ? 0 : indexes.Count();
+        }
+
+        /// <summary>
+        /// Returns the left characters of a string to the length required
+        /// </summary>
+        /// <param name="input">The input text</param>
+        /// <param name="length">The length</param>
+        /// <returns>The left characters of the string</returns>
+        public static string Left
+            (
+                this string input,
+                int length
+            )
+        {
+            return Truncate(input, length, null);
+        }
+
+        /// <summary>
+        /// Returns the right characters of a string to the length required
+        /// </summary>
+        /// <param name="input">The input text</param>
+        /// <param name="length">The length</param>
+        /// <returns>The right characters of the string</returns>
+        public static string Right
+            (
+                this string input,
+                int length
+            )
+        {
+            if (String.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+            else
+            {
+                if (length < 0)
+                {
+                    throw new ArgumentOutOfRangeException
+                    (
+                        "The length must be greater than zero."
+                    );
+                }
+
+                if (length >= input.Length)
+                {
+                    return input;
+                }
+                else
+                {
+                    var startIndex = (input.Length - length);
+
+                    return input.Substring(startIndex);
+                }
+            }
         }
 
         /// <summary>
