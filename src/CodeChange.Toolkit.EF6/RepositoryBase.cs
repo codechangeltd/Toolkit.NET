@@ -240,10 +240,12 @@
 
                 if (entity == default(TRoot))
                 {
+                    var typeName = typeof(TRoot).Name;
+
                     throw new EntityNotFoundException
                     (
                         key,
-                        $"The key supplied doesn't match any items in the repository."
+                        $"Key does not match any {typeName} entities in the repository."
                     );
                 }
             }
