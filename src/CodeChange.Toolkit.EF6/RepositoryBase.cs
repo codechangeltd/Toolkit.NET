@@ -140,7 +140,10 @@
                     entity
                 );
 
-                entry.State = EntityState.Modified;
+                if (entry.State != EntityState.Added)
+                {
+                    entry.State = EntityState.Modified;
+                }
             }
             else
             {
@@ -342,7 +345,10 @@
                 );
             }
 
-            entry.State = EntityState.Modified;
+            if (entry.State != EntityState.Added)
+            {
+                entry.State = EntityState.Modified;
+            }
         }
 
         /// <summary>
