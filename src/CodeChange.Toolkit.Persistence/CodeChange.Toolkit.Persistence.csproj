@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Product>Toolkit.NET</Product>
-		<Description>A library containing persistence tools and interfaces.</Description>
-		<Copyright>Copyright © Code Change Ltd 2018</Copyright>
-		<Authors>Code Change Ltd</Authors>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<Version>1.0.0</Version>
-		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
-		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Persistence/Icon.png</PackageIconUrl>
-		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-		<PackageReleaseNotes></PackageReleaseNotes>
-		<Tags>CodeChange Toolkit Persistence .NET DOTNET C#</Tags>
-		<LangVersion>7.1</LangVersion>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>Toolkit.NET</Product>
+    <Description>A library containing persistence tools and interfaces.</Description>
+    <Copyright>Copyright © Code Change Ltd 2018</Copyright>
+    <Authors>Code Change Ltd</Authors>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Version>1.0.0</Version>
+    <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
+    <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Persistence/Icon.png</PackageIconUrl>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <Tags>CodeChange Toolkit Persistence .NET DOTNET C#</Tags>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
 
 </Project>

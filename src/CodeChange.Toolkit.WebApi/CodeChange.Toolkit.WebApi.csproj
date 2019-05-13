@@ -9,7 +9,7 @@
 		<Authors>Code Change Ltd</Authors>
 		<AssemblyVersion>1.1.0</AssemblyVersion>
 		<Version>1.1.0</Version>
-		<PackageLicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</PackageLicenseUrl>
+		<licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.WebApi/Icon.png</PackageIconUrl>
@@ -21,10 +21,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
-		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.6" />
-		<PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.6" />
-		<PackageReference Include="Nito.AsyncEx" Version="4.0.1" />
-		<PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
+		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.7" />
+		<PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
+		<PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
