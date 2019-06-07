@@ -133,7 +133,10 @@
             {
                 foreach (var aggregate in aggregates)
                 {
-                    aggregate.UnpublishedEvents.Clear();
+                    if (aggregate.UnpublishedEvents != null)
+                    {
+                        aggregate.UnpublishedEvents.Clear();
+                    }
                 }
 
                 ProcessEventQueue(postEventQueue);
