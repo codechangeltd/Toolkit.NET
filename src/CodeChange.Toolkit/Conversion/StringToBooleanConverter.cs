@@ -53,7 +53,7 @@
             {
                 foreach (var comparer in this.AcceptedTrueValues)
                 {
-                    if (value.Trim().ToLower().StartsWith(comparer))
+                    if (value.Trim().StartsWith(comparer, StringComparison.OrdinalIgnoreCase))
                     {
                         result = true;
                         break;
