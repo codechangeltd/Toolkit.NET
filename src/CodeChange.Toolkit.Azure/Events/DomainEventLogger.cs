@@ -125,7 +125,7 @@
             var usedCount = properties.Count
             (
                 pair => pair.Key == key
-                    || pair.Key.StartsWith(key) & pair.Key.EndsWith("]")
+                    || pair.Key.StartsWith(key) && pair.Key.EndsWith("]")
             );
 
             if (usedCount > 0)

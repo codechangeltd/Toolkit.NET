@@ -156,7 +156,7 @@
 
                 var isSimple = propertyType.IsSimple();
 
-                if (false == (isSimple | propertyType.IsDateTime()))
+                if (false == (isSimple || propertyType.IsDateTime()))
                 {
                     var interfaces = propertyType.GetInterfaces();
 

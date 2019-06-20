@@ -385,14 +385,14 @@
 
             var isCollection = interfaces.Any
             (
-                x => x == typeof(ICollection) | x == typeof(IList)
+                x => x == typeof(ICollection) || x == typeof(IList)
                     ||
                     (
                         x.IsGenericType
                             &&
                             (
                                 x.GetGenericTypeDefinition() == typeof(ICollection<>)
-                                    | x.GetGenericTypeDefinition() == typeof(IList<>)
+                                    || x.GetGenericTypeDefinition() == typeof(IList<>)
                             )
                     )
             );

@@ -506,8 +506,8 @@
                 {
                     if (previousChar != Char.MinValue && Char.IsLetter(currentChar))
                     {
-                        if (Char.IsNumber(previousChar) & !Char.IsNumber(currentChar) 
-                            || Char.IsUpper(currentChar) & Char.IsLower(previousChar))
+                        if (Char.IsNumber(previousChar) && !Char.IsNumber(currentChar) 
+                            || Char.IsUpper(currentChar) && Char.IsLower(previousChar))
                         {
                             result += separator + Convert.ToString(currentChar);
                         }
