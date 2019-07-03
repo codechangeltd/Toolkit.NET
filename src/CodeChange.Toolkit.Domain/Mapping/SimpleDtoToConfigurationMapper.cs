@@ -10,7 +10,7 @@
     /// </summary>
     public class SimpleDtoToConfigurationMapper : IDtoToConfigurationMapper
     {
-        private static Dictionary<Type, PropertyInfo[]> _propertyCache 
+        private static readonly Dictionary<Type, PropertyInfo[]> _propertyCache 
             = new Dictionary<Type, PropertyInfo[]>();
 
         /// <summary>

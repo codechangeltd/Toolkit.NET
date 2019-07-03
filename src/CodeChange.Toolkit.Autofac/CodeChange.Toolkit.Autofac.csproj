@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -7,25 +6,22 @@
     <Description>A library containing Autofac tools and interface implementations.</Description>
     <Copyright>Copyright © Code Change Ltd 2018</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.1</AssemblyVersion>
+    <Version>1.1.1</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Autofac/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Added plugin module</PackageReleaseNotes>
+    <PackageReleaseNotes>Implemented ITypeActivator interface</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Autofac .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj" />
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
   </ItemGroup>
-
 </Project>

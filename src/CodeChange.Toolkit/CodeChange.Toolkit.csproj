@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -7,26 +6,23 @@
     <Description>A library containing various extensions and tools built on top of the .NET Framework Class Library.</Description>
     <Copyright>Copyright © Code Change Ltd 2018</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.2.6</AssemblyVersion>
-    <Version>1.2.6</Version>
+    <AssemblyVersion>1.2.7</AssemblyVersion>
+    <Version>1.2.7</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Improved String.Truncate extension and added Left and Right string extensions.</PackageReleaseNotes>
+    <PackageReleaseNotes>Created and utilized ITypeActivator interface.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Plugins\" />
   </ItemGroup>
-
 </Project>

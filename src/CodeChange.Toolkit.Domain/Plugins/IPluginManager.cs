@@ -11,7 +11,16 @@
         /// Automatically installs any new plug-ins that are found
         /// </summary>
         void AutoInstallPlugins();
-        
+
+        /// <summary>
+        /// Automatically installs the plug-ins specified
+        /// </summary>
+        /// <param name="plugins">The plugins to install</param>
+        void AutoInstallPlugins
+        (
+            params IPlugin[] plugins
+        );
+
         /// <summary>
         /// Initialises the plug-in specified
         /// </summary>

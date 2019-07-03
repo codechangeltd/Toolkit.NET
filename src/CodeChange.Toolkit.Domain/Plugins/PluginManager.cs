@@ -36,10 +36,26 @@
         /// </summary>
         public void AutoInstallPlugins()
         {
-            var namesOfPluginsInstalled = new List<string>();
             var allPlugins = _pluginRepository.GetAllPlugins();
 
-            foreach (var plugin in allPlugins.ToList())
+            AutoInstallPlugins
+            (
+                allPlugins.ToArray()
+            );
+        }
+
+        /// <summary>
+        /// Automatically installs the plug-ins specified
+        /// </summary>
+        /// <param name="plugins">The plugins to install</param>
+        public void AutoInstallPlugins
+            (
+                params IPlugin[] plugins
+            )
+        {
+            var namesOfPluginsInstalled = new List<string>();
+            
+            foreach (var plugin in plugins)
             {
                 var pluginName = plugin.Name;
 

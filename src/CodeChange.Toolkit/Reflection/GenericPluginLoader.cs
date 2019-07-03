@@ -1,5 +1,6 @@
 ﻿namespace System.Reflection
 {
+    using CodeChange.Toolkit.Reflection;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -58,10 +59,12 @@
         /// Loads all plug-ins contained in all assemblies that are found in the path specified
         /// </summary>
         /// <param name="path">The path of the plug-ins directory</param>
+        /// <param name="activator">THe type activator (optional)</param>
         /// <returns>A collection of matching plug-in instances</returns>
         public IEnumerable<T> LoadPlugins
             (
-                string path
+                string path,
+                ITypeActivator activator = null
             )
         {
             Validate.IsNotEmpty(path);
@@ -102,7 +105,16 @@
             // Build a collection of plug-in instances from the plug-in types
             foreach (var type in pluginTypes)
             {
-                T plugin = (T)Activator.CreateInstance(type);
+                T plugin;
+
+                if (activator != null)
+                {
+                    plugin = (T)activator.GetInstance(type);
+                }
+                else
+                {
+                    plugin = (T)Activator.CreateInstance(type);
+                }
 
                 plugins.Add(plugin);
             }
