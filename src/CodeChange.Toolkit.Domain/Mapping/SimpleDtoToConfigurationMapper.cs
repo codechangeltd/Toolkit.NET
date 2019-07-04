@@ -1,6 +1,7 @@
 ﻿namespace CodeChange.Toolkit.Domain.Mapping
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -35,59 +36,11 @@
                 );
             }
 
-            var configuration = new TConfiguration();
-            var configProperties = GetMappableProperties(configuration);
-            var dtoProperties = GetMappableProperties(dto);
-            var mappedNames = new List<string>();
-
-            foreach (var configProperty in configProperties)
-            {
-                var alreadyMapped = mappedNames.Contains
-                (
-                    configProperty.Name
-                );
-
-                if (alreadyMapped)
-                {
-                    continue;
-                }
-
-                var dtoProperty = dtoProperties.FirstOrDefault
-                (
-                    p => p.Name == configProperty.Name
-                );
-                
-                if (dtoProperty != null)
-                {
-                    var configPropertyType = configProperty.PropertyType;
-
-                    var dtoPropertyValue = dtoProperty.GetValue
-                    (
-                        dto
-                    );
-
-                    if (configPropertyType == dtoProperty.PropertyType)
-                    {
-                        configProperty.SetValue
-                        (
-                            configuration,
-                            dtoPropertyValue
-                        );
-
-                        mappedNames.Add
-                        (
-                            configProperty.Name
-                        );
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException
-                        (
-                            $"The property {configProperty.Name} could not be mapped."
-                        );
-                    }
-                }
-            }
+            var configuration = (TConfiguration)Map
+            (
+                dto,
+                new TConfiguration()
+            );
 
             return configuration;
         }
@@ -118,9 +71,10 @@
 
             foreach (var dto in dtos)
             {
-                var configuration = Map<TDto, TConfiguration>
+                var configuration = (TConfiguration)Map
                 (
-                    dto
+                    dto,
+                    new TConfiguration()
                 );
 
                 configurations.Add(configuration);
@@ -161,6 +115,207 @@
                 _propertyCache[type] = properties;
 
                 return properties;
+            }
+        }
+
+        /// <summary>
+        /// Maps a DTO to an existing configuration object
+        /// </summary>
+        /// <param name="dto">The DTO to map from</param>
+        /// <param name="configuration">The configuration to map to</param>
+        /// <returns>The mapped configuration</returns>
+        private object Map
+            (
+                object dto,
+                object configuration
+            )
+        {
+            if (dto == null)
+            {
+                return configuration;
+            }
+
+            var configProperties = GetMappableProperties(configuration);
+            var dtoProperties = GetMappableProperties(dto);
+            var mappedNames = new List<string>();
+
+            foreach (var configProperty in configProperties)
+            {
+                var alreadyMapped = mappedNames.Contains
+                (
+                    configProperty.Name
+                );
+
+                if (alreadyMapped)
+                {
+                    continue;
+                }
+
+                var dtoProperty = dtoProperties.FirstOrDefault
+                (
+                    p => p.Name == configProperty.Name
+                );
+
+                if (dtoProperty != null)
+                {
+                    var configPropertyType = configProperty.PropertyType;
+
+                    var dtoPropertyValue = dtoProperty.GetValue
+                    (
+                        dto
+                    );
+
+                    if (configPropertyType == dtoProperty.PropertyType)
+                    {
+                        configProperty.SetValue
+                        (
+                            configuration,
+                            dtoPropertyValue
+                        );
+
+                        mappedNames.Add
+                        (
+                            configProperty.Name
+                        );
+                    }
+                    else
+                    {
+                        // NOTE:
+                        // This code handles the scenario where the two property 
+                        // types are different but can be converted 
+                        // (e.g. nested collection of capture DTOs that can be 
+                        // mapped to a collection of configurations).
+
+                        var canConvert = CanConvertValue
+                        (
+                            dtoProperty,
+                            configProperty
+                        );
+
+                        if (canConvert)
+                        {
+                            object convertedValue;
+                            var isNumeric = configPropertyType.IsNumeric();
+
+                            if (isNumeric)
+                            {
+                                var nestedConfigurationList = new List<object>();
+                                var collectionType = configPropertyType.GetEnumerableType();
+
+                                foreach (var item in dtoPropertyValue as IEnumerable)
+                                {
+                                    var nestedConfiguration = Activator.CreateInstance
+                                    (
+                                        collectionType
+                                    );
+
+                                    nestedConfiguration = Map
+                                    (
+                                        dtoPropertyValue,
+                                        nestedConfiguration
+                                    );
+
+                                    nestedConfigurationList.Add
+                                    (
+                                        nestedConfiguration
+                                    );
+                                }
+
+                                if (collectionType.IsArray)
+                                {
+                                    // TODO: convert the array type to the expected type
+
+                                    convertedValue = Array.ConvertAll
+                                    (
+                                        nestedConfigurationList.ToArray(),
+                                        item => ObjectConverter.Convert(item, collectionType)
+                                    );
+                                }
+                                else
+                                {
+                                    // TODO: convert the list type to the expected type
+
+                                    convertedValue = nestedConfigurationList;
+                                }
+                            }
+                            else
+                            {
+                                var nestedConfiguration = Activator.CreateInstance
+                                (
+                                    configPropertyType
+                                );
+
+                                convertedValue = Map
+                                (
+                                    dtoPropertyValue,
+                                    nestedConfiguration
+                                );
+                            }
+
+                            configProperty.SetValue
+                            (
+                                configuration,
+                                convertedValue
+                            );
+
+                            mappedNames.Add
+                            (
+                                configProperty.Name
+                            );
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException
+                            (
+                                $"Property {configProperty.Name} could not be mapped."
+                            );
+                        }
+                    }
+                }
+            }
+
+            return configuration;
+        }
+
+        /// <summary>
+        /// Determines a DTO property can be converted for a configuration
+        /// </summary>
+        /// <param name="dtoProperty">The DTO property</param>
+        /// <param name="configProperty">The configuration property</param>
+        /// <returns>True, if the value can be converted; else false</returns>
+        /// <remarks>
+        /// The convention for auto converting from DTO to configuration 
+        /// is that the DTO property type name must end with "Dto", 
+        /// while the mapped configuration property type name must end 
+        /// with "Configuration".
+        /// </remarks>
+        private bool CanConvertValue
+            (
+                PropertyInfo dtoProperty,
+                PropertyInfo configProperty
+            )
+        {
+            var dtoType = dtoProperty.PropertyType;
+            var configType = configProperty.PropertyType;
+
+            if (false == (dtoType.IsClass && configType.IsClass))
+            {
+                return false;
+            }
+            else if (false == dtoType.Name.EndsWith("Dto"))
+            {
+                return false;
+            }
+            else if (false == configType.Name.EndsWith("Configuration"))
+            {
+                return false;
+            }
+            else
+            {
+                var isDtoNumeric = dtoType.IsNumeric();
+                var isConfigNumeric = configType.IsNumeric();
+
+                return isDtoNumeric == isConfigNumeric;
             }
         }
     }

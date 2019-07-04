@@ -72,7 +72,7 @@
                 {
                     RaiseCannotConvertException(value);
 
-                    return default(T);
+                    return default;
                 }
             }
         }
@@ -89,7 +89,7 @@
             
             if (String.IsNullOrEmpty(value))
             {
-                return default(T);
+                return default;
             }
 
             if (convertType.IsNullableType())
