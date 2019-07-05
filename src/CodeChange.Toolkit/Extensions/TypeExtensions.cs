@@ -36,7 +36,8 @@
                 {
                     return true;
                 }
-                else if (toType.IsAssignableFrom(fromObjectType) || fromObjectType.IsAssignableFrom(toType))
+                else if (toType.IsAssignableFrom(fromObjectType) 
+                    || fromObjectType.IsAssignableFrom(toType))
                 {
                     return true;
                 }
@@ -121,7 +122,7 @@
             {
                 throw new InvalidOperationException
                 (
-                    $"The type {type.Name} does not contain a property named {propertyName}."
+                    $"{type.Name} does not contain a property named {propertyName}."
                 );
             }
 
@@ -286,7 +287,8 @@
         {
             Validate.IsNotNull(type);
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType 
+                && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Nullable type, check if the nested type is simple.
                 return IsSimple

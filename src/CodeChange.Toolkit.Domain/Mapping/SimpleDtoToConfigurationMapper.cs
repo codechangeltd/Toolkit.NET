@@ -153,72 +153,81 @@
 
                 var dtoProperty = dtoProperties.FirstOrDefault
                 (
-                    p => p.Name == configProperty.Name
+                    p => p.Name.Equals
+                    (
+                        configProperty.Name,
+                        StringComparison.OrdinalIgnoreCase
+                    )
                 );
 
                 if (dtoProperty != null)
                 {
                     var configPropertyType = configProperty.PropertyType;
 
-                    var dtoPropertyValue = dtoProperty.GetValue
+                    var valueToSet = dtoProperty.GetValue
                     (
                         dto
                     );
 
-                    if (configPropertyType == dtoProperty.PropertyType)
+                    // Check if we need to convert the value before setting it
+                    if (configPropertyType != dtoProperty.PropertyType)
                     {
-                        configProperty.SetValue
+                        var canConvertDirectly = dtoProperty.PropertyType.CanConvert
                         (
-                            configuration,
-                            dtoPropertyValue
+                            configPropertyType,
+                            valueToSet
                         );
 
-                        mappedNames.Add
-                        (
-                            configProperty.Name
-                        );
-                    }
-                    else
-                    {
-                        // NOTE:
-                        // This code handles the scenario where the two property 
-                        // types are different but can be converted 
-                        // (e.g. nested collection of capture DTOs that can be 
-                        // mapped to a collection of configurations).
-
-                        var canConvert = CanConvertValue
-                        (
-                            dtoProperty,
-                            configProperty
-                        );
-
-                        if (canConvert)
+                        if (canConvertDirectly)
                         {
-                            var convertedValue = ConvertValue
+                            valueToSet = ObjectConverter.Convert
                             (
-                                dtoPropertyValue,
+                                valueToSet,
                                 configPropertyType
-                            );
-
-                            configProperty.SetValue
-                            (
-                                configuration,
-                                convertedValue
-                            );
-
-                            mappedNames.Add
-                            (
-                                configProperty.Name
                             );
                         }
                         else
                         {
-                            throw new InvalidOperationException
+                            // NOTE:
+                            // This code handles the scenario where the two property 
+                            // types are different but can be converted using reflection
+                            // (e.g. nested collection of DTOs that can be mapped to a
+                            // collection of configurations).
+
+                            var canConvertIndirectly = CanConvertComplexType
                             (
-                                $"Property {configProperty.Name} could not be mapped."
+                                dtoProperty,
+                                configProperty
                             );
+
+                            if (canConvertIndirectly)
+                            {
+                                valueToSet = ConvertComplexType
+                                (
+                                    valueToSet,
+                                    configPropertyType
+                                );
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException
+                                (
+                                    $"Property {configProperty.Name} could not be mapped."
+                                );
+                            }
                         }
                     }
+
+                    configProperty.SetValue
+                    (
+                        configuration,
+                        valueToSet
+                    );
+
+                    mappedNames.Add
+                    (
+                        configProperty.Name
+                    );
                 }
             }
 
@@ -237,14 +246,21 @@
         /// while the mapped configuration property type name must end 
         /// with "Configuration".
         /// </remarks>
-        private bool CanConvertValue
+        private bool CanConvertComplexType
             (
                 PropertyInfo dtoProperty,
                 PropertyInfo configProperty
             )
         {
-            var dtoType = dtoProperty.PropertyType;
-            var configType = configProperty.PropertyType;
+            var dtoType = ResolveUnderlyingType
+            (
+                dtoProperty.PropertyType
+            );
+
+            var configType = ResolveUnderlyingType
+            (
+                configProperty.PropertyType
+            );
 
             if (false == (dtoType.IsClass && configType.IsClass))
             {
@@ -265,6 +281,20 @@
 
                 return isDtoNumeric == isConfigNumeric;
             }
+
+            Type ResolveUnderlyingType(Type parentType)
+            {
+                var isEnumerable = parentType.IsEnumerable();
+
+                if (isEnumerable)
+                {
+                    return parentType.GetEnumerableType();
+                }
+                else
+                {
+                    return parentType;
+                }
+            }
         }
 
         /// <summary>
@@ -273,16 +303,16 @@
         /// <param name="dtoPropertyValue">The DTO property value</param>
         /// <param name="configPropertyType">The configuration property type</param>
         /// <returns>The converted value</returns>
-        private object ConvertValue
+        private object ConvertComplexType
             (
                 object dtoPropertyValue,
                 Type configPropertyType
             )
         {
             object convertedValue;
-            var isNumeric = configPropertyType.IsNumeric();
+            var isEnumerable = configPropertyType.IsEnumerable();
 
-            if (isNumeric)
+            if (isEnumerable)
             {
                 var nestedConfigList = new List<object>();
                 var collectionType = configPropertyType.GetEnumerableType();
