@@ -194,63 +194,11 @@
 
                         if (canConvert)
                         {
-                            object convertedValue;
-                            var isNumeric = configPropertyType.IsNumeric();
-
-                            if (isNumeric)
-                            {
-                                var nestedConfigurationList = new List<object>();
-                                var collectionType = configPropertyType.GetEnumerableType();
-
-                                foreach (var item in dtoPropertyValue as IEnumerable)
-                                {
-                                    var nestedConfiguration = Activator.CreateInstance
-                                    (
-                                        collectionType
-                                    );
-
-                                    nestedConfiguration = Map
-                                    (
-                                        dtoPropertyValue,
-                                        nestedConfiguration
-                                    );
-
-                                    nestedConfigurationList.Add
-                                    (
-                                        nestedConfiguration
-                                    );
-                                }
-
-                                if (collectionType.IsArray)
-                                {
-                                    // TODO: convert the array type to the expected type
-
-                                    convertedValue = Array.ConvertAll
-                                    (
-                                        nestedConfigurationList.ToArray(),
-                                        item => ObjectConverter.Convert(item, collectionType)
-                                    );
-                                }
-                                else
-                                {
-                                    // TODO: convert the list type to the expected type
-
-                                    convertedValue = nestedConfigurationList;
-                                }
-                            }
-                            else
-                            {
-                                var nestedConfiguration = Activator.CreateInstance
-                                (
-                                    configPropertyType
-                                );
-
-                                convertedValue = Map
-                                (
-                                    dtoPropertyValue,
-                                    nestedConfiguration
-                                );
-                            }
+                            var convertedValue = ConvertValue
+                            (
+                                dtoPropertyValue,
+                                configPropertyType
+                            );
 
                             configProperty.SetValue
                             (
@@ -317,6 +265,109 @@
 
                 return isDtoNumeric == isConfigNumeric;
             }
+        }
+
+        /// <summary>
+        /// Converts a DTO property value to the configuration property type
+        /// </summary>
+        /// <param name="dtoPropertyValue">The DTO property value</param>
+        /// <param name="configPropertyType">The configuration property type</param>
+        /// <returns>The converted value</returns>
+        private object ConvertValue
+            (
+                object dtoPropertyValue,
+                Type configPropertyType
+            )
+        {
+            object convertedValue;
+            var isNumeric = configPropertyType.IsNumeric();
+
+            if (isNumeric)
+            {
+                var nestedConfigList = new List<object>();
+                var collectionType = configPropertyType.GetEnumerableType();
+
+                foreach (var item in dtoPropertyValue as IEnumerable)
+                {
+                    var nestedConfiguration = Activator.CreateInstance
+                    (
+                        collectionType
+                    );
+
+                    nestedConfiguration = Map
+                    (
+                        dtoPropertyValue,
+                        nestedConfiguration
+                    );
+
+                    nestedConfigList.Add
+                    (
+                        nestedConfiguration
+                    );
+                }
+
+                if (collectionType.IsArray)
+                {
+                    // NOTE:
+                    // We need to convert the nested configuration list 
+                    // of objects to the correct array type. We do this 
+                    // by creating a new array instance of the type expected
+                    // and then setting its values to those in the list.
+
+                    var newArray = Array.CreateInstance
+                    (
+                        collectionType,
+                        nestedConfigList.Count
+                    );
+
+                    for (var i = 0; i < nestedConfigList.Count; i++)
+                    {
+                        newArray.SetValue(nestedConfigList[i], i);
+                    }
+
+                    convertedValue = newArray;
+                }
+                else
+                {
+                    // NOTE:
+                    // We need to convert the nested configuration list 
+                    // of objects to the correct type. We do this by 
+                    // dynamically creating a new list of the type expected 
+                    // and then populating it with the original list.
+
+                    var listType = typeof(List<>).MakeGenericType
+                    (
+                        new[] { collectionType }
+                    );
+
+                    var convertedList = (IList)Activator.CreateInstance
+                    (
+                        listType
+                    );
+
+                    nestedConfigList.ForEach
+                    (
+                        item => convertedList.Add(item)
+                    );
+
+                    convertedValue = convertedList;
+                }
+            }
+            else
+            {
+                var nestedConfiguration = Activator.CreateInstance
+                (
+                    configPropertyType
+                );
+
+                convertedValue = Map
+                (
+                    dtoPropertyValue,
+                    nestedConfiguration
+                );
+            }
+
+            return convertedValue;
         }
     }
 }
