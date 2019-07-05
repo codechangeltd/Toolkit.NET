@@ -84,7 +84,7 @@
             {
                 var methodType = actionContext.Request.Method.Method;
 
-                if (methodType.ToUpper() == "POST")
+                if (methodType.Equals("POST", StringComparison.OrdinalIgnoreCase))
                 {
                     var task = actionContext.Request.Content.ReadAsStringAsync();
                     var body = task.WaitAndUnwrapException();
@@ -99,7 +99,7 @@
                 }
             }
 
-            if (String.IsNullOrEmpty(value) || value.ToLower() == "null")
+            if (String.IsNullOrEmpty(value) || value.Equals("null", StringComparison.OrdinalIgnoreCase))
             {
                 value = null;
             }

@@ -33,7 +33,7 @@
             {
                 var matchingItem = dictionary.FirstOrDefault
                 (
-                    item => item.Key.ToLower() == property.Name.ToLower()
+                    item => item.Key.Equals(property.Name, StringComparison.OrdinalIgnoreCase)
                 );
 
                 var matchFound = matchingItem.Equals
