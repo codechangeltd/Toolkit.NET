@@ -252,25 +252,31 @@
         /// <summary>
         /// Gets the enumerable type from a collection type
         /// </summary>
-        /// <param name="type">The type</param>
+        /// <param name="collectionType">The collection type</param>
         /// <returns>The enumerable type found</returns>
         public static Type GetEnumerableType
             (
-                this Type type
+                this Type collectionType
             )
         {
-            foreach (var intType in type.GetInterfaces())
+            if (collectionType.IsArray)
             {
-                if (intType.IsGenericType
-                    && intType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                {
-                    return intType.GetGenericArguments()[0];
-                }
+                return collectionType.GetElementType();
             }
+            else
+            {
+                foreach (var interfaceType in collectionType.GetInterfaces())
+                {
+                    if (interfaceType.IsGenericType
+                        && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    {
+                        return interfaceType.GetGenericArguments()[0];
+                    }
+                }
 
-            return null;
+                return typeof(object);
+            }
         }
-
 
         /// <summary>
         /// Determines if a type is a simple type

@@ -309,6 +309,11 @@
                 Type configPropertyType
             )
         {
+            if (dtoPropertyValue == null)
+            {
+                return null;
+            }
+
             object convertedValue;
             var isEnumerable = configPropertyType.IsEnumerable();
 
