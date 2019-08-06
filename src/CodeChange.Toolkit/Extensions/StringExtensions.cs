@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Net.Mail;
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -48,7 +49,7 @@
         /// </summary>
         private static readonly Regex _apostropheRegex = new Regex
         (
-            ApostrophePattern,
+            StringExtensions.ApostrophePattern,
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -57,7 +58,7 @@
         /// </summary>
         private static readonly Regex _urlBadCharRegex = new Regex
         (
-            UrlBadCharPattern,
+            StringExtensions.UrlBadCharPattern,
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -66,7 +67,7 @@
         /// </summary>
         private static readonly Regex _multiSpaceRegex = new Regex
         (
-            MultiSpacePattern,
+            StringExtensions.MultiSpacePattern,
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -75,7 +76,7 @@
         /// </summary>
         private static readonly Regex _htmlRegex = new Regex
         (
-            HtmlPattern,
+            StringExtensions.HtmlPattern,
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -84,7 +85,7 @@
         /// </summary>
         private static readonly Regex _emailRegex = new Regex
         (
-            EmailAddressPattern,
+            StringExtensions.EmailAddressPattern,
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -256,7 +257,7 @@
                 return Double.TryParse
                 (
                     value,
-                    out double number
+                    out double _
                 );
             }
         }
@@ -432,7 +433,7 @@
                 (
                     url,
                     UriKind.Absolute,
-                    out var result
+                    out _
                 );
             }
         }
@@ -1045,7 +1046,23 @@
             }
             else
             {
-                return _emailRegex.IsMatch(value);
+                //return _emailRegex.IsMatch(value);
+
+                try
+                {
+                    var addr = new MailAddress(value);
+
+                    return String.Equals
+                    (
+                        addr.Address,
+                        value,
+                        StringComparison.OrdinalIgnoreCase
+                    );
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
