@@ -39,7 +39,19 @@
                 else if (toType.IsAssignableFrom(fromObjectType) 
                     || fromObjectType.IsAssignableFrom(toType))
                 {
-                    return true;
+                    var fromConvertable = fromType.ImplementsInterface
+                    (
+                        typeof(IConvertible)
+                    );
+
+                    var toConvertable = toType.ImplementsInterface
+                    (
+                        typeof(IConvertible)
+                    );
+
+                    var canConvert = (fromConvertable && toConvertable);
+
+                    return canConvert;
                 }
                 else
                 {
@@ -60,11 +72,13 @@
                         "CanConvert"
                     );
 
-                    return (bool)canConvertProperty.GetGetMethod().Invoke
+                    var canConvert = (bool)canConvertProperty.GetGetMethod().Invoke
                     (
                         instance,
                         null
                     );
+
+                    return canConvert;
                 }
             }
         }
@@ -196,10 +210,17 @@
         {
             Validate.IsNotNull(type);
 
-            return 
-            (
-                false == type.IsValueType || (Nullable.GetUnderlyingType(type) != null)
-            );
+            if (type.IsEnumerable())
+            {
+                return false;
+            }
+            else
+            {
+                return
+                (
+                    false == type.IsValueType || (Nullable.GetUnderlyingType(type) != null)
+                );
+            }
         }
 
         /// <summary>
@@ -259,18 +280,27 @@
                 this Type collectionType
             )
         {
+            Validate.IsNotNull(collectionType);
+
             if (collectionType.IsArray)
             {
                 return collectionType.GetElementType();
             }
             else
             {
-                foreach (var interfaceType in collectionType.GetInterfaces())
+                if (collectionType.IsGenericType)
                 {
-                    if (interfaceType.IsGenericType
-                        && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    return collectionType.GetGenericArguments()[0];
+                }
+                else
+                {
+                    foreach (var interfaceType in collectionType.GetInterfaces())
                     {
-                        return interfaceType.GetGenericArguments()[0];
+                        if (interfaceType.IsGenericType
+                            && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        {
+                            return interfaceType.GetGenericArguments()[0];
+                        }
                     }
                 }
 

@@ -210,9 +210,14 @@
                             }
                             else
                             {
+                                var name = configProperty.Name;
+                                var dtoPropertyType = dtoProperty.PropertyType;
+
                                 throw new InvalidOperationException
                                 (
-                                    $"Property {configProperty.Name} could not be mapped."
+                                    $"Property '{name}' could not be mapped. " +
+                                    $"Type {dtoPropertyType.Name} cannot be " +
+                                    $"converted to {configPropertyType.Name}."
                                 );
                             }
                         }
@@ -331,7 +336,7 @@
 
                     nestedConfiguration = Map
                     (
-                        dtoPropertyValue,
+                        item,
                         nestedConfiguration
                     );
 
