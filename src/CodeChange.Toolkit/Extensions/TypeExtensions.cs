@@ -39,19 +39,26 @@
                 else if (toType.IsAssignableFrom(fromObjectType) 
                     || fromObjectType.IsAssignableFrom(toType))
                 {
-                    var fromConvertable = fromType.ImplementsInterface
-                    (
-                        typeof(IConvertible)
-                    );
+                    if (toType.IsInterface)
+                    {
+                        var fromConvertable = fromType.ImplementsInterface
+                        (
+                            typeof(IConvertible)
+                        );
 
-                    var toConvertable = toType.ImplementsInterface
-                    (
-                        typeof(IConvertible)
-                    );
+                        var toConvertable = toType.ImplementsInterface
+                        (
+                            typeof(IConvertible)
+                        );
 
-                    var canConvert = (fromConvertable && toConvertable);
+                        var canConvert = (fromConvertable && toConvertable);
 
-                    return canConvert;
+                        return canConvert;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
