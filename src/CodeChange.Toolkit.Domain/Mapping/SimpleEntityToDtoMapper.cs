@@ -21,10 +21,10 @@
     /// </remarks>
     public class SimpleEntityToDtoMapper : IEntityToDtoMapper
     {
-        private static Dictionary<Type, PropertyInfo[]> _propertyCache
+        private readonly static Dictionary<Type, PropertyInfo[]> _propertyCache
             = new Dictionary<Type, PropertyInfo[]>();
 
-        private static Dictionary<Type, MethodInfo[]> _methodCache
+        private readonly static Dictionary<Type, MethodInfo[]> _methodCache
             = new Dictionary<Type, MethodInfo[]>();
 
         /// <summary>
@@ -46,10 +46,12 @@
         /// <typeparam name="TEntity">The aggregate entity type</typeparam>
         /// <typeparam name="TDto">The DTO type</typeparam>
         /// <param name="entity">The entity to map</param>
+        /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
         public TDto Map<TEntity, TDto>
             (
-                TEntity entity
+                TEntity entity,
+                bool mapNestedDtos = true
             )
 
             where TEntity : IAggregateEntity
@@ -63,7 +65,7 @@
             {
                 var dto = (object)new TDto();
 
-                Map(entity, ref dto, true);
+                Map(entity, ref dto, mapNestedDtos);
 
                 return (TDto)dto;
             }

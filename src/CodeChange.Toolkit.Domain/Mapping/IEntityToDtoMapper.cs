@@ -22,10 +22,12 @@
         /// <typeparam name="TEntity">The aggregate entity type</typeparam>
         /// <typeparam name="TDto">The DTO type</typeparam>
         /// <param name="entity">The entity to map</param>
+        /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
         TDto Map<TEntity, TDto>
         (
-            TEntity entity
+            TEntity entity,
+            bool mapNestedDtos = true
         )
         where TEntity : IAggregateEntity
         where TDto : class, new();
