@@ -151,7 +151,11 @@
 
                 var usedCount = set.Count
                 (
-                    m => m.LookupKey.Equals(entity.LookupKey, StringComparison.OrdinalIgnoreCase)
+                    m => m.LookupKey.Equals
+                    (
+                        entity.LookupKey,
+                        StringComparison.OrdinalIgnoreCase
+                    )
                 );
 
                 if (usedCount == 0)
@@ -196,7 +200,11 @@
 
             var usedCount = set.Count
             (
-                m => m.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
+                m => m.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             return usedCount > 0;
@@ -218,7 +226,11 @@
 
             var entity = GetAll(useEagerLoading).FirstOrDefault
             (
-                m => m.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
+                m => m.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             if (entity == default(TRoot))
@@ -238,7 +250,11 @@
 
                 entity = addedEntities.FirstOrDefault
                 (
-                    m => m.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
+                    m => m.LookupKey.Equals
+                    (
+                        key,
+                        StringComparison.OrdinalIgnoreCase
+                    )
                 );
 
                 if (entity == default(TRoot))
