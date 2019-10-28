@@ -18,7 +18,7 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj" />
