@@ -53,6 +53,7 @@
             return dateTime.HasValue ? dateTime.Value.ToLocalTime() : dateTime;
         }
 
+        // TODO: REMOVE?
         /// <summary>
         /// Converts a date to local time
         /// </summary>
@@ -118,6 +119,163 @@
             if (date.HasValue)
             {
                 return ToLocalTime
+                (
+                    date.Value,
+                    localeConfiguration
+                );
+            }
+            else
+            {
+                return date;
+            }
+        }
+
+        /// <summary>
+        /// Converts a UTC DateTime to Local
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime UtcToLocalTime
+            (
+                this DateTime date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            // TODO: Implement
+            //if (date.Kind == DateTimeKind.Unspecified)
+            //{
+            //    throw new Exception("Date-time UTC or local unknown.");
+            //}
+
+            if (date.Kind == DateTimeKind.Local)
+            {
+                return date;
+            }
+
+            if (localeConfiguration.TimeZoneOffset.HasValue)
+            {
+                var offset =
+                (
+                    localeConfiguration.TimeZoneOffset.Value * -1
+                );
+
+                date = date.AddMinutes(offset);
+            }
+            else if (localeConfiguration.DefaultTimeZone != null)
+            {
+                date = TimeZoneInfo.ConvertTimeFromUtc
+                (
+                    date,
+                    localeConfiguration.DefaultTimeZone
+                );
+            }
+            else
+            {
+                return date; //throw
+            }
+
+            date = DateTime.SpecifyKind
+            (
+                date,
+                DateTimeKind.Local
+            );
+
+            return date;
+        }
+
+        /// <summary>
+        /// Converts a nullable UTC DateTime to Local
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime? UtcToLocalTime
+            (
+                this DateTime? date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            if (date.HasValue)
+            {
+                return ToLocalTime
+                (
+                    date.Value,
+                    localeConfiguration
+                );
+            }
+            else
+            {
+                return date;
+            }
+        }
+
+        /// <summary>
+        /// Converts a Local DateTime to UTC
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime LocalToUtcTime
+            (
+                this DateTime date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            // TODO: Implement
+            //if (date.Kind == DateTimeKind.Unspecified)
+            //{
+            //    throw new Exception("Date-time UTC or local unknown.");
+            //}
+
+            if (date.Kind == DateTimeKind.Utc)
+            {
+                return date;
+            }
+
+            if (localeConfiguration.TimeZoneOffset.HasValue)
+            {
+                var offset = localeConfiguration.TimeZoneOffset.Value;
+
+                date = date.AddMinutes(offset);
+            }
+            else if (localeConfiguration.DefaultTimeZone != null)
+            {
+                date = TimeZoneInfo.ConvertTimeToUtc
+                (
+                    date,
+                    localeConfiguration.DefaultTimeZone
+                );
+            }
+            else
+            {
+                return date;    // Throw
+            }
+
+            date = DateTime.SpecifyKind
+            (
+                date,
+                DateTimeKind.Utc
+            );
+
+            return date;
+        }
+
+        /// <summary>
+        /// Converts a Local DateTime to UTC
+        /// </summary>
+        /// <param name="date">The date convert</param>
+        /// <param name="localeConfiguration">The locale configuration</param>
+        /// <returns>The date in local time</returns>
+        public static DateTime? LocalToUtcTime
+            (
+                this DateTime? date,
+                ILocaleConfiguration localeConfiguration
+            )
+        {
+            if (date.HasValue)
+            {
+                return LocalToUtcTime
                 (
                     date.Value,
                     localeConfiguration

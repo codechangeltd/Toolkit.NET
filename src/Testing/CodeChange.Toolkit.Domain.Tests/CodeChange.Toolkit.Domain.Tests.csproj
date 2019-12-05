@@ -58,6 +58,7 @@
     <Compile Include="TestDto.cs" />
     <Compile Include="TestNestedConfiguration.cs" />
     <Compile Include="TestNestedDto.cs" />
+    <Compile Include="TimeZone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
