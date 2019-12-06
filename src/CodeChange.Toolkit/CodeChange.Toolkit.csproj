@@ -6,14 +6,14 @@
     <Description>A library containing various extensions and tools built on top of the .NET Framework Class Library.</Description>
     <Copyright>Copyright © Code Change Ltd 2019</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.2.10</AssemblyVersion>
-    <Version>1.2.10</Version>
+    <AssemblyVersion>1.2.11</AssemblyVersion>
+    <Version>1.2.11</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Bug fix for CanConvert Type extension method.</PackageReleaseNotes>
+    <PackageReleaseNotes>Bug fixes for date time zones. Also added some new methods to the Validate static class.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

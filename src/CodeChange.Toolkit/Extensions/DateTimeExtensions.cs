@@ -53,7 +53,6 @@
             return dateTime.HasValue ? dateTime.Value.ToLocalTime() : dateTime;
         }
 
-        // TODO: REMOVE?
         /// <summary>
         /// Converts a date to local time
         /// </summary>
@@ -68,40 +67,21 @@
         {
             if (date.HasTime())
             {
-                if (localeConfiguration.TimeZoneOffset.HasValue)
+                if (date.Kind == DateTimeKind.Unspecified)
                 {
-                    var offset =
+                    date = DateTime.SpecifyKind
                     (
-                        localeConfiguration.TimeZoneOffset.Value * -1
+                        date,
+                        DateTimeKind.Utc
                     );
+                }
 
-                    date = date.AddMinutes(offset);
-                }
-                else if (localeConfiguration.DefaultTimeZone != null)
-                {
-                    date = TimeZoneInfo.ConvertTimeFromUtc
-                    (
-                        new DateTime
-                        (
-                            date.Ticks,
-                            DateTimeKind.Utc
-                        ),
-                        localeConfiguration.DefaultTimeZone
-                    );
-                }
-                else
-                {
-                    date = date.ToLocalTime();
-                }
+                return date.UtcToLocalTime(localeConfiguration);
             }
-
-            date = DateTime.SpecifyKind
-            (
-                date,
-                DateTimeKind.Unspecified
-            );
-
-            return date;
+            else
+            {
+                return date;
+            }
         }
 
         /// <summary>
@@ -142,11 +122,15 @@
                 ILocaleConfiguration localeConfiguration
             )
         {
-            // TODO: Implement
-            //if (date.Kind == DateTimeKind.Unspecified)
-            //{
-            //    throw new Exception("Date-time UTC or local unknown.");
-            //}
+            Validate.IsNotNull(localeConfiguration);
+
+            if (date.Kind == DateTimeKind.Unspecified)
+            {
+                throw new ArgumentException
+                (
+                    "Unspecified date kind cannot be converted to local time."
+                );
+            }
 
             if (date.Kind == DateTimeKind.Local)
             {
@@ -172,7 +156,7 @@
             }
             else
             {
-                return date; //throw
+                date = date.ToLocalTime();
             }
 
             date = DateTime.SpecifyKind
@@ -222,11 +206,13 @@
                 ILocaleConfiguration localeConfiguration
             )
         {
-            // TODO: Implement
-            //if (date.Kind == DateTimeKind.Unspecified)
-            //{
-            //    throw new Exception("Date-time UTC or local unknown.");
-            //}
+            if (date.Kind == DateTimeKind.Unspecified)
+            {
+                throw new ArgumentException
+                (
+                    "Unspecified date kind cannot be converted to UTC."
+                );
+            }
 
             if (date.Kind == DateTimeKind.Utc)
             {
@@ -249,7 +235,7 @@
             }
             else
             {
-                return date;    // Throw
+                return date.ToUniversalTime();
             }
 
             date = DateTime.SpecifyKind

@@ -2,12 +2,15 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Reflection;
 
     /// <summary>
     /// Represents a base class for all plug-in implementations
     /// </summary>
     public abstract class PluginBase : IPlugin
     {
+        private FileVersionInfo _versionInfo;
+
         /// <summary>
         /// Gets a default name for the plug-in
         /// </summary>
@@ -35,7 +38,15 @@
         {
             get
             {
-                return "Code Change Ltd";
+                if (_versionInfo == null)
+                {
+                    _versionInfo = FileVersionInfo.GetVersionInfo
+                    (
+                        Assembly.GetExecutingAssembly().Location
+                    );
+                }
+
+                return _versionInfo.CompanyName;
             }
         }
 

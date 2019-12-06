@@ -12,9 +12,25 @@
         /// Constructs the configuration with the default values
         /// </summary>
         public DefaultLocaleConfiguration()
+            : this(TimeZoneInfo.Local, CultureInfo.CurrentCulture)
+        { }
+
+        /// <summary>
+        /// Constructs the configuration with the specific values
+        /// </summary>
+        /// <param name="timeZone">The time zone</param>
+        /// <param name="culture">The culture</param>
+        public DefaultLocaleConfiguration
+            (
+                TimeZoneInfo timeZone,
+                CultureInfo culture
+            )
         {
-            this.DefaultTimeZone = TimeZoneInfo.Local;
-            this.DefaultCulture = CultureInfo.CurrentCulture;
+            Validate.IsNotNull(timeZone);
+            Validate.IsNotNull(culture);
+
+            this.DefaultTimeZone = timeZone;
+            this.DefaultCulture = culture;
         }
 
         /// <summary>

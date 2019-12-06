@@ -711,19 +711,22 @@
                 value.ToCharArray()
             );
 
-            var hash = new MD5CryptoServiceProvider().ComputeHash
-            (
-                bytes
-            );
+            using (var provider = new MD5CryptoServiceProvider())
+            {
+                var hash = provider.ComputeHash
+                (
+                    bytes
+                );
 
-            // Concatenate the hash bytes into one long string
-            var builder = hash.Aggregate
-            (
-                new StringBuilder(32),
-                (sb, b) => sb.Append(b.ToString("X2"))
-            );
+                // Concatenate the hash bytes into one long string
+                var builder = hash.Aggregate
+                (
+                    new StringBuilder(32),
+                    (sb, b) => sb.Append(b.ToString("X2"))
+                );
 
-            return builder.ToString();
+                return builder.ToString();
+            }
         }
 
         /// <summary>

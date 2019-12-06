@@ -163,7 +163,7 @@
             
             throw new InvalidCastException
             (
-                $"The value '{valueString}' cannot be converted to {typeName}."
+                $"'{valueString}' cannot be converted to type {typeName}."
             );
         }
     }

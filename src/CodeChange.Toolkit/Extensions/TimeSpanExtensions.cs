@@ -15,7 +15,7 @@
                 this TimeSpan span
             )
         {
-            var template = String.Empty;
+            string template;
 
             if (span.Days > 0)
             {
