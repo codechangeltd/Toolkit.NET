@@ -9,7 +9,7 @@
     /// </summary>
     public class AzureEfConfiguration : DbConfiguration
     {
-        private static AsyncLocal<bool> _suspendStrategy = new AsyncLocal<bool>()
+        private static readonly AsyncLocal<bool> _suspendStrategy = new AsyncLocal<bool>()
         {
             Value = false
         };

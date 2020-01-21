@@ -1,7 +1,9 @@
-﻿namespace CodeChange.Toolkit.EF6.Plugins
+﻿namespace CodeChange.Toolkit.EntityFrameworkCore.Plugins
 {
     using CodeChange.Toolkit.Domain.Plugins;
-    
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
     /// <summary>
     /// Represents a database schema configuration for an installed plug-in type infos
     /// </summary>
@@ -11,7 +13,15 @@
         public InstalledPluginTypeInfoConfiguration()
             : base()
         {
-            this.HasKey
+            this.DisableKeyAutoBuild = true;
+        }
+
+        protected override void ApplyCustomConfiguration
+            (
+                EntityTypeBuilder<InstalledPluginTypeInfo> builder
+            )
+        {
+            builder.HasKey
             (
                 m => new
                 {
@@ -20,10 +30,10 @@
                 }
             );
 
-            this.HasRequired(m => m.InstalledPlugin)
+            builder.HasOne(m => m.InstalledPlugin)
                 .WithMany(m => m.AssemblyTypes)
                 .HasForeignKey(m => new { m.InstalledPluginId })
-                .WillCascadeOnDelete();
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
