@@ -1,6 +1,7 @@
 ﻿namespace CodeChange.Toolkit.Persistence
 {
     using System;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents a Unit of Work contract that can be used with repositories
@@ -18,9 +19,20 @@
         void RefreshAll();
 
         /// <summary>
-        /// Saves all changes made in this context to the underlying database
+        /// Asynchronously refreshes all objects being tracked with data from the data source
+        /// </summary>
+        Task RefreshAllAsync();
+
+        /// <summary>
+        /// Saves all changes made in unit to the underlying database
         /// </summary>
         /// <returns>The number of objects written to the underlying database</returns>
         int SaveChanges();
+
+        /// <summary>
+        /// Asynchronously saves all changes made in unit to the underlying database
+        /// </summary>
+        /// <returns>The number of objects written to the underlying database</returns>
+        Task<int> SaveChangesAsync();
     }
 }

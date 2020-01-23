@@ -3,6 +3,7 @@
     using CodeChange.Toolkit.Domain.Aggregate;
     using CodeChange.Toolkit.Domain.Events;
     using CodeChange.Toolkit.Persistence;
+    using Nito.AsyncEx.Synchronous;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -10,6 +11,7 @@
     using System.Data.Entity.Core;
     using System.Data.Entity.SqlServer;
     using System.Linq;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents an Entity Framework unit of work implementation
@@ -54,23 +56,49 @@
         }
 
         /// <summary>
-        /// Saves all changes made in this context to the underlying database
+        /// Asynchronously refreshes all objects being tracked with data from the data source
         /// </summary>
-        /// <returns>The number of objects written to the underlying database</returns>
-        public int SaveChanges()
+        public async Task RefreshAllAsync()
         {
-            return SaveChanges
-            (
-                _context
-            );
+            var tasks = new List<Task>();
+
+            foreach (var entity in _context.ChangeTracker.Entries())
+            {
+                tasks.Add
+                (
+                    entity.ReloadAsync()
+                );
+            }
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Saves all changes made in this context to the underlying database
         /// </summary>
-        /// <param name="context">The DB context</param>
         /// <returns>The number of objects written to the underlying database</returns>
-        private int SaveChanges
+        public int SaveChanges()
+        {
+            return SaveChangesAsync(_context).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously saves all changes made in unit to the underlying database
+        /// </summary>
+        /// <returns>The number of objects written to the underlying database</returns>
+        public async Task<int> SaveChangesAsync()
+        {
+            var saveTask = SaveChangesAsync(_context);
+
+            return await saveTask.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asynchronously saves all changes made in this context to the underlying database
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <returns>The number of objects written to the underlying database</returns>
+        private async Task<int> SaveChangesAsync
             (
                 DbContext context
             )
@@ -93,15 +121,17 @@
 
             AzureEfConfiguration.SuspendExecutionStrategy = true;
 
-            executionStrategy.Execute
+            await executionStrategy.Execute
             (
-                () =>
+                async () =>
                 {
                     using (var transaction = context.Database.BeginTransaction())
                     {
                         try
                         {
-                            rows = context.SaveChanges();
+                            var saveTask = context.SaveChangesAsync();
+
+                            rows = await saveTask.ConfigureAwait(false);
                             transaction.Commit();
 
                             success = true;
@@ -118,14 +148,14 @@
                                 // entities are not cached in the context so we can 
                                 // stop the same error being raised indefinitely.
 
-                                RefreshAll();
+                                await RefreshAllAsync().ConfigureAwait(false);
                             }
 
                             throw;
                         }
                     }
                 }
-            );
+            ).ConfigureAwait(false);
 
             AzureEfConfiguration.SuspendExecutionStrategy = false;
 

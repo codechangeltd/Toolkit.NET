@@ -49,7 +49,7 @@
         {
             Validate.IsNotEmpty(key);
 
-            return this.GetEntityByLookupKey
+            return this.GetEntity
             (
                 key,
                 true

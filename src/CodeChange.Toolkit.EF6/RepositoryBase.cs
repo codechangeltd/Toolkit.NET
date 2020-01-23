@@ -130,7 +130,11 @@
 
             var attached = context.Set<TRoot>().Local.Any
             (
-                q => q.LookupKey == entity.LookupKey
+                x => x.LookupKey.Equals
+                (
+                    entity.LookupKey,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             if (attached)
@@ -188,7 +192,11 @@
 
             var attached = context.Set<TRoot>().Local.Any
             (
-                q => q.LookupKey == key
+                x => x.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             if (attached)
@@ -405,7 +413,6 @@
             )
         {
             Validate.IsNotNull(entity);
-            Validate.IsNotNull(this.WriteContext);
 
             entity.Destroy();
 

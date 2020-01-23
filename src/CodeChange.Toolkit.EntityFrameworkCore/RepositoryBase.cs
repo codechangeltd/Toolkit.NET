@@ -2,10 +2,13 @@
 {
     using CodeChange.Toolkit.Domain.Aggregate;
     using Microsoft.EntityFrameworkCore;
+    using Nito.AsyncEx.Synchronous;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents the base class for all Entity Framework Core repositories
@@ -14,6 +17,8 @@
     public abstract class RepositoryBase<TRoot> : IAggregateRepository<TRoot>
         where TRoot : class, IAggregateRoot
     {
+        private readonly DbSet<TRoot> _readSet;
+        private readonly DbSet<TRoot> _writeSet;
         private List<PropertyInfo> _navigationProperties;
 
         /// <summary>
@@ -26,6 +31,9 @@
             )
         {
             Validate.IsNotNull(context);
+
+            _readSet = context.Set<TRoot>();
+            _writeSet = context.Set<TRoot>();
 
             this.ReadContext = context;
             this.WriteContext = context;
@@ -44,6 +52,9 @@
         {
             Validate.IsNotNull(readContext);
             Validate.IsNotNull(writeContext);
+
+            _readSet = readContext.Set<TRoot>();
+            _writeSet = writeContext.Set<TRoot>();
 
             this.ReadContext = readContext;
             this.WriteContext = writeContext;
@@ -92,20 +103,30 @@
                 TRoot entity
             )
         {
+            AddEntityAsync(entity).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously adds a new entity to the set in the database context
+        /// </summary>
+        /// <param name="entity">The entity to add</param>
+        protected virtual async Task AddEntityAsync
+            (
+                TRoot entity
+            )
+        {
             Validate.IsNotNull(entity);
 
             var key = entity.GetKeyValue();
-            var hasBeenUsed = HasKeyBeenUsed(key);
+            var usedTask = KeyUsedAsync(key);
+            var hasBeenUsed = await usedTask.ConfigureAwait(false);
 
             if (false == hasBeenUsed)
             {
                 entity.DateCreated = DateTime.UtcNow;
                 entity.DateModified = DateTime.UtcNow;
 
-                this.WriteContext.Set<TRoot>().Add
-                (
-                    entity
-                );
+                _writeSet.Add(entity);
             }
             else
             {
@@ -125,19 +146,32 @@
                 TRoot entity
             )
         {
+            AddOrUpdateEntityAsync(entity).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously adds or updates an entity in the repository
+        /// </summary>
+        /// <param name="entity">The entity to add or update</param>
+        protected virtual async Task AddOrUpdateEntityAsync
+            (
+                TRoot entity
+            )
+        {
             var context = this.WriteContext;
 
-            var attached = context.Set<TRoot>().Local.Any
+            var attached = _writeSet.Local.Any
             (
-                q => q.LookupKey == entity.LookupKey
+                x => x.LookupKey.Equals
+                (
+                    entity.LookupKey,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             if (attached)
             {
-                var entry = context.Entry<TRoot>
-                (
-                    entity
-                );
+                var entry = context.Entry<TRoot>(entity);
 
                 if (entry.State != EntityState.Added)
                 {
@@ -146,9 +180,9 @@
             }
             else
             {
-                var set = context.Set<TRoot>().AsNoTracking();
+                var untrackedSet = _writeSet.AsNoTracking();
 
-                var usedCount = set.Count
+                var countTask = untrackedSet.CountAsync
                 (
                     m => m.LookupKey.Equals
                     (
@@ -157,23 +191,38 @@
                     )
                 );
 
+                var usedCount = await countTask.ConfigureAwait(false);
+
                 if (usedCount == 0)
                 {
-                    AddEntity(entity);
+                    await AddEntityAsync(entity).ConfigureAwait(false);
                 }
                 else
                 {
-                    UpdateEntity(entity);
+                    await UpdateEntityAsync(entity).ConfigureAwait(false);
                 }
             }
         }
 
         /// <summary>
-        /// Determines if the key specified has already been used by another entity of the same type
+        /// Determines if the key specified has already been used by another entity
         /// </summary>
         /// <param name="key">The key value to check</param>
         /// <returns>True, if the key has already been used; otherwise false</returns>
-        protected virtual bool HasKeyBeenUsed
+        protected virtual bool KeyUsed
+            (
+                string key
+            )
+        {
+            return KeyUsedAsync(key).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously determines if the key specified has already been used by another entity
+        /// </summary>
+        /// <param name="key">The key value to check</param>
+        /// <returns>True, if the key has already been used; otherwise false</returns>
+        protected virtual async Task<bool> KeyUsedAsync
             (
                 string key
             )
@@ -183,11 +232,13 @@
                 return false;
             }
 
-            var context = this.WriteContext;
-
-            var attached = context.Set<TRoot>().Local.Any
+            var attached = _writeSet.Local.Any
             (
-                q => q.LookupKey == key
+                x => x.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                )
             );
 
             if (attached)
@@ -195,18 +246,9 @@
                 return true;
             }
 
-            var set = context.Set<TRoot>().AsNoTracking();
+            var task = ExistsAsync(key);
 
-            var usedCount = set.Count
-            (
-                m => m.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
-
-            return usedCount > 0;
+            return await task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -215,7 +257,22 @@
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntityByLookupKey
+        protected virtual TRoot GetEntity
+            (
+                string key,
+                bool useEagerLoading = false
+            )
+        {
+            return GetEntityAsync(key).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously gets a single entity from the database context using the key value
+        /// </summary>
+        /// <param name="key">The entities key value</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <returns>The matching entity</returns>
+        protected virtual async Task<TRoot> GetEntityAsync
             (
                 string key,
                 bool useEagerLoading = false
@@ -223,14 +280,78 @@
         {
             Validate.IsNotEmpty(key);
 
-            var entity = GetAll(useEagerLoading).FirstOrDefault
+            var task = GetEntityAsync
             (
-                m => m.LookupKey.Equals
+                x => x.LookupKey.Equals
                 (
                     key,
                     StringComparison.OrdinalIgnoreCase
-                )
+                ),
+                key,
+                useEagerLoading
             );
+
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Gets a single entity from the database context using the ID value
+        /// </summary>
+        /// <param name="id">The entities ID value</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <returns>The matching entity</returns>
+        protected virtual TRoot GetEntity
+            (
+                long id,
+                bool useEagerLoading = false
+            )
+        {
+            return GetEntityAsync(id).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously gets a single entity from the database context using the ID value
+        /// </summary>
+        /// <param name="id">The entities ID value</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <returns>The matching entity</returns>
+        protected virtual async Task<TRoot> GetEntityAsync
+            (
+                long id,
+                bool useEagerLoading = false
+            )
+        {
+            var task = GetEntityAsync
+            (
+                x => x.ID == id,
+                id.ToString(),
+                useEagerLoading
+            );
+
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asynchronously gets a single entity from the database context using the key value
+        /// </summary>
+        /// <param name="predicate">The search predicate</param>
+        /// <param name="key">The entities key value</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <returns>The matching entity</returns>
+        private async Task<TRoot> GetEntityAsync
+            (
+                Expression<Func<TRoot, bool>> predicate,
+                string key,
+                bool useEagerLoading = false
+            )
+        {
+            var findTask = FindFirstOrDefaultAsync
+            (
+                predicate,
+                useEagerLoading
+            );
+
+            var entity = await findTask.ConfigureAwait(false);
 
             if (entity == default(TRoot))
             {
@@ -249,11 +370,7 @@
 
                 entity = addedEntities.FirstOrDefault
                 (
-                    m => m.LookupKey.Equals
-                    (
-                        key,
-                        StringComparison.OrdinalIgnoreCase
-                    )
+                    predicate.Compile()
                 );
 
                 if (entity == default(TRoot))
@@ -272,35 +389,6 @@
         }
 
         /// <summary>
-        /// Gets a single entity from the database context using the ID value
-        /// </summary>
-        /// <param name="id">The entities ID value</param>
-        /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
-        /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntityById
-            (
-                long id,
-                bool useEagerLoading = false
-            )
-        {
-            var entity = GetAll(useEagerLoading).FirstOrDefault
-            (
-                m => m.ID == id
-            );
-
-            if (entity == default(TRoot))
-            {
-                throw new EntityNotFoundException
-                (
-                    id.ToString(),
-                    $"The ID supplied doesn't match any items in the repository."
-                );
-            }
-
-            return entity;
-        }
-
-        /// <summary>
         /// Gets a collection of all entities from the database context
         /// </summary>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
@@ -310,8 +398,7 @@
                 bool useEagerLoading = false
             )
         {
-            var set = this.ReadContext.Set<TRoot>();
-            var query = (IQueryable<TRoot>)set;
+            var query = (IQueryable<TRoot>)_readSet;
 
             if (useEagerLoading)
             {
@@ -322,7 +409,156 @@
         }
 
         /// <summary>
-        /// Updates a single entity and notifies the database context tracking manager
+        /// Finds all entities in the database matching a predicate
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
+        /// <returns>A query for finding the entities</returns>
+        protected virtual IQueryable<TRoot> FindAll
+            (
+                Expression<Func<TRoot, bool>> predicate,
+                bool useEagerLoading = false
+            )
+        {
+            var query = _readSet.Where(predicate);
+
+            if (useEagerLoading)
+            {
+                query = ApplyEagerLoading(query);
+            }
+
+            return query;
+        }
+
+        /// <summary>
+        /// Finds the first entity in the database matching a predicate
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
+        /// <returns>The matching entity, or the default value if not found</returns>
+        protected virtual TRoot FindFirstOrDefault
+            (
+                Expression<Func<TRoot, bool>> predicate,
+                bool useEagerLoading = false
+            )
+        {
+            return FindAll(predicate).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Asynchronously finds the first entity in the database matching a predicate
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
+        /// <returns>The matching entity, or the default value if not found</returns>
+        protected virtual async Task<TRoot> FindFirstOrDefaultAsync
+            (
+                Expression<Func<TRoot, bool>> predicate,
+                bool useEagerLoading = false
+            )
+        {
+            var task = FindAll(predicate).FirstOrDefaultAsync();
+
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Counts the number of entities in the database matching a predicate
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <returns>The number of entities found</returns>
+        protected virtual int Count
+            (
+                Expression<Func<TRoot, bool>> predicate
+            )
+        {
+            return _readSet.Count(predicate);
+        }
+
+        /// <summary>
+        /// Asynchronously counts the number of entities in the database matching a predicate
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <returns>The number of entities found</returns>
+        protected virtual async Task<int> CountAsync
+            (
+                Expression<Func<TRoot, bool>> predicate
+            )
+        {
+            var task = _readSet.AsNoTracking().CountAsync(predicate);
+
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Determines if an entity exist
+        /// </summary>
+        /// <param name="key">The lookup key</param>
+        /// <returns>True, if the entity was found; otherwise false</returns>
+        protected virtual bool Exists
+            (
+                string key
+            )
+        {
+            return ExistsAsync(key).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously determines if an entity exist
+        /// </summary>
+        /// <param name="predicate">The lookup key</param>
+        /// <returns>True, if the entity was found; otherwise false</returns>
+        protected virtual async Task<bool> ExistsAsync
+            (
+                string key
+            )
+        {
+            var task = ExistsAsync
+            (
+                x => x.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            );
+
+            var exists = await task.ConfigureAwait(false);
+
+            return exists;
+        }
+
+        /// <summary>
+        /// Determines if an entity (matching a predicate) exist
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <returns>True, if the entity was found; otherwise false</returns>
+        protected virtual bool Exists
+            (
+                Expression<Func<TRoot, bool>> predicate
+            )
+        {
+            return ExistsAsync(predicate).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously determines if an entity (matching a predicate) exist
+        /// </summary>
+        /// <param name="predicate">The predicate</param>
+        /// <returns>True, if the entity was found; otherwise false</returns>
+        protected virtual async Task<bool> ExistsAsync
+            (
+                Expression<Func<TRoot, bool>> predicate
+            )
+        {
+            var task = _readSet.AsNoTracking().CountAsync(predicate);
+
+            var count = await task.ConfigureAwait(false);
+
+            return count > 0;
+        }
+
+        /// <summary>
+        /// Updates an entity and notifies the context tracker
         /// </summary>
         /// <param name="entity">The entity to update</param>
         protected virtual void UpdateEntity
@@ -330,10 +566,23 @@
                 TRoot entity
             )
         {
+            UpdateEntityAsync(entity).WaitAndUnwrapException();
+        }
+
+        /// <summary>
+        /// Asynchronously updates an entity and notifies the context tracker
+        /// </summary>
+        /// <param name="entity">The entity to update</param>
+        protected virtual async Task UpdateEntityAsync
+            (
+                TRoot entity
+            )
+        {
             Validate.IsNotNull(entity);
 
             var key = entity.GetKeyValue();
-            var lookupEntity = GetEntityByLookupKey(key);
+            var getTask = GetEntityAsync(key);
+            var lookupEntity = await getTask.ConfigureAwait(false);
             var context = this.WriteContext;
 
             if (lookupEntity != null && lookupEntity.ID != entity.ID)
@@ -346,18 +595,12 @@
 
             entity.DateModified = DateTime.UtcNow;
 
-            var entry = context.Entry<TRoot>
-            (
-                entity
-            );
+            var entry = context.Entry<TRoot>(entity);
 
             // Ensure the entity has been attached to the object state manager
             if (entry.State == EntityState.Detached)
             {
-                context.Set<TRoot>().Attach
-                (
-                    entity
-                );
+                _writeSet.Attach(entity);
             }
 
             if (entry.State != EntityState.Added)
@@ -375,7 +618,7 @@
                 long id
             )
         {
-            var entity = GetEntityById(id, false);
+            var entity = GetEntity(id, false);
 
             RemoveEntity(entity);
         }
@@ -389,7 +632,7 @@
                 string key
             )
         {
-            var entity = GetEntityByLookupKey(key, false);
+            var entity = GetEntity(key, false);
 
             RemoveEntity(entity);
         }
@@ -404,7 +647,6 @@
             )
         {
             Validate.IsNotNull(entity);
-            Validate.IsNotNull(this.WriteContext);
 
             entity.Destroy();
 
@@ -416,16 +658,10 @@
             // Ensure the entity has been attached to the object state manager
             if (dbEntry.State == EntityState.Detached)
             {
-                this.WriteContext.Set<TRoot>().Attach
-                (
-                    entity
-                );
+                _writeSet.Attach(entity);
             }
 
-            this.WriteContext.Set<TRoot>().Remove
-            (
-                entity
-            );
+            _writeSet.Remove(entity);
         }
 
         /// <summary>
