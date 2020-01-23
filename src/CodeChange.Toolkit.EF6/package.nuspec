@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 	<id>CodeChange.Toolkit.EF6</id>
-	<version>1.3.0</version>
+	<version>1.3.1</version>
 	<title>CodeChange.Toolkit.EF6</title>
 	<authors>Code Change Ltd</authors>
 	<owners>Code Change Ltd</owners>
@@ -11,7 +11,7 @@
 	<iconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.EF6/Icon.png</iconUrl>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<description>A library containing Entity Framework 6 tools, base classes and interface implementations.</description>
-	<releaseNotes>Added unit of work support for async</releaseNotes>
+	<releaseNotes>Added cancellation token support to unit of work.</releaseNotes>
 	<copyright>Copyright 2020</copyright>
 	<tags>Toolkit CodeChange EF6 .NET</tags>
 	<dependencies>

@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -56,7 +57,11 @@
         /// <summary>
         /// Asynchronously refreshes all objects being tracked with data from the data source
         /// </summary>
-        public async Task RefreshAllAsync()
+        /// <param name="cancellationToken">The cancellation token</param>
+        public async Task RefreshAllAsync
+            (
+                CancellationToken cancellationToken = default
+            )
         {
             var tasks = new List<Task>();
 
@@ -64,7 +69,7 @@
             {
                 tasks.Add
                 (
-                    entity.ReloadAsync()
+                    entity.ReloadAsync(cancellationToken)
                 );
             }
 
@@ -83,10 +88,18 @@
         /// <summary>
         /// Asynchronously saves all changes made in unit to the underlying database
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The number of objects written to the underlying database</returns>
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync
+            (
+                CancellationToken cancellationToken = default
+            )
         {
-            var saveTask = SaveChangesAsync(_context);
+            var saveTask = SaveChangesAsync
+            (
+                _context,
+                cancellationToken
+            );
 
             return await saveTask.ConfigureAwait(false);
         }
@@ -98,7 +111,8 @@
         /// <returns>The number of objects written to the underlying database</returns>
         private async Task<int> SaveChangesAsync
             (
-                DbContext context
+                DbContext context,
+                CancellationToken cancellationToken = default
             )
         {
             Validate.IsNotNull(context);
@@ -119,7 +133,10 @@
             {
                 try
                 {
-                    var saveTask = context.SaveChangesAsync();
+                    var saveTask = context.SaveChangesAsync
+                    (
+                        cancellationToken
+                    );
 
                     rows = await saveTask.ConfigureAwait(false);
                     transaction.Commit();
@@ -137,7 +154,9 @@
                         // entities are not cached in the context so we can 
                         // stop the same error being raised indefinitely.
 
-                        await RefreshAllAsync().ConfigureAwait(false);
+                        var refreshTask = RefreshAllAsync(cancellationToken);
+
+                        await refreshTask.ConfigureAwait(false);
                     }
 
                     throw;

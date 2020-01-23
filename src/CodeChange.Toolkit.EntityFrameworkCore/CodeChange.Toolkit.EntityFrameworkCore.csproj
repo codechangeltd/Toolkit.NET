@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -7,29 +6,26 @@
     <Description>A library containing Entity Framework Core tools, base classes and interface implementations.</Description>
     <Copyright>Copyright © Code Change Ltd 2020</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <Version>1.0.2</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Refactored repository base and unit of work to support async.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added cancellation token support.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.1" />
     <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj" />
     <ProjectReference Include="..\CodeChange.Toolkit.Persistence\CodeChange.Toolkit.Persistence.csproj" />
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
   </ItemGroup>
-
 </Project>

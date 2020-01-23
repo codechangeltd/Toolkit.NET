@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -110,15 +111,17 @@
         /// Asynchronously adds a new entity to the set in the database context
         /// </summary>
         /// <param name="entity">The entity to add</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         protected virtual async Task AddEntityAsync
             (
-                TRoot entity
+                TRoot entity,
+                CancellationToken cancellationToken = default
             )
         {
             Validate.IsNotNull(entity);
 
             var key = entity.GetKeyValue();
-            var usedTask = KeyUsedAsync(key);
+            var usedTask = KeyUsedAsync(key, cancellationToken);
             var hasBeenUsed = await usedTask.ConfigureAwait(false);
 
             if (false == hasBeenUsed)
@@ -153,9 +156,11 @@
         /// Asynchronously adds or updates an entity in the repository
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         protected virtual async Task AddOrUpdateEntityAsync
             (
-                TRoot entity
+                TRoot entity,
+                CancellationToken cancellationToken = default
             )
         {
             var context = this.WriteContext;
@@ -184,22 +189,35 @@
 
                 var countTask = untrackedSet.CountAsync
                 (
-                    m => m.LookupKey.Equals
+                    x => x.LookupKey.Equals
                     (
                         entity.LookupKey,
                         StringComparison.OrdinalIgnoreCase
-                    )
+                    ),
+                    cancellationToken
                 );
 
                 var usedCount = await countTask.ConfigureAwait(false);
 
                 if (usedCount == 0)
                 {
-                    await AddEntityAsync(entity).ConfigureAwait(false);
+                    var addTask = AddEntityAsync
+                    (
+                        entity,
+                        cancellationToken
+                    );
+
+                    await addTask.ConfigureAwait(false);
                 }
                 else
                 {
-                    await UpdateEntityAsync(entity).ConfigureAwait(false);
+                    var updateTask = UpdateEntityAsync
+                    (
+                        entity,
+                        cancellationToken
+                    );
+
+                    await updateTask.ConfigureAwait(false);
                 }
             }
         }
@@ -221,10 +239,12 @@
         /// Asynchronously determines if the key specified has already been used by another entity
         /// </summary>
         /// <param name="key">The key value to check</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>True, if the key has already been used; otherwise false</returns>
         protected virtual async Task<bool> KeyUsedAsync
             (
-                string key
+                string key,
+                CancellationToken cancellationToken = default
             )
         {
             if (String.IsNullOrEmpty(key))
@@ -246,7 +266,7 @@
                 return true;
             }
 
-            var task = ExistsAsync(key);
+            var task = ExistsAsync(key, cancellationToken);
 
             return await task.ConfigureAwait(false);
         }
@@ -271,11 +291,13 @@
         /// </summary>
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The matching entity</returns>
         protected virtual async Task<TRoot> GetEntityAsync
             (
                 string key,
-                bool useEagerLoading = false
+                bool useEagerLoading = false,
+                CancellationToken cancellationToken = default
             )
         {
             Validate.IsNotEmpty(key);
@@ -288,7 +310,8 @@
                     StringComparison.OrdinalIgnoreCase
                 ),
                 key,
-                useEagerLoading
+                useEagerLoading,
+                cancellationToken
             );
 
             return await task.ConfigureAwait(false);
@@ -314,18 +337,21 @@
         /// </summary>
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The matching entity</returns>
         protected virtual async Task<TRoot> GetEntityAsync
             (
                 long id,
-                bool useEagerLoading = false
+                bool useEagerLoading = false,
+                CancellationToken cancellationToken = default
             )
         {
             var task = GetEntityAsync
             (
                 x => x.ID == id,
                 id.ToString(),
-                useEagerLoading
+                useEagerLoading,
+                cancellationToken
             );
 
             return await task.ConfigureAwait(false);
@@ -337,18 +363,21 @@
         /// <param name="predicate">The search predicate</param>
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The matching entity</returns>
         private async Task<TRoot> GetEntityAsync
             (
                 Expression<Func<TRoot, bool>> predicate,
                 string key,
-                bool useEagerLoading = false
+                bool useEagerLoading = false,
+                CancellationToken cancellationToken = default
             )
         {
             var findTask = FindFirstOrDefaultAsync
             (
                 predicate,
-                useEagerLoading
+                useEagerLoading,
+                cancellationToken
             );
 
             var entity = await findTask.ConfigureAwait(false);
@@ -450,14 +479,17 @@
         /// </summary>
         /// <param name="predicate">The predicate</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The matching entity, or the default value if not found</returns>
         protected virtual async Task<TRoot> FindFirstOrDefaultAsync
             (
                 Expression<Func<TRoot, bool>> predicate,
-                bool useEagerLoading = false
+                bool useEagerLoading = false,
+                CancellationToken cancellationToken = default
             )
         {
-            var task = FindAll(predicate).FirstOrDefaultAsync();
+            var query = FindAll(predicate);
+            var task = query.FirstOrDefaultAsync(cancellationToken);
 
             return await task.ConfigureAwait(false);
         }
@@ -479,13 +511,19 @@
         /// Asynchronously counts the number of entities in the database matching a predicate
         /// </summary>
         /// <param name="predicate">The predicate</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The number of entities found</returns>
         protected virtual async Task<int> CountAsync
             (
-                Expression<Func<TRoot, bool>> predicate
+                Expression<Func<TRoot, bool>> predicate,
+                CancellationToken cancellationToken = default
             )
         {
-            var task = _readSet.AsNoTracking().CountAsync(predicate);
+            var task = _readSet.AsNoTracking().CountAsync
+            (
+                predicate,
+                cancellationToken
+            );
 
             return await task.ConfigureAwait(false);
         }
@@ -507,10 +545,12 @@
         /// Asynchronously determines if an entity exist
         /// </summary>
         /// <param name="predicate">The lookup key</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>True, if the entity was found; otherwise false</returns>
         protected virtual async Task<bool> ExistsAsync
             (
-                string key
+                string key,
+                CancellationToken cancellationToken = default
             )
         {
             var task = ExistsAsync
@@ -519,7 +559,8 @@
                 (
                     key,
                     StringComparison.OrdinalIgnoreCase
-                )
+                ),
+                cancellationToken
             );
 
             var exists = await task.ConfigureAwait(false);
@@ -544,13 +585,19 @@
         /// Asynchronously determines if an entity (matching a predicate) exist
         /// </summary>
         /// <param name="predicate">The predicate</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>True, if the entity was found; otherwise false</returns>
         protected virtual async Task<bool> ExistsAsync
             (
-                Expression<Func<TRoot, bool>> predicate
+                Expression<Func<TRoot, bool>> predicate,
+                CancellationToken cancellationToken = default
             )
         {
-            var task = _readSet.AsNoTracking().CountAsync(predicate);
+            var task = _readSet.AsNoTracking().CountAsync
+            (
+                predicate,
+                cancellationToken
+            );
 
             var count = await task.ConfigureAwait(false);
 
@@ -573,17 +620,25 @@
         /// Asynchronously updates an entity and notifies the context tracker
         /// </summary>
         /// <param name="entity">The entity to update</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         protected virtual async Task UpdateEntityAsync
             (
-                TRoot entity
+                TRoot entity,
+                CancellationToken cancellationToken = default
             )
         {
             Validate.IsNotNull(entity);
 
             var key = entity.GetKeyValue();
-            var getTask = GetEntityAsync(key);
+            
+            var getTask = GetEntityAsync
+            (
+                key,
+                false,
+                cancellationToken
+            );
+
             var lookupEntity = await getTask.ConfigureAwait(false);
-            var context = this.WriteContext;
 
             if (lookupEntity != null && lookupEntity.ID != entity.ID)
             {
@@ -595,7 +650,7 @@
 
             entity.DateModified = DateTime.UtcNow;
 
-            var entry = context.Entry<TRoot>(entity);
+            var entry = this.WriteContext.Entry<TRoot>(entity);
 
             // Ensure the entity has been attached to the object state manager
             if (entry.State == EntityState.Detached)

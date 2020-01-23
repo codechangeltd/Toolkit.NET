@@ -1,6 +1,7 @@
 ﻿namespace CodeChange.Toolkit.Persistence
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -21,7 +22,11 @@
         /// <summary>
         /// Asynchronously refreshes all objects being tracked with data from the data source
         /// </summary>
-        Task RefreshAllAsync();
+        /// <param name="cancellationToken">The cancellation token</param>
+        Task RefreshAllAsync
+        (
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Saves all changes made in unit to the underlying database
@@ -32,7 +37,11 @@
         /// <summary>
         /// Asynchronously saves all changes made in unit to the underlying database
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The number of objects written to the underlying database</returns>
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync
+        (
+            CancellationToken cancellationToken = default
+        );
     }
 }
