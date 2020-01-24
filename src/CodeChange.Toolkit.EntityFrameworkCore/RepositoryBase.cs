@@ -12,9 +12,9 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Represents the base class for all Entity Framework Core repositories
+    /// A base class for Entity Framework Core repositories
     /// </summary>
-    /// <typeparam name="TRoot">The aggregate root entity type</typeparam>
+    /// <typeparam name="TRoot">The aggregate root type</typeparam>
     public abstract class RepositoryBase<TRoot> : IAggregateRepository<TRoot>
         where TRoot : class, IAggregateRoot
     {

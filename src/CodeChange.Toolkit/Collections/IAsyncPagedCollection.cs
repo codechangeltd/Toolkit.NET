@@ -16,19 +16,24 @@
         int PageSize { get; }
 
         /// <summary>
-        /// Gets the total number of pages
+        /// Asynchronously gets the total number of pages
         /// </summary>
-        int PageCount { get; }
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <remarks>The total number of pages</remarks>
+        Task<int> GetPageCount
+        (
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Asynchronously gets a collection of items at the page number specified
         /// </summary>
-        /// <param name="number">The page number</param>
+        /// <param name="pageNumber">The page number</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>A collection of the items from the page</returns>
         Task<IEnumerable<T>> GetPage
         (
-            int number,
+            int pageNumber,
             CancellationToken cancellationToken = default
         );
 
@@ -46,6 +51,16 @@
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>A collection of collections, each representing a page</returns>
         Task<IEnumerable<(int PageNumber, IEnumerable<T> Items)>> GetAllPages
+        (
+            CancellationToken cancellationToken = default
+        );
+
+        /// <summary>
+        /// Asynchronously gets the total number of items in the collection
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <remarks>The total number of items</remarks>
+        Task<int> GetItemCount
         (
             CancellationToken cancellationToken = default
         );

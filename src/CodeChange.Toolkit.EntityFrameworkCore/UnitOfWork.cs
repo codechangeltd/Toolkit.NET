@@ -13,7 +13,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Represents an Entity Framework Core unit of work implementation
+    /// An Entity Framework Core unit of work implementation
     /// </summary>
     public sealed class UnitOfWork : IUnitOfWork
     {

@@ -21,11 +21,11 @@
         /// <summary>
         /// Gets a collection of items at the page number specified
         /// </summary>
-        /// <param name="number">The page number</param>
+        /// <param name="pageNumber">The page number</param>
         /// <returns>A collection of the items from the page</returns>
         IEnumerable<T> GetPage
         (
-            int number
+            int pageNumber
         );
 
         /// <summary>

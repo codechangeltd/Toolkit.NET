@@ -11,25 +11,38 @@
     /// <typeparam name="T">The type of objects to paginate</typeparam>
     public class PagedCollection<T> : IPagedCollection<T>
     {
-        private readonly IEnumerable<T> _collection;
+        private readonly IQueryable<T> _source;
         private readonly int _totalCount;
 
         /// <summary>
         /// Constructs the paged collection with the collection data
         /// </summary>
-        /// <param name="collection">The source of data for the collection</param>
+        /// <param name="source">The source of data for the collection</param>
         /// <param name="pageSize">The maximum page size</param>
         public PagedCollection
             (
-                IEnumerable<T> collection,
+                IEnumerable<T> source,
+                int pageSize
+            )
+            : this(source.AsQueryable<T>(), pageSize)
+        { }
+
+        /// <summary>
+        /// Constructs the paged collection with the collection data
+        /// </summary>
+        /// <param name="source">The source of data for the collection</param>
+        /// <param name="pageSize">The maximum page size</param>
+        public PagedCollection
+            (
+                IQueryable<T> source,
                 int pageSize
             )
         {
-            Validate.IsNotNull(collection);
+            Validate.IsNotNull(source);
             Validate.IsGreaterThan(pageSize, 0);
 
-            _collection = collection;
-            _totalCount = collection.Count();
+            _source = source;
+            _totalCount = source.Count();
 
             var pageCount = CalculatePageCount(pageSize, _totalCount);
 
@@ -89,13 +102,13 @@
 
             if (_totalCount == 0)
             {
-                return _collection;
+                return _source;
             }
 
             var pageSize = this.PageSize;
             var skipCount = pageNumber * pageSize;
 
-            var page = _collection.Skip(skipCount).Take(pageSize);
+            var page = _source.Skip(skipCount).Take(pageSize);
 
             return page;
         }
@@ -106,7 +119,7 @@
         /// <returns>A collection of collections, each representing a page</returns>
         public IEnumerable<(int PageNumber, IEnumerable<T> Items)> GetAllPages()
         {
-            var pages = new List<(int PageNumber, IEnumerable<T> Items)>();
+            var pages = new List<(int, IEnumerable<T>)>();
 
             for (var number = 1; number <= this.PageCount; number++)
             {
@@ -137,7 +150,7 @@
         /// <returns>An enumerator that can be used to iterate through the collection</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return _collection.GetEnumerator();
+            return _source.GetEnumerator();
         }
 
         /// <summary>
@@ -146,7 +159,7 @@
         /// <returns>An enumerator that can be used to iterate through the collection</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _collection.GetEnumerator();
+            return _source.GetEnumerator();
         }
     }
 }

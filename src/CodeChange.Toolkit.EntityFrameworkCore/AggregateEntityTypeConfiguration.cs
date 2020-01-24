@@ -6,7 +6,7 @@
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     /// <summary>
-    /// Represents a base entity configuration for all aggregate entities
+    /// A base entity configuration for all aggregate entities
     /// </summary>
     /// <typeparam name="TEntity">The entity type to configure</typeparam>
     public abstract class AggregateEntityTypeConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
