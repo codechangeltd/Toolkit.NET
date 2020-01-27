@@ -1,5 +1,7 @@
 ﻿namespace CodeChange.Toolkit.EntityFrameworkCore
 {
+    using CodeChange.Toolkit.Collections;
+    using CodeChange.Toolkit.Domain;
     using CodeChange.Toolkit.Domain.Aggregate;
     using Microsoft.EntityFrameworkCore;
     using Nito.AsyncEx.Synchronous;
@@ -457,6 +459,141 @@
             }
 
             return query;
+        }
+
+        /// <summary>
+        /// Filters and paginates a query
+        /// </summary>
+        /// <param name="query">The query to filter and paginate</param>
+        /// <param name="filter">The filter</param>
+        /// <returns>A paged collection</returns>
+        protected virtual IPagedCollection<TRoot> FilterAndPaginate
+            (
+                IQueryable<TRoot> query,
+                AggregateFilter filter
+            )
+        {
+            Validate.IsNotNull(filter);
+
+            query = Filter(query, filter);
+
+            return Paginate(query, filter.PageSize);
+        }
+
+        /// <summary>
+        /// Filters and paginates a query for asynchronous operations
+        /// </summary>
+        /// <param name="query">The query to filter and paginate</param>
+        /// <param name="filter">The filter</param>
+        /// <returns>An asynchronous paged collection</returns>
+        protected virtual IAsyncPagedCollection<TRoot> FilterAndPaginateAsync
+            (
+                IQueryable<TRoot> query,
+                AggregateFilter filter
+            )
+        {
+            Validate.IsNotNull(filter);
+
+            query = Filter(query, filter);
+
+            return PaginateAsync(query, filter.PageSize);
+        }
+
+        /// <summary>
+        /// Filters a query
+        /// </summary>
+        /// <param name="query">The query to filter</param>
+        /// <param name="filter">The filter</param>
+        /// <returns>The filtered queryable</returns>
+        protected virtual IQueryable<TRoot> Filter
+            (
+                IQueryable<TRoot> query,
+                AggregateFilter filter
+            )
+        {
+            Validate.IsNotNull(filter);
+
+            if (filter.CreatedRange != null)
+            {
+                var startDate = filter.CreatedRange.StartDate;
+                var endDate = filter.CreatedRange.EndDate;
+
+                query = query.Where
+                (
+                    x => x.DateCreated >= startDate
+                );
+
+                if (endDate.HasValue)
+                {
+                    endDate = endDate.Value.AddDays(1);
+
+                    query = query.Where
+                    (
+                        x => x.DateCreated < endDate.Value
+                    );
+                }
+            }
+
+            if (filter.ModifiedRange != null)
+            {
+                var startDate = filter.ModifiedRange.StartDate;
+                var endDate = filter.ModifiedRange.EndDate;
+
+                query = query.Where
+                (
+                    x => x.DateModified >= startDate
+                );
+
+                if (endDate.HasValue)
+                {
+                    endDate = endDate.Value.AddDays(1);
+
+                    query = query.Where
+                    (
+                        x => x.DateModified < endDate.Value
+                    );
+                }
+            }
+
+            return query;
+        }
+
+        /// <summary>
+        /// Paginates a query
+        /// </summary>
+        /// <param name="query">The query to paginate</param>
+        /// <param name="pageSize">The maximum page size</param>
+        /// <returns>A paged collection</returns>
+        protected virtual IPagedCollection<TRoot> Paginate
+            (
+                IQueryable<TRoot> query,
+                int pageSize
+            )
+        {
+            return new PagedCollection<TRoot>
+            (
+                query,
+                pageSize
+            );
+        }
+
+        /// <summary>
+        /// Paginates a query for asynchronous operations
+        /// </summary>
+        /// <param name="query">The query to paginate</param>
+        /// <param name="pageSize">The maximum page size</param>
+        /// <returns>An asynchronous paged collection</returns>
+        protected virtual IAsyncPagedCollection<TRoot> PaginateAsync
+            (
+                IQueryable<TRoot> query,
+                int pageSize
+            )
+        {
+            return new AsyncPagedCollection<TRoot>
+            (
+                query,
+                pageSize
+            );
         }
 
         /// <summary>
