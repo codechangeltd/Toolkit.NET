@@ -1,5 +1,6 @@
 ﻿namespace CodeChange.Toolkit.EntityFrameworkCore.Events
 {
+    using CodeChange.Toolkit.Domain.Aggregate;
     using CodeChange.Toolkit.Domain.Events;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -32,9 +33,7 @@
                 DomainEventLog log
             )
         {
-            Validate.IsNotNull(log);
-
-            this.AddEntity(log);
+            AddEntity(log);
         }
 
         /// <summary>
@@ -47,13 +46,20 @@
                 string key
             )
         {
-            Validate.IsNotEmpty(key);
+            var result = GetEntity(key, true);
 
-            return this.GetEntity
-            (
-                key,
-                true
-            );
+            if (result.IsSuccess)
+            {
+                return result.Value;
+            }
+            else
+            {
+                throw new EntityNotFoundException
+                (
+                    key,
+                    "No event log was found matching the key"
+                );
+            }
         }
 
         /// <summary>
@@ -62,10 +68,7 @@
         /// <returns>A collection of domain event logs</returns>
         public IEnumerable<DomainEventLog> GetAllLogs()
         {
-            return this.GetAll().OrderByDescending
-            (
-                a => a.DateCreated
-            );
+            return GetAll().OrderByDescending(a => a.DateCreated);
         }
 
         /// <summary>
@@ -78,7 +81,7 @@
                 DateTime? endDate
             )
         {
-            var logs = this.GetAll().Where
+            var logs = GetAll().Where
             (
                 m => m.DateCreated >= startDate
             );

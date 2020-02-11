@@ -3,6 +3,7 @@
     using CodeChange.Toolkit.Collections;
     using CodeChange.Toolkit.Domain;
     using CodeChange.Toolkit.Domain.Aggregate;
+    using CSharpFunctionalExtensions;
     using Microsoft.EntityFrameworkCore;
     using Nito.AsyncEx.Synchronous;
     using System;
@@ -101,12 +102,13 @@
         /// Adds a new entity to the set in the database context
         /// </summary>
         /// <param name="entity">The entity to add</param>
-        protected virtual void AddEntity
+        /// <returns>The result of the operation</returns>
+        protected virtual Result AddEntity
             (
                 TRoot entity
             )
         {
-            AddEntityAsync(entity).WaitAndUnwrapException();
+            return AddEntityAsync(entity).WaitAndUnwrapException();
         }
 
         /// <summary>
@@ -114,7 +116,8 @@
         /// </summary>
         /// <param name="entity">The entity to add</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        protected virtual async Task AddEntityAsync
+        /// <returns>The result of the operation</returns>
+        protected virtual async Task<Result> AddEntityAsync
             (
                 TRoot entity,
                 CancellationToken cancellationToken = default
@@ -132,10 +135,12 @@
                 entity.DateModified = DateTime.UtcNow;
 
                 _writeSet.Add(entity);
+
+                return Result.Ok();
             }
             else
             {
-                throw new InvalidOperationException
+                return Result.Failure
                 (
                     $"An item with the key '{key}' has already been added."
                 );
@@ -146,12 +151,13 @@
         /// Adds or updates an entity in the repository
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
-        protected virtual void AddOrUpdateEntity
+        /// <returns>The result of the operation</returns>
+        protected virtual Result AddOrUpdateEntity
             (
                 TRoot entity
             )
         {
-            AddOrUpdateEntityAsync(entity).WaitAndUnwrapException();
+            return AddOrUpdateEntityAsync(entity).WaitAndUnwrapException();
         }
 
         /// <summary>
@@ -159,7 +165,8 @@
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        protected virtual async Task AddOrUpdateEntityAsync
+        /// <returns>The result of the operation</returns>
+        protected virtual async Task<Result> AddOrUpdateEntityAsync
             (
                 TRoot entity,
                 CancellationToken cancellationToken = default
@@ -178,12 +185,14 @@
 
             if (attached)
             {
-                var entry = context.Entry<TRoot>(entity);
+                var entry = context.Entry(entity);
 
                 if (entry.State != EntityState.Added)
                 {
                     entry.State = EntityState.Modified;
                 }
+
+                return Result.Ok();
             }
             else
             {
@@ -209,7 +218,7 @@
                         cancellationToken
                     );
 
-                    await addTask.ConfigureAwait(false);
+                    return await addTask.ConfigureAwait(false);
                 }
                 else
                 {
@@ -219,7 +228,7 @@
                         cancellationToken
                     );
 
-                    await updateTask.ConfigureAwait(false);
+                    return await updateTask.ConfigureAwait(false);
                 }
             }
         }
@@ -278,8 +287,8 @@
         /// </summary>
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
-        /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntity
+        /// <returns>The result with the matching entity</returns>
+        protected virtual Result<TRoot> GetEntity
             (
                 string key,
                 bool useEagerLoading = false
@@ -294,8 +303,8 @@
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The matching entity</returns>
-        protected virtual async Task<TRoot> GetEntityAsync
+        /// <returns>The result with the matching entity</returns>
+        protected virtual async Task<Result<TRoot>> GetEntityAsync
             (
                 string key,
                 bool useEagerLoading = false,
@@ -311,7 +320,6 @@
                     key,
                     StringComparison.OrdinalIgnoreCase
                 ),
-                key,
                 useEagerLoading,
                 cancellationToken
             );
@@ -324,8 +332,8 @@
         /// </summary>
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
-        /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntity
+        /// <returns>The result with the matching entity</returns>
+        protected virtual Result<TRoot> GetEntity
             (
                 long id,
                 bool useEagerLoading = false
@@ -340,8 +348,8 @@
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The matching entity</returns>
-        protected virtual async Task<TRoot> GetEntityAsync
+        /// <returns>The result with the matching entity</returns>
+        protected virtual async Task<Result<TRoot>> GetEntityAsync
             (
                 long id,
                 bool useEagerLoading = false,
@@ -351,7 +359,6 @@
             var task = GetEntityAsync
             (
                 x => x.ID == id,
-                id.ToString(),
                 useEagerLoading,
                 cancellationToken
             );
@@ -363,14 +370,12 @@
         /// Asynchronously gets a single entity from the database context using the key value
         /// </summary>
         /// <param name="predicate">The search predicate</param>
-        /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The matching entity</returns>
-        private async Task<TRoot> GetEntityAsync
+        /// <returns>The result with the matching entity</returns>
+        private async Task<Result<TRoot>> GetEntityAsync
             (
                 Expression<Func<TRoot, bool>> predicate,
-                string key,
                 bool useEagerLoading = false,
                 CancellationToken cancellationToken = default
             )
@@ -390,14 +395,9 @@
                 // then try to find it in the change trackers added entries.
                 var tracker = this.WriteContext.ChangeTracker;
 
-                var addedEntities = tracker.Entries<TRoot>().Where
-                (
-                    entry => entry.State == EntityState.Added
-                )
-                .Select
-                (
-                    entry => entry.Entity
-                );
+                var addedEntities = tracker.Entries<TRoot>()
+                    .Where(entry => entry.State == EntityState.Added)
+                    .Select(entry => entry.Entity);
 
                 entity = addedEntities.FirstOrDefault
                 (
@@ -408,15 +408,14 @@
                 {
                     var typeName = typeof(TRoot).Name;
 
-                    throw new EntityNotFoundException
+                    return Result.Failure<TRoot>
                     (
-                        key,
                         $"Key does not match any {typeName} entities in the repository."
                     );
                 }
             }
 
-            return entity;
+            return Result.Ok(entity);
         }
 
         /// <summary>
@@ -745,12 +744,13 @@
         /// Updates an entity and notifies the context tracker
         /// </summary>
         /// <param name="entity">The entity to update</param>
-        protected virtual void UpdateEntity
+        /// <returns>The result of the operation</returns>
+        protected virtual Result UpdateEntity
             (
                 TRoot entity
             )
         {
-            UpdateEntityAsync(entity).WaitAndUnwrapException();
+            return UpdateEntityAsync(entity).WaitAndUnwrapException();
         }
 
         /// <summary>
@@ -758,7 +758,8 @@
         /// </summary>
         /// <param name="entity">The entity to update</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        protected virtual async Task UpdateEntityAsync
+        /// <returns>The result of the operation</returns>
+        protected virtual async Task<Result> UpdateEntityAsync
             (
                 TRoot entity,
                 CancellationToken cancellationToken = default
@@ -767,37 +768,44 @@
             Validate.IsNotNull(entity);
 
             var key = entity.GetKeyValue();
-            
-            var getTask = GetEntityAsync
+
+            var countTask = CountAsync
             (
-                key,
-                false,
+                x => x.ID != entity.ID && x.LookupKey.Equals
+                (
+                    key,
+                    StringComparison.OrdinalIgnoreCase
+                ),
                 cancellationToken
             );
 
-            var lookupEntity = await getTask.ConfigureAwait(false);
+            var duplicateKeyCount = await countTask.ConfigureAwait(false);
 
-            if (lookupEntity != null && lookupEntity.ID != entity.ID)
+            if (duplicateKeyCount == 0)
             {
-                throw new InvalidOperationException
+                entity.DateModified = DateTime.UtcNow;
+
+                var entry = this.WriteContext.Entry(entity);
+
+                // Ensure the entity has been attached to the object state manager
+                if (entry.State == EntityState.Detached)
+                {
+                    _writeSet.Attach(entity);
+                }
+
+                if (entry.State != EntityState.Added)
+                {
+                    entry.State = EntityState.Modified;
+                }
+
+                return Result.Ok();
+            }
+            else
+            {
+                return Result.Failure
                 (
                     $"The key '{key}' has already been used by another entity."
                 );
-            }
-
-            entity.DateModified = DateTime.UtcNow;
-
-            var entry = this.WriteContext.Entry<TRoot>(entity);
-
-            // Ensure the entity has been attached to the object state manager
-            if (entry.State == EntityState.Detached)
-            {
-                _writeSet.Attach(entity);
-            }
-
-            if (entry.State != EntityState.Added)
-            {
-                entry.State = EntityState.Modified;
             }
         }
 
@@ -805,34 +813,43 @@
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="id">The ID of the entity to delete</param>
-        protected virtual void RemoveEntity
+        /// <returns>The result of the operation</returns>
+        protected virtual Result RemoveEntity
             (
                 long id
             )
         {
-            var entity = GetEntity(id, false);
+            var result = GetEntity(id, false);
 
-            RemoveEntity(entity);
+            return result.Tap
+            (
+                entity => RemoveEntity(entity)
+            );
         }
 
         /// <summary>
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="key">The lookup key of the entity to delete</param>
-        protected virtual void RemoveEntity
+        /// <returns>The result of the operation</returns>
+        protected virtual Result RemoveEntity
             (
                 string key
             )
         {
-            var entity = GetEntity(key, false);
+            var result = GetEntity(key, false);
 
-            RemoveEntity(entity);
+            return result.Tap
+            (
+                entity => RemoveEntity(entity)
+            );
         }
 
         /// <summary>
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="entity">The entity to delete</param>
+        /// <returns>The result of the operation</returns>
         protected virtual void RemoveEntity
             (
                 TRoot entity
@@ -842,10 +859,7 @@
 
             entity.Destroy();
 
-            var dbEntry = this.WriteContext.Entry<TRoot>
-            (
-                entity
-            );
+            var dbEntry = this.WriteContext.Entry(entity);
 
             // Ensure the entity has been attached to the object state manager
             if (dbEntry.State == EntityState.Detached)
