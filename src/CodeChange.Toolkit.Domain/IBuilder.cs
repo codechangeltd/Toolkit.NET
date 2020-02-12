@@ -1,8 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    
     /// <summary>
     /// Defines a contract for a builder pattern that is responsible for creating a complex immutable object
     /// </summary>

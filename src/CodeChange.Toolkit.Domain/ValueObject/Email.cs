@@ -1,19 +1,24 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
     using CSharpFunctionalExtensions;
+    using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
     /// <summary>
     /// Represents a persons email address
     /// </summary>
-    public class EmailAddress : ValueObject
+    public class Email : ValueObject
     {
-        private EmailAddress() { }
+        private Email() { }
 
-        private EmailAddress(string email)
+        private Email(string email)
         {
-            this.Email = email;
+            var parts = email.Split('@');
+
+            this.Address = email;
+            this.User = parts[0];
+            this.Host = parts[1];
         }
 
         /// <summary>
@@ -21,11 +26,19 @@
         /// </summary>
         /// <param name="email">The email address string</param>
         /// <returns>The result with the email address</returns>
-        public static Result<EmailAddress> Create
+        public static Result<Email> Create
             (
                 string email
             )
         {
+            if (String.IsNullOrWhiteSpace(email))
+            {
+                return Result.Failure<Email>
+                (
+                    "The email address must contain a value."
+                );
+            }
+
             var isValid = Regex.IsMatch
             (
                 email,
@@ -34,13 +47,13 @@
 
             if (isValid)
             {
-                var address = new EmailAddress(email);
+                var address = new Email(email);
 
                 return Result.Ok(address);
             }
             else
             {
-                return Result.Failure<EmailAddress>
+                return Result.Failure<Email>
                 (
                     $"The email address '{email}' is invalid."
                 );
@@ -48,18 +61,28 @@
         }
 
         /// <summary>
-        /// Gets the email address raw value
+        /// Gets the full email address
         /// </summary>
-        public string Email { get; private set; }
+        public string Address { get; private set; }
+
+        /// <summary>
+        /// Gets the host portion of the email address
+        /// </summary>
+        public string Host { get; private set; }
+
+        /// <summary>
+        /// Gets the user information from the email address
+        /// </summary>
+        public string User { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.Email.ToUpper();
+            yield return this.Address.ToUpper();
         }
 
         public override string ToString()
         {
-            return this.Email;
+            return this.Address;
         }
     }
 }

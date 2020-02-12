@@ -515,43 +515,23 @@
             if (filter.CreatedRange != null)
             {
                 var startDate = filter.CreatedRange.StartDate;
-                var endDate = filter.CreatedRange.EndDate;
+                var endDate = filter.CreatedRange.EndDate.AddDays(1);
 
                 query = query.Where
                 (
-                    x => x.DateCreated >= startDate
+                    x => x.DateCreated >= startDate && x.DateCreated < endDate
                 );
-
-                if (endDate.HasValue)
-                {
-                    endDate = endDate.Value.AddDays(1);
-
-                    query = query.Where
-                    (
-                        x => x.DateCreated < endDate.Value
-                    );
-                }
             }
 
             if (filter.ModifiedRange != null)
             {
                 var startDate = filter.ModifiedRange.StartDate;
-                var endDate = filter.ModifiedRange.EndDate;
+                var endDate = filter.ModifiedRange.EndDate.AddDays(1);
 
                 query = query.Where
                 (
-                    x => x.DateModified >= startDate
+                    x => x.DateModified >= startDate && x.DateModified < endDate
                 );
-
-                if (endDate.HasValue)
-                {
-                    endDate = endDate.Value.AddDays(1);
-
-                    query = query.Where
-                    (
-                        x => x.DateModified < endDate.Value
-                    );
-                }
             }
 
             return query;
