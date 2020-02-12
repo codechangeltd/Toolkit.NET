@@ -1,11 +1,13 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
+    using CSharpFunctionalExtensions;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a single date range
     /// </summary>
-    public class DateRange : ValueObject<DateRange>
+    public class DateRange : ValueObject
     {
         /// <summary>
         /// Constructs the data range with the start and end dates
@@ -25,11 +27,17 @@
         /// <summary>
         /// Gets the start date range
         /// </summary>
-        public DateTime StartDate { get; }
+        public DateTime StartDate { get; private set; }
 
         /// <summary>
         /// Gets the end date range
         /// </summary>
-        public DateTime? EndDate { get; }
+        public DateTime? EndDate { get; private set; }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return this.StartDate;
+            yield return this.EndDate;
+        }
     }
 }

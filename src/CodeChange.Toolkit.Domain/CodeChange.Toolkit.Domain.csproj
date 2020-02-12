@@ -18,6 +18,9 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
   </ItemGroup>
 </Project>
