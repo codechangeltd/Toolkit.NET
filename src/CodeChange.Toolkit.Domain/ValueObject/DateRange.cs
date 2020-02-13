@@ -21,12 +21,6 @@
             this.EndDate = endDate ?? DateTime.MaxValue;
         }
 
-        /// <summary>
-        /// Creates a new data range start and end dates
-        /// </summary>
-        /// <param name="startDate">The start date</param>
-        /// <param name="endDate">The end date</param>
-        /// <returns>The result with the date range created</returns>
         public static Result<DateRange> Create
             (
                 DateTime startDate,
@@ -46,17 +40,11 @@
 
             var range = new DateRange(startDate, endDate);
 
-            return Result.Ok(range);
+            return Result.Success(range);
         }
 
-        /// <summary>
-        /// Gets the start date range
-        /// </summary>
         public DateTime StartDate { get; private set; }
 
-        /// <summary>
-        /// Gets the end date range
-        /// </summary>
         public DateTime EndDate { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()

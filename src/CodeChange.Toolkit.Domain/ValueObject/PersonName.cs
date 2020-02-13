@@ -29,15 +29,6 @@
             this.Suffix = suffix;
         }
 
-        /// <summary>
-        /// Creates a new person name
-        /// </summary>
-        /// <param name="firstName">The first name</param>
-        /// <param name="middleName">The middle name</param>
-        /// <param name="lastName">The last name</param>
-        /// <param name="title">The title (optional)</param>
-        /// <param name="suffix">The suffix (optional)</param>
-        /// <returns>The result with the name created</returns>
         public static Result<PersonName> Create
             (
                 string firstName,
@@ -77,33 +68,18 @@
                     suffix
                 );
 
-                return Result.Ok(personName);
+                return Result.Success(personName);
             }
         }
 
-        /// <summary>
-        /// Gets the persons first name
-        /// </summary>
         public string FirstName { get; private set; }
 
-        /// <summary>
-        /// Gets the persons middle name
-        /// </summary>
         public string MiddleName { get; private set; }
 
-        /// <summary>
-        /// Gets the persons last name
-        /// </summary>
         public string LastName { get; private set; }
         
-        /// <summary>
-        /// Gets the persons title
-        /// </summary>
         public string Title { get; private set; }
 
-        /// <summary>
-        /// Gets the name suffix
-        /// </summary>
         public string Suffix { get; private set; }
 
         /// <summary>
@@ -165,11 +141,11 @@
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.FirstName;
-            yield return this.MiddleName;
-            yield return this.LastName;
-            yield return this.Title;
-            yield return this.Suffix;
+            yield return this.FirstName.ToUpper();
+            yield return this.MiddleName.ToUpper();
+            yield return this.LastName.ToUpper();
+            yield return this.Title.ToUpper();
+            yield return this.Suffix.ToUpper();
         }
 
         public override string ToString()

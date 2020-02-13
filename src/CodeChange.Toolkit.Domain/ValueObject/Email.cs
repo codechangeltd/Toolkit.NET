@@ -21,11 +21,6 @@
             this.Host = parts[1];
         }
 
-        /// <summary>
-        /// Creates a new email address
-        /// </summary>
-        /// <param name="email">The email address string</param>
-        /// <returns>The result with the email address</returns>
         public static Result<Email> Create
             (
                 string email
@@ -49,7 +44,7 @@
             {
                 var address = new Email(email);
 
-                return Result.Ok(address);
+                return Result.Success(address);
             }
             else
             {
@@ -60,19 +55,10 @@
             }
         }
 
-        /// <summary>
-        /// Gets the full email address
-        /// </summary>
         public string Address { get; private set; }
 
-        /// <summary>
-        /// Gets the host portion of the email address
-        /// </summary>
         public string Host { get; private set; }
 
-        /// <summary>
-        /// Gets the user information from the email address
-        /// </summary>
         public string User { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()

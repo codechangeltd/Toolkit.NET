@@ -1,6 +1,7 @@
 ﻿namespace CodeChange.Toolkit.Domain.Messages
 {
     using CSharpFunctionalExtensions;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -13,7 +14,12 @@
         /// Handles the message by executing orchestration logic
         /// </summary>
         /// <param name="message">The message to handle</param>
+        /// <param name="cancellationToken">The cancellation token (optional)</param>
         /// <returns>The result of the message</returns>
-        Task<Result> Handle(T message);
+        Task<Result> Handle
+        (
+            T message,
+            CancellationToken cancellationToken = default
+        );
     }
 }

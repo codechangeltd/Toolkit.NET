@@ -17,11 +17,6 @@
             this.Number = number.Trim();
         }
 
-        /// <summary>
-        /// Creates a new phone number
-        /// </summary>
-        /// <param name="number">The number</param>
-        /// <returns>The result with the phone number created</returns>
         public static Result<PhoneNumber> Create
             (
                 string number
@@ -46,7 +41,7 @@
             {
                 var pn = new PhoneNumber(number);
 
-                return Result.Ok(pn);
+                return Result.Success(pn);
             }
             else
             {
@@ -57,14 +52,11 @@
             }
         }
 
-        /// <summary>
-        /// Gets the telephone number
-        /// </summary>
         public string Number { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.Number;
+            yield return this.Number.ToUpper();
         }
 
         public override string ToString()

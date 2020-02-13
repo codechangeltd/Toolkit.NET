@@ -136,7 +136,7 @@
 
                 _writeSet.Add(entity);
 
-                return Result.Ok();
+                return Result.Success();
             }
             else
             {
@@ -192,7 +192,7 @@
                     entry.State = EntityState.Modified;
                 }
 
-                return Result.Ok();
+                return Result.Success();
             }
             else
             {
@@ -415,7 +415,7 @@
                 }
             }
 
-            return Result.Ok(entity);
+            return Result.Success(entity);
         }
 
         /// <summary>
@@ -778,7 +778,7 @@
                     entry.State = EntityState.Modified;
                 }
 
-                return Result.Ok();
+                return Result.Success();
             }
             else
             {
