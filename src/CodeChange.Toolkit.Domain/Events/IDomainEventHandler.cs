@@ -1,19 +1,12 @@
 ﻿namespace CodeChange.Toolkit.Domain.Events
 {
+    using CodeChange.Toolkit.Domain.Messages;
+
     /// <summary>
-    /// Interface for implementations that handle domain events
+    /// Defines a contract for a domain event handler in a domain orientated architecture
     /// </summary>
-    /// <typeparam name="T">The domain event type</typeparam>
-    public interface IDomainEventHandler<T> 
+    /// <typeparam name="T">The domain event type to handle</typeparam>
+    public interface IDomainEventHandler<in T> : IHandler<T>
         where T : IDomainEvent
-    {
-        /// <summary>
-        /// Handles the domain event implementation
-        /// </summary>
-        /// <param name="domainEvent">The domain event handler</param>
-        void Handle
-        (
-            T domainEvent
-        );
-    }
+    { }
 }
