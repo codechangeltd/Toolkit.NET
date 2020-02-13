@@ -47,6 +47,11 @@
 
         public DateTime EndDate { get; private set; }
 
+        public bool IsWithinRange(DateTime date)
+        {
+            return date >= this.StartDate && date <= this.EndDate;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return this.StartDate;
