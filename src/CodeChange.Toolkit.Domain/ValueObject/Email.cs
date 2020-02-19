@@ -34,11 +34,21 @@
                 );
             }
 
-            var isValid = Regex.IsMatch
-            (
-                email,
-                @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"
-            );
+            bool isValid;
+
+            try
+            {
+                isValid = Regex.IsMatch
+                (
+                    email,
+                    @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$",
+                    RegexOptions.IgnoreCase
+                );
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                isValid = false;
+            }
 
             if (isValid)
             {
