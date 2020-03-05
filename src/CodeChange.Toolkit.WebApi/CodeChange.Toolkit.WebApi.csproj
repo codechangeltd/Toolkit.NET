@@ -1,33 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Product>Toolkit.NET</Product>
 		<Description>A library containing various extensions and tools built on top of the ASP.NET Web API framework.</Description>
-		<Copyright>Copyright © Code Change Ltd 2018</Copyright>
+		<Copyright>Copyright © Code Change Ltd 2010</Copyright>
 		<Authors>Code Change Ltd</Authors>
-		<AssemblyVersion>1.1.1</AssemblyVersion>
-		<Version>1.1.1</Version>
+		<AssemblyVersion>1.1.2</AssemblyVersion>
+		<Version>1.1.2</Version>
 		<licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
 		<PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.WebApi/Icon.png</PackageIconUrl>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-		<PackageReleaseNotes>Fixed minor warnings and removed unused package.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added support to WebApiPuginBase for protocol errors.</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit WebApi Web API .NET DOTNET C#</Tags>
 		<LangVersion>7.1</LangVersion>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
 		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.7" />
 		<PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
 	</ItemGroup>
-
 </Project>

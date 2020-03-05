@@ -304,7 +304,34 @@
 
                 return CreateSuccessResponse(request, result);
             }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    if (ex.Response is HttpWebResponse response)
+                    {
+                        return request.CreateResponse
+                        (
+                            response.StatusCode,
+                            ex.Message
+                        );
+                    }
+                    else
+                    {
+                        return RespondToUnhandledException(ex);
+                    }
+                }
+                else
+                {
+                    return RespondToUnhandledException(ex);
+                }
+            }
             catch (Exception ex)
+            {
+                return RespondToUnhandledException(ex);
+            }
+
+            HttpResponseMessage RespondToUnhandledException(Exception ex)
             {
                 LogError(ex, request);
 
