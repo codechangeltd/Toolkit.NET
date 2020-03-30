@@ -367,7 +367,9 @@
                 {
                     throw new InvalidOperationException
                     (
-                        $"The property {dtoProperty.Name} could not be mapped."
+                        $"Property '{dtoProperty.Name}' could not be mapped. " +
+                        $"Type {dtoPropertyType.Name} cannot be converted to " +
+                        $"{entityPropertyType.Name}."
                     );
                 }
             }

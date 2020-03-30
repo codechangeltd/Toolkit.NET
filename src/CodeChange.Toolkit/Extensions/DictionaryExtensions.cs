@@ -40,12 +40,12 @@
                     )
                 );
 
-                var matchFound = matchingItem.Equals
+                var matchFound = false == matchingItem.Equals
                 (
                     default(KeyValuePair<string, object>)
                 );
 
-                if (false == matchFound)
+                if (matchFound)
                 {
                     var propertyType = property.PropertyType;
                     var value = matchingItem.Value;
