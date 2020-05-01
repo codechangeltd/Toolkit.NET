@@ -7,7 +7,7 @@
     <Copyright>Copyright © Code Change Ltd 2020</Copyright>
     <Authors>Code Change Ltd</Authors>
     <AssemblyVersion>2.0.0</AssemblyVersion>
-    <Version>2.0.0-preview1</Version>
+    <Version>2.0.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
