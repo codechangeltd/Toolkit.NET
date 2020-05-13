@@ -103,10 +103,7 @@
                 entity.DateCreated = DateTime.UtcNow;
                 entity.DateModified = DateTime.UtcNow;
 
-                this.WriteContext.Set<TRoot>().Add
-                (
-                    entity
-                );
+                this.WriteContext.Set<TRoot>().Add(entity);
             }
             else
             {
@@ -127,8 +124,9 @@
             )
         {
             var context = this.WriteContext;
+            var set = context.Set<TRoot>();
 
-            var attached = context.Set<TRoot>().Local.Any
+            var attached = set.Local.Any
             (
                 x => x.LookupKey.Equals
                 (
@@ -139,10 +137,7 @@
 
             if (attached)
             {
-                var entry = context.Entry<TRoot>
-                (
-                    entity
-                );
+                var entry = context.Entry(entity);
 
                 if (entry.State != EntityState.Added)
                 {
@@ -151,11 +146,9 @@
             }
             else
             {
-                var set = context.Set<TRoot>().AsNoTracking();
-
-                var usedCount = set.Count
+                var usedCount = set.AsNoTracking().Count
                 (
-                    m => m.LookupKey.Equals
+                    x => x.LookupKey.Equals
                     (
                         entity.LookupKey,
                         StringComparison.OrdinalIgnoreCase
@@ -188,9 +181,9 @@
                 return false;
             }
 
-            var context = this.WriteContext;
+            var set = this.WriteContext.Set<TRoot>();
 
-            var attached = context.Set<TRoot>().Local.Any
+            var attached = set.Local.Any
             (
                 x => x.LookupKey.Equals
                 (
@@ -204,11 +197,9 @@
                 return true;
             }
 
-            var set = context.Set<TRoot>().AsNoTracking();
-
-            var usedCount = set.Count
+            var usedCount = set.AsNoTracking().Count
             (
-                m => m.LookupKey.Equals
+                x => x.LookupKey.Equals
                 (
                     key,
                     StringComparison.OrdinalIgnoreCase
@@ -234,7 +225,7 @@
 
             var entity = GetAll(useEagerLoading).FirstOrDefault
             (
-                m => m.LookupKey.Equals
+                x => x.LookupKey.Equals
                 (
                     key,
                     StringComparison.OrdinalIgnoreCase
@@ -247,18 +238,13 @@
                 // then try to find it in the change trackers added entries.
                 var tracker = this.WriteContext.ChangeTracker;
 
-                var addedEntities = tracker.Entries<TRoot>().Where
-                (
-                    entry => entry.State == EntityState.Added
-                )
-                .Select
-                (
-                    entry => entry.Entity
-                );
+                var addedEntities = tracker.Entries<TRoot>()
+                    .Where(x => x.State == EntityState.Added)
+                    .Select(x => x.Entity);
 
                 entity = addedEntities.FirstOrDefault
                 (
-                    m => m.LookupKey.Equals
+                    x => x.LookupKey.Equals
                     (
                         key,
                         StringComparison.OrdinalIgnoreCase
@@ -292,10 +278,7 @@
                 bool useEagerLoading = false
             )
         {
-            var entity = GetAll(useEagerLoading).FirstOrDefault
-            (
-                m => m.ID == id
-            );
+            var entity = GetAll(useEagerLoading).FirstOrDefault(x => x.ID == id);
 
             if (entity == default(TRoot))
             {
@@ -355,10 +338,7 @@
 
             entity.DateModified = DateTime.UtcNow;
 
-            var entry = context.Entry<TRoot>
-            (
-                entity
-            );
+            var entry = context.Entry(entity);
 
             // Ensure the entity has been attached to the object state manager
             if (entry.State == EntityState.Detached)
@@ -416,24 +396,16 @@
 
             entity.Destroy();
 
-            var dbEntry = this.WriteContext.Entry<TRoot>
-            (
-                entity
-            );
+            var context = this.WriteContext;
+            var entry = context.Entry(entity);
 
             // Ensure the entity has been attached to the object state manager
-            if (dbEntry.State == EntityState.Detached)
+            if (entry.State == EntityState.Detached)
             {
-                this.WriteContext.Set<TRoot>().Attach
-                (
-                    entity
-                );
+                context.Set<TRoot>().Attach(entity);
             }
 
-            this.WriteContext.Set<TRoot>().Remove
-            (
-                entity
-            );
+            context.Set<TRoot>().Remove(entity);
         }
 
         /// <summary>
@@ -446,9 +418,11 @@
                 IQueryable<TRoot> query
             )
         {
-            if (this.NavigationProperties != null)
+            var properties = this.NavigationProperties;
+
+            if (properties != null)
             {
-                foreach (var property in this.NavigationProperties)
+                foreach (var property in properties)
                 {
                     query.Include(property.Name);
                 }
@@ -469,17 +443,15 @@
             try
             {
                 // Get the meta data associated with the entity
-                var writeContext = this.WriteContext;
-                var objectContext = ((IObjectContextAdapter)writeContext).ObjectContext;
+                var context = this.WriteContext;
+                var objectContext = ((IObjectContextAdapter)context).ObjectContext;
                 var objectSet = objectContext.CreateObjectSet<TRoot>();
                 var entitySetElementType = objectSet.EntitySet.ElementType;
 
                 foreach (var navigationProperty in entitySetElementType.NavigationProperties)
                 {
-                    var property = entityType.GetProperty
-                    (
-                        navigationProperty.Name
-                    );
+                    var name = navigationProperty.Name;
+                    var property = entityType.GetProperty(name);
 
                     properties.Add(property);
                 }
