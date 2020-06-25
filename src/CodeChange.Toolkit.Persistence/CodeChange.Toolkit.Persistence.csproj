@@ -16,5 +16,13 @@
     <PackageReleaseNotes>Added cancellation token support.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Persistence .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 </Project>
