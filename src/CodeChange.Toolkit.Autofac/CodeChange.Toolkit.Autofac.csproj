@@ -4,16 +4,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing Autofac tools and interface implementations.</Description>
-    <Copyright>Copyright © Code Change Ltd 2018</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2020</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
-    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.2</AssemblyVersion>
+    <Version>1.1.2</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Autofac/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Implemented ITypeActivator interface</PackageReleaseNotes>
+    <PackageReleaseNotes>Updated to use the latest Toolkit assembly versions.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Autofac .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

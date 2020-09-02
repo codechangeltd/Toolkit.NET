@@ -8,10 +8,10 @@
     /// <summary>
     /// Represents a standard implementation of a plugin registrar
     /// </summary>
-    public class PluginManager : IPluginManager
+    public sealed class PluginManager : IPluginManager
     {
-        private IPluginRepository _pluginRepository;
-        private IInstalledPluginRepository _installationRepository;
+        private readonly IPluginRepository _pluginRepository;
+        private readonly IInstalledPluginRepository _installationRepository;
 
         /// <summary>
         /// Constructs the service with required dependencies
@@ -38,80 +38,49 @@
         {
             var allPlugins = _pluginRepository.GetAllPlugins();
 
-            AutoInstallPlugins
-            (
-                allPlugins.ToArray()
-            );
+            AutoInstallPlugins(allPlugins.ToArray());
         }
 
         /// <summary>
         /// Automatically installs the plug-ins specified
         /// </summary>
         /// <param name="plugins">The plugins to install</param>
-        public void AutoInstallPlugins
-            (
-                params IPlugin[] plugins
-            )
+        public void AutoInstallPlugins(params IPlugin[] plugins)
         {
             var namesOfPluginsInstalled = new List<string>();
             
             foreach (var plugin in plugins)
             {
                 var pluginName = plugin.Name;
-
-                var nameFound = namesOfPluginsInstalled.Contains
-                (
-                    pluginName
-                );
+                var nameFound = namesOfPluginsInstalled.Contains(pluginName);
 
                 if (false == nameFound)
                 {
-                    var isRegistered = _installationRepository.IsPluginInstalled
-                    (
-                        pluginName
-                    );
+                    var isRegistered = _installationRepository.IsPluginInstalled(pluginName);
 
                     if (isRegistered)
                     {
-                        var installation = _installationRepository.GetInstallation
-                        (
-                            pluginName
-                        );
+                        var installation = _installationRepository.GetInstallation(pluginName);
 
                         if (installation.CompareVersions(plugin) != 0)
                         {
-                            var fromVersion = new Version
-                            (
-                                installation.PluginVersion
-                            );
+                            var fromVersion = new Version(installation.PluginVersion);
 
                             plugin.Upgrade(fromVersion);
                             installation.UpdatePluginDetails(plugin);
 
-                            _installationRepository.UpdateInstallation
-                            (
-                                installation
-                            );
+                            _installationRepository.UpdateInstallation(installation);
                         }
                     }
                     else
                     {
-                        var installedPlugin = InstalledPlugin.CreateInstalledPlugin
-                        (
-                            plugin
-                        );
+                        var installedPlugin = InstalledPlugin.CreateInstalledPlugin(plugin);
 
                         plugin.Install();
 
-                        _installationRepository.AddInstallation
-                        (
-                            installedPlugin
-                        );
+                        _installationRepository.AddInstallation(installedPlugin);
 
-                        namesOfPluginsInstalled.Add
-                        (
-                            pluginName
-                        );
+                        namesOfPluginsInstalled.Add(pluginName);
                     }
                 }
             }
@@ -121,17 +90,11 @@
         /// Initialises the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        public void InitialisePlugin
-            (
-                string pluginName
-            )
+        public void InitialisePlugin(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            var isRegistered = _installationRepository.IsPluginInstalled
-            (
-                pluginName
-            );
+            var isRegistered = _installationRepository.IsPluginInstalled(pluginName);
 
             if (false == isRegistered)
             {
@@ -141,10 +104,7 @@
                 );
             }
 
-            var installation = _installationRepository.GetInstallation
-            (
-                pluginName
-            );
+            var installation = _installationRepository.GetInstallation(pluginName);
 
             if (installation.Disabled)
             {
@@ -154,10 +114,7 @@
                 );
             }
 
-            var plugin = _pluginRepository.GetPlugin
-            (
-                pluginName
-            );
+            var plugin = _pluginRepository.GetPlugin(pluginName);
 
             plugin.Initialise();
         }
@@ -176,34 +133,24 @@
         /// Initialises all plug-ins of the type specified
         /// </summary>
         /// <typeparam name="T">The plug-in type</typeparam>
-        public void InitialisePlugins<T>()
-            where T : IPlugin
+        public void InitialisePlugins<T>() where T : IPlugin
         {
             var plugins = _pluginRepository.GetPlugins<T>();
 
-            InitialisePlugins
-            (
-                (IEnumerable<IPlugin>)plugins
-            );
+            InitialisePlugins((IEnumerable<IPlugin>)plugins);
         }
 
         /// <summary>
         /// Initialises the plug-in collection specified
         /// </summary>
         /// <param name="plugins">The plug-ins to initialise</param>
-        private void InitialisePlugins
-            (
-                IEnumerable<IPlugin> plugins
-            )
+        private void InitialisePlugins(IEnumerable<IPlugin> plugins)
         {
             Validate.IsNotNull(plugins);
 
             foreach (var plugin in plugins.ToList())
             {
-                var installation = _installationRepository.GetInstallation
-                (
-                    plugin.Name
-                );
+                var installation = _installationRepository.GetInstallation(plugin.Name);
 
                 if (false == installation.Disabled)
                 {
@@ -216,72 +163,45 @@
         /// Disables the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        public void DisablePlugin
-            (
-                string pluginName
-            )
+        public void DisablePlugin(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            var installedPlugin = _installationRepository.GetInstallation
-            (
-                pluginName
-            );
+            var installedPlugin = _installationRepository.GetInstallation(pluginName);
 
             installedPlugin.Disable();
 
-            _installationRepository.UpdateInstallation
-            (
-                installedPlugin
-            );
+            _installationRepository.UpdateInstallation(installedPlugin);
         }
 
         /// <summary>
         /// Enables the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        public void EnablePlugin
-            (
-                string pluginName
-            )
+        public void EnablePlugin(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            var installedPlugin = _installationRepository.GetInstallation
-            (
-                pluginName
-            );
+            var installedPlugin = _installationRepository.GetInstallation(pluginName);
 
             installedPlugin.Enable();
 
-            _installationRepository.UpdateInstallation
-            (
-                installedPlugin
-            );
+            _installationRepository.UpdateInstallation(installedPlugin);
         }
 
         /// <summary>
         /// Uninstalls the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        public void UninstallPlugin
-            (
-                string pluginName
-            )
+        public void UninstallPlugin(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            var plugin = _pluginRepository.GetPlugin
-            (
-                pluginName
-            );
+            var plugin = _pluginRepository.GetPlugin(pluginName);
 
             plugin.Uninstall();
 
-            _installationRepository.RemoveInstallation
-            (
-                pluginName
-            );
+            _installationRepository.RemoveInstallation(pluginName);
         }
     }
 }

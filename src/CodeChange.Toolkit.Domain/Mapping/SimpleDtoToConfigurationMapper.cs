@@ -21,26 +21,15 @@
         /// <typeparam name="TConfiguration">The configuration type</typeparam>
         /// <param name="dto">The DTO to map</param>
         /// <returns>The mapped configuration</returns>
-        public TConfiguration Map<TDto, TConfiguration>
-            (
-                TDto dto
-            )
-
+        public TConfiguration Map<TDto, TConfiguration>(TDto dto)
             where TConfiguration : class, new()
         {
             if (dto == null)
             {
-                throw new ArgumentException
-                (
-                    "The DTO cannot be null."
-                );
+                throw new ArgumentException("The DTO cannot be null.");
             }
 
-            var configuration = (TConfiguration)Map
-            (
-                dto,
-                new TConfiguration()
-            );
+            var configuration = (TConfiguration)Map(dto, new TConfiguration());
 
             return configuration;
         }
@@ -52,11 +41,7 @@
         /// <typeparam name="TConfiguration">The configuration type</typeparam>
         /// <param name="dtos">The DTOs to map</param>
         /// <returns>The mapped configuration</returns>
-        public IEnumerable<TConfiguration> Map<TDto, TConfiguration>
-            (
-                IEnumerable<TDto> dtos
-            )
-            
+        public IEnumerable<TConfiguration> Map<TDto, TConfiguration>(IEnumerable<TDto> dtos)
             where TConfiguration : class, new()
         {
             if (dtos == null)
@@ -88,10 +73,7 @@
         /// </summary>
         /// <param name="o">The object</param>
         /// <returns>A collection of matching properties</returns>
-        private IEnumerable<PropertyInfo> GetMappableProperties
-            (
-                object o
-            )
+        private IEnumerable<PropertyInfo> GetMappableProperties(object o)
         {
             var type = o.GetType();
 
@@ -101,16 +83,10 @@
             }
             else
             {
-                var properties = type.GetProperties
-                (
-                    BindingFlags.Public | BindingFlags.Instance
-                );
-
-                properties = properties.Where
-                (
-                    p => p.CanRead
-                )
-                .ToArray();
+                var properties = type
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.CanRead)
+                    .ToArray();
 
                 _propertyCache[type] = properties;
 
@@ -124,11 +100,7 @@
         /// <param name="dto">The DTO to map from</param>
         /// <param name="configuration">The configuration to map to</param>
         /// <returns>The mapped configuration</returns>
-        private object Map
-            (
-                object dto,
-                object configuration
-            )
+        private object Map(object dto, object configuration)
         {
             if (dto == null)
             {
@@ -141,10 +113,7 @@
 
             foreach (var configProperty in configProperties)
             {
-                var alreadyMapped = mappedNames.Contains
-                (
-                    configProperty.Name
-                );
+                var alreadyMapped = mappedNames.Contains(configProperty.Name);
 
                 if (alreadyMapped)
                 {
@@ -153,7 +122,7 @@
 
                 var dtoProperty = dtoProperties.FirstOrDefault
                 (
-                    p => p.Name.Equals
+                    x => x.Name.Equals
                     (
                         configProperty.Name,
                         StringComparison.OrdinalIgnoreCase
@@ -163,11 +132,7 @@
                 if (dtoProperty != null)
                 {
                     var configPropertyType = configProperty.PropertyType;
-
-                    var valueToSet = dtoProperty.GetValue
-                    (
-                        dto
-                    );
+                    var valueToSet = dtoProperty.GetValue(dto);
 
                     // Check if we need to convert the value before setting it
                     if (configPropertyType != dtoProperty.PropertyType)
@@ -180,11 +145,7 @@
 
                         if (canConvertDirectly)
                         {
-                            valueToSet = ObjectConverter.Convert
-                            (
-                                valueToSet,
-                                configPropertyType
-                            );
+                            valueToSet = ObjectConverter.Convert(valueToSet, configPropertyType);
                         }
                         else
                         {
@@ -202,11 +163,7 @@
 
                             if (canConvertIndirectly)
                             {
-                                valueToSet = ConvertComplexType
-                                (
-                                    valueToSet,
-                                    configPropertyType
-                                );
+                                valueToSet = ConvertComplexType(valueToSet, configPropertyType);
                             }
                             else
                             {
@@ -223,16 +180,8 @@
                         }
                     }
 
-                    configProperty.SetValue
-                    (
-                        configuration,
-                        valueToSet
-                    );
-
-                    mappedNames.Add
-                    (
-                        configProperty.Name
-                    );
+                    configProperty.SetValue(configuration, valueToSet);
+                    mappedNames.Add(configProperty.Name);
                 }
             }
 
@@ -251,21 +200,10 @@
         /// while the mapped configuration property type name must end 
         /// with "Configuration".
         /// </remarks>
-        private bool CanConvertComplexType
-            (
-                PropertyInfo dtoProperty,
-                PropertyInfo configProperty
-            )
+        private bool CanConvertComplexType(PropertyInfo dtoProperty, PropertyInfo configProperty)
         {
-            var dtoType = ResolveUnderlyingType
-            (
-                dtoProperty.PropertyType
-            );
-
-            var configType = ResolveUnderlyingType
-            (
-                configProperty.PropertyType
-            );
+            var dtoType = ResolveUnderlyingType(dtoProperty.PropertyType);
+            var configType = ResolveUnderlyingType(configProperty.PropertyType);
 
             if (false == (dtoType.IsClass && configType.IsClass))
             {
@@ -308,11 +246,7 @@
         /// <param name="dtoPropertyValue">The DTO property value</param>
         /// <param name="configPropertyType">The configuration property type</param>
         /// <returns>The converted value</returns>
-        private object ConvertComplexType
-            (
-                object dtoPropertyValue,
-                Type configPropertyType
-            )
+        private object ConvertComplexType(object dtoPropertyValue, Type configPropertyType)
         {
             if (dtoPropertyValue == null)
             {
@@ -329,21 +263,11 @@
 
                 foreach (var item in dtoPropertyValue as IEnumerable)
                 {
-                    var nestedConfiguration = Activator.CreateInstance
-                    (
-                        collectionType
-                    );
+                    var nestedConfiguration = Activator.CreateInstance(collectionType);
 
-                    nestedConfiguration = Map
-                    (
-                        item,
-                        nestedConfiguration
-                    );
+                    nestedConfiguration = Map(item, nestedConfiguration);
 
-                    nestedConfigList.Add
-                    (
-                        nestedConfiguration
-                    );
+                    nestedConfigList.Add(nestedConfiguration);
                 }
 
                 if (collectionType.IsArray)
@@ -380,10 +304,7 @@
                         new[] { collectionType }
                     );
 
-                    var convertedList = (IList)Activator.CreateInstance
-                    (
-                        listType
-                    );
+                    var convertedList = (IList)Activator.CreateInstance(listType);
 
                     nestedConfigList.ForEach
                     (
@@ -395,16 +316,9 @@
             }
             else
             {
-                var nestedConfiguration = Activator.CreateInstance
-                (
-                    configPropertyType
-                );
+                var nestedConfiguration = Activator.CreateInstance(configPropertyType);
 
-                convertedValue = Map
-                (
-                    dtoPropertyValue,
-                    nestedConfiguration
-                );
+                convertedValue = Map(dtoPropertyValue, nestedConfiguration);
             }
 
             return convertedValue;

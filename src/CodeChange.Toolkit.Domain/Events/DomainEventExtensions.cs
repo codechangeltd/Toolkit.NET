@@ -12,10 +12,7 @@
         /// </summary>
         /// <param name="event">The domain event</param>
         /// <returns>True, if the event is pre-transaction; otherwise false</returns>
-        public static bool IsPreTransaction
-            (
-                this IDomainEvent @event
-            )
+        public static bool IsPreTransaction(this IDomainEvent @event)
         {
             Validate.IsNotNull(@event);
 
@@ -33,10 +30,7 @@
         /// </summary>
         /// <param name="event">The domain event</param>
         /// <returns>True, if the event is pre-transaction; otherwise false</returns>
-        public static bool IsPostTransaction
-            (
-                this IDomainEvent @event
-            )
+        public static bool IsPostTransaction(this IDomainEvent @event)
         {
             Validate.IsNotNull(@event);
 

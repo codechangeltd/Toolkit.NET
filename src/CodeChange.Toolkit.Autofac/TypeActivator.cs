@@ -15,10 +15,7 @@
         /// Constructs the activator with an Autofac lifetime scope
         /// </summary>
         /// <param name="scope">The lifetime scope</param>
-        public TypeActivator
-            (
-                ILifetimeScope scope
-            )
+        public TypeActivator(ILifetimeScope scope)
         {
             Validate.IsNotNull(scope);
 

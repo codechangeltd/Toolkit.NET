@@ -25,10 +25,7 @@
         /// Constructs a installed plug-in with the plug-in specified
         /// </summary>
         /// <param name="plugin">The plug-in</param>
-        protected InstalledPlugin
-			(
-				IPlugin plugin
-			)
+        protected InstalledPlugin(IPlugin plugin)
 		{
 			Validate.IsNotNull(plugin);
 
@@ -51,13 +48,8 @@
 		/// </summary>
 		/// <param name="plugin">The plug-in</param>
 		/// <returns>The installed plug-in that was created</returns>
-		public static InstalledPlugin CreateInstalledPlugin
-			(
-				IPlugin plugin
-			)
+		public static InstalledPlugin CreateInstalledPlugin(IPlugin plugin)
 		{
-			Validate.IsNotNull(plugin);
-
 			return new InstalledPlugin(plugin);
 		}
 
@@ -104,20 +96,14 @@
 		/// </remarks>
 		public virtual void Destroy()
 		{
-            this.UnpublishedEvents.Add
-            (
-				new PluginUninstalledEvent(this)
-			);
+            this.UnpublishedEvents.Add(new PluginUninstalledEvent(this));
 		}
 
 		/// <summary>
 		/// Sets the plug-in details
 		/// </summary>
 		/// <param name="plugin">The plug-in</param>
-		protected void SetPluginDetails
-            (
-                IPlugin plugin
-            )
+		protected void SetPluginDetails(IPlugin plugin)
 		{
 			Validate.IsNotNull(plugin);
 
@@ -150,11 +136,7 @@
 
 			foreach (var type in assemblyTypes)
 			{
-				var info = new InstalledPluginTypeInfo
-                (
-                    this,
-                    type
-                );
+				var info = new InstalledPluginTypeInfo(this, type);
 
 				this.AssemblyTypes.Add(info);
 			}
@@ -164,19 +146,13 @@
 		/// Updates the installed plug-in details using the plugin specified
 		/// </summary>
 		/// <param name="plugin">The plug-in</param>
-		internal void UpdatePluginDetails
-            (
-                IPlugin plugin
-            )
+		internal void UpdatePluginDetails(IPlugin plugin)
 		{
 			Validate.IsNotNull(plugin);
 
 			SetPluginDetails(plugin);
 
-            this.UnpublishedEvents.Add
-            (
-				new PluginUpgradedEvent(this)
-			);   
+            this.UnpublishedEvents.Add(new PluginUpgradedEvent(this));
 		}
 
 		/// <summary>
@@ -214,22 +190,13 @@
 		/// A return value greater than zero indicates that the plugin is newer
 		/// A return value less than zero indicates that the plugin is older
 		/// </remarks>
-		internal int CompareVersions
-            (
-                IPlugin plugin
-            )
+		internal int CompareVersions(IPlugin plugin)
 		{
 			Validate.IsNotNull(plugin);
 
-			var installedVersion = new Version
-			(
-				this.PluginVersion
-			);
+			var installedVersion = new Version(this.PluginVersion);
 
-			return installedVersion.CompareTo
-            (
-                plugin.Version
-            );
+			return installedVersion.CompareTo(plugin.Version);
 		}
 
 		/// <summary>
@@ -250,11 +217,7 @@
 		/// <summary>
 		/// Gets a collection of types for the plug-ins assembly
 		/// </summary>
-		public virtual ICollection<InstalledPluginTypeInfo> AssemblyTypes
-		{
-			get;
-			protected set;
-		}
+		public virtual ICollection<InstalledPluginTypeInfo> AssemblyTypes { get; protected set; }
 
 		/// <summary>
 		/// Gets a flag used to indicate if the plug-in has been disabled
@@ -282,10 +245,7 @@
 			this.Disabled = true;
 			this.DateDisabled = DateTime.UtcNow;
 
-            this.UnpublishedEvents.Add
-            (
-				new PluginDisabledEvent(this)
-			);
+            this.UnpublishedEvents.Add(new PluginDisabledEvent(this));
 		}
 
 		/// <summary>
@@ -304,10 +264,7 @@
 			this.Disabled = false;
 			this.DateDisabled = null;
 
-            this.UnpublishedEvents.Add
-            (
-				new PluginEnabledEvent(this)
-			);
+            this.UnpublishedEvents.Add(new PluginEnabledEvent(this));
 		}
 	}
 }

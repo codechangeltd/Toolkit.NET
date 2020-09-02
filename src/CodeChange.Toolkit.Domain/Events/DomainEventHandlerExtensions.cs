@@ -13,11 +13,7 @@
         /// <typeparam name="T">The domain event type</typeparam>
         /// <param name="handler">The domain event</param>
         /// <returns>True, if the event is pre-transaction; otherwise false</returns>
-        public static bool IsPreTransaction<T>
-            (
-                this IDomainEventHandler<T> handler
-            )
-
+        public static bool IsPreTransaction<T>(this IDomainEventHandler<T> handler)
             where T : IDomainEvent
         {
             Validate.IsNotNull(handler);
@@ -37,11 +33,7 @@
         /// <typeparam name="T">The domain event type</typeparam>
         /// <param name="handler">The domain event</param>
         /// <returns>True, if the event is pre-transaction; otherwise false</returns>
-        public static bool IsPostTransaction<T>
-            (
-                this IDomainEventHandler<T> handler
-            )
-
+        public static bool IsPostTransaction<T>(this IDomainEventHandler<T> handler)
             where T : IDomainEvent
         {
             Validate.IsNotNull(handler);

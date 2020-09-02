@@ -5,10 +5,7 @@
     /// </summary>
     public class StateTransitionException : UserFlowException
     {
-        public StateTransitionException
-            (
-                string message
-            )
+        public StateTransitionException(string message)
             : base(message)
         { }
     }

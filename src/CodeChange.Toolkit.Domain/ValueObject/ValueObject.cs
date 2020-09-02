@@ -64,15 +64,15 @@
                 return false;
             }
 
-            var t = GetType();
+            var type = GetType();
             var otherType = other.GetType();
 
-            if (t != otherType)
+            if (type != otherType)
             {
                 return false;
             }
 
-            var fields = t.GetFields
+            var fields = type.GetFields
             (
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
             );
@@ -105,20 +105,17 @@
         /// <returns>A collection of field information items</returns>
         private IEnumerable<FieldInfo> GetFields()
         {
-            var t = GetType();
+            var type = GetType();
             var fields = new List<FieldInfo>();
 
-            while (t != typeof(object))
+            while (type != typeof(object))
             {
                 fields.AddRange
                 (
-                    t.GetFields
-                    (
-                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
-                    )
+                    type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                 );
 
-                t = t.BaseType;
+                type = type.BaseType;
             }
 
             return fields;

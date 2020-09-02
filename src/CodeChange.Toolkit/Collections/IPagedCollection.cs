@@ -23,10 +23,7 @@
         /// </summary>
         /// <param name="pageNumber">The page number</param>
         /// <returns>A collection of the items from the page</returns>
-        IEnumerable<T> GetPage
-        (
-            int pageNumber
-        );
+        IEnumerable<T> GetPage(int pageNumber);
 
         /// <summary>
         /// Gets all pages in the collection

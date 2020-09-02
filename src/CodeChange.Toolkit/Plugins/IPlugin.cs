@@ -36,10 +36,7 @@
         /// Upgrades the plug-in from the version specified to the latest version
         /// </summary>
         /// <param name="fromVersion">The version to upgrade from</param>
-        void Upgrade
-        (
-            Version fromVersion
-        );
+        void Upgrade(Version fromVersion);
 
         /// <summary>
         /// Uninstalls the plug-in and cleans up any redundant data

@@ -5,10 +5,7 @@
     /// </summary>
     public class PluginInstalledEvent : PluginDomainEventBase
     {
-        public PluginInstalledEvent
-            (
-                InstalledPlugin plugin
-            )
+        public PluginInstalledEvent(InstalledPlugin plugin)
             : base(plugin)
         { }
 

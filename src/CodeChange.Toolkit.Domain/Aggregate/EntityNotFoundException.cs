@@ -12,14 +12,8 @@
         /// </summary>
         /// <param name="entityKey">The entity key</param>
         /// <param name="message">The error message</param>
-        public EntityNotFoundException
-            (
-                string entityKey
-            )
-            : base
-            (
-                $"No entity was found matching the key '{entityKey}'."
-            )
+        public EntityNotFoundException(string entityKey)
+            : base($"No entity was found matching the key '{entityKey}'.")
         {
             this.EntityKey = entityKey;
         }
@@ -29,11 +23,7 @@
         /// </summary>
         /// <param name="entityKey">The entity key</param>
         /// <param name="message">The error message</param>
-        public EntityNotFoundException
-            (
-                string entityKey,
-                string message
-            )
+        public EntityNotFoundException(string entityKey, string message)
             : base(message)
         {
             Validate.IsNotEmpty(entityKey);

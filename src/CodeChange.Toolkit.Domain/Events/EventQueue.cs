@@ -10,7 +10,7 @@
     /// </summary>
     public sealed class EventQueue : IEventQueue
     {
-        private List<EventQueueItem> _items;
+        private readonly List<EventQueueItem> _items;
 
         /// <summary>
         /// Constructs the event queue with a new collection
@@ -26,23 +26,13 @@
         /// <param name="aggregateKey">The aggregate roots key</param>
         /// <param name="aggregateType">The aggregate root type</param>
         /// <param name="event">The domain event</param>
-        public void Add
-            (
-                string aggregateKey,
-                Type aggregateType,
-                IDomainEvent @event
-            )
+        public void Add(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
             Validate.IsNotEmpty(aggregateKey);
             Validate.IsNotNull(aggregateType);
             Validate.IsNotNull(@event);
 
-            var item = new EventQueueItem
-            (
-                aggregateKey,
-                aggregateType,
-                @event
-            );
+            var item = new EventQueueItem(aggregateKey, aggregateType, @event);
 
             _items.Add(item);
         }

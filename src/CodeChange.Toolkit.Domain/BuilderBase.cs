@@ -18,10 +18,7 @@
         /// </summary>
         /// <param name="builder">The builder object to use</param>
         /// <returns>The build result of the builder object specified by the implicit operation</returns>
-        public static implicit operator T
-            (
-                BuilderBase<T> builder
-            )
+        public static implicit operator T(BuilderBase<T> builder)
         {
             return builder.Build();
         }
@@ -40,10 +37,7 @@
                     typeof(T).ToString()
                 );
 
-                throw new InvalidOperationException
-                (
-                    message
-                );
+                throw new InvalidOperationException(message);
             }
 
             _built = true;

@@ -16,10 +16,6 @@
         /// <param name="message">The message to handle</param>
         /// <param name="cancellationToken">The cancellation token (optional)</param>
         /// <returns>The result of the message</returns>
-        Task<Result> Handle
-        (
-            T message,
-            CancellationToken cancellationToken = default
-        );
+        Task<Result> Handle(T message, CancellationToken cancellationToken = default);
     }
 }

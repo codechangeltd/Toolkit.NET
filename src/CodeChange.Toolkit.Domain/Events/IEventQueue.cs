@@ -14,12 +14,7 @@
         /// <param name="aggregateKey">The aggregate roots key</param>
         /// <param name="aggregateType">The aggregate root type</param>
         /// <param name="event">The domain event</param>
-        void Add
-        (
-            string aggregateKey,
-            Type aggregateType,
-            IDomainEvent @event
-        );
+        void Add(string aggregateKey, Type aggregateType, IDomainEvent @event);
 
         /// <summary>
         /// Gets the next domain event in the queue

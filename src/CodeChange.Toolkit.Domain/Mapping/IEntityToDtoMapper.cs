@@ -24,13 +24,9 @@
         /// <param name="entity">The entity to map</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
-        TDto Map<TEntity, TDto>
-        (
-            TEntity entity,
-            bool mapNestedDtos = true
-        )
-        where TEntity : IAggregateEntity
-        where TDto : class, new();
+        TDto Map<TEntity, TDto>(TEntity entity, bool mapNestedDtos = true)
+            where TEntity : IAggregateEntity
+            where TDto : class, new();
 
         /// <summary>
         /// Maps a collection of entities to a collection of DTOs
@@ -40,12 +36,8 @@
         /// <param name="entities">The collection of entities to map</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>A collection of mapped DTOs</returns>
-        IEnumerable<TDto> Map<TEntity, TDto>
-        (
-            IEnumerable<TEntity> entities,
-            bool mapNestedDtos = false
-        )
-        where TEntity : IAggregateEntity
-        where TDto : class, new();
+        IEnumerable<TDto> Map<TEntity, TDto>(IEnumerable<TEntity> entities, bool mapNestedDtos = false)
+            where TEntity : IAggregateEntity
+            where TDto : class, new();
     }
 }

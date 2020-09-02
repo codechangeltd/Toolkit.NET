@@ -19,11 +19,7 @@
         /// </summary>
         /// <param name="source">The source of data for the collection</param>
         /// <param name="pageSize">The maximum page size</param>
-        public PagedCollection
-            (
-                IEnumerable<T> source,
-                int pageSize
-            )
+        public PagedCollection(IEnumerable<T> source, int pageSize)
             : this(source.AsQueryable<T>(), pageSize)
         { }
 
@@ -32,11 +28,7 @@
         /// </summary>
         /// <param name="source">The source of data for the collection</param>
         /// <param name="pageSize">The maximum page size</param>
-        public PagedCollection
-            (
-                IQueryable<T> source,
-                int pageSize
-            )
+        public PagedCollection(IQueryable<T> source, int pageSize)
         {
             Validate.IsNotNull(source);
             Validate.IsGreaterThan(pageSize, 0);
@@ -56,11 +48,7 @@
         /// <param name="pageSize">The page size</param>
         /// <param name="totalCount">The number of items in total</param>
         /// <returns>The page count</returns>
-        protected int CalculatePageCount
-            (
-                int pageSize,
-                int totalCount
-            )
+        protected int CalculatePageCount(int pageSize, int totalCount)
         {
             if (totalCount == 0)
             {
@@ -92,10 +80,7 @@
         /// </summary>
         /// <param name="pageNumber">The page number</param>
         /// <returns>A collection of the items from the page</returns>
-        public IEnumerable<T> GetPage
-            (
-                int pageNumber
-            )
+        public IEnumerable<T> GetPage(int pageNumber)
         {
             Validate.IsGreaterThan(pageNumber, 0);
             Validate.IsLessThan(pageNumber, this.PageCount);

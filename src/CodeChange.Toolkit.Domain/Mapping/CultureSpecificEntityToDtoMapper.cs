@@ -19,10 +19,7 @@
         /// Constructs the entity mapper with locale configuration
         /// </summary>
         /// <param name="localeConfiguration">The locale configuration</param>
-        public CultureSpecificEntityToDtoMapper
-            (
-                ILocaleConfiguration localeConfiguration
-            )
+        public CultureSpecificEntityToDtoMapper(ILocaleConfiguration localeConfiguration)
         {
             Validate.IsNotNull(localeConfiguration);
 

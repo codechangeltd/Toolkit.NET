@@ -16,19 +16,13 @@
         /// Automatically installs the plug-ins specified
         /// </summary>
         /// <param name="plugins">The plugins to install</param>
-        void AutoInstallPlugins
-        (
-            params IPlugin[] plugins
-        );
+        void AutoInstallPlugins(params IPlugin[] plugins);
 
         /// <summary>
         /// Initialises the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        void InitialisePlugin
-        (
-            string pluginName
-        );
+        void InitialisePlugin(string pluginName);
 
         /// <summary>
         /// Initialises all plug-ins
@@ -39,34 +33,24 @@
         /// Initialises all plug-ins of the type specified
         /// </summary>
         /// <typeparam name="T">The plug-in type</typeparam>
-        void InitialisePlugins<T>()
-            where T: IPlugin;
+        void InitialisePlugins<T>() where T: IPlugin;
 
         /// <summary>
         /// Disables the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        void DisablePlugin
-        (
-            string pluginName
-        );
+        void DisablePlugin(string pluginName);
 
         /// <summary>
         /// Enables the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        void EnablePlugin
-        (
-            string pluginName
-        );
+        void EnablePlugin(string pluginName);
 
         /// <summary>
         /// Uninstalls the plug-in specified
         /// </summary>
         /// <param name="pluginName">The plug-in name</param>
-        void UninstallPlugin
-        (
-            string pluginName
-        );
+        void UninstallPlugin(string pluginName);
     }
 }

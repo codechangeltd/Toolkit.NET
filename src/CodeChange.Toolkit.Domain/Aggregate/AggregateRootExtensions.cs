@@ -14,10 +14,7 @@
         /// </summary>
         /// <param name="aggregate">The aggregate root</param>
         /// <returns>A collection of matching domain events</returns>
-        public static IList<IDomainEvent> GetPreTransactionEvents
-            (
-                this IAggregateRoot aggregate
-            )
+        public static IList<IDomainEvent> GetPreTransactionEvents(this IAggregateRoot aggregate)
         {
             Validate.IsNotNull(aggregate);
 
@@ -44,10 +41,7 @@
         /// </summary>
         /// <param name="aggregate">The aggregate root</param>
         /// <returns>A collection of matching domain events</returns>
-        public static IList<IDomainEvent> GetPostTransactionEvents
-            (
-                this IAggregateRoot aggregate
-            )
+        public static IList<IDomainEvent> GetPostTransactionEvents(this IAggregateRoot aggregate)
         {
             Validate.IsNotNull(aggregate);
 

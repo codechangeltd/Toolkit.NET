@@ -14,11 +14,8 @@
         /// <typeparam name="TConfiguration">The configuration type</typeparam>
         /// <param name="dto">The DTO to map</param>
         /// <returns>The mapped configuration</returns>
-        TConfiguration Map<TDto, TConfiguration>
-        (
-            TDto dto
-        )
-        where TConfiguration : class, new();
+        TConfiguration Map<TDto, TConfiguration>(TDto dto) 
+            where TConfiguration : class, new();
 
         /// <summary>
         /// Maps a collection of DTOs to a collection of configurations
@@ -27,10 +24,7 @@
         /// <typeparam name="TConfiguration">The configuration type</typeparam>
         /// <param name="dtos">The DTOs to map</param>
         /// <returns>The mapped configuration</returns>
-        IEnumerable<TConfiguration> Map<TDto, TConfiguration>
-        (
-            IEnumerable<TDto> dtos
-        )
-        where TConfiguration : class, new();
+        IEnumerable<TConfiguration> Map<TDto, TConfiguration>(IEnumerable<TDto> dtos) 
+            where TConfiguration : class, new();
     }
 }

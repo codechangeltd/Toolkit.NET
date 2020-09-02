@@ -20,10 +20,7 @@
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <remarks>The total number of pages</remarks>
-        Task<int> GetPageCount
-        (
-            CancellationToken cancellationToken = default
-        );
+        Task<int> GetPageCount(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously gets a collection of items at the page number specified
@@ -31,11 +28,7 @@
         /// <param name="pageNumber">The page number</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>A collection of the items from the page</returns>
-        Task<IEnumerable<T>> GetPage
-        (
-            int pageNumber,
-            CancellationToken cancellationToken = default
-        );
+        Task<IEnumerable<T>> GetPage(int pageNumber, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously gets a collection of items at the page number specified
@@ -60,19 +53,13 @@
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <remarks>The total number of items</remarks>
-        Task<int> GetItemCount
-        (
-            CancellationToken cancellationToken = default
-        );
+        Task<int> GetItemCount(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously gets all items in the collection (not paginated)
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>A collection of items</returns>
-        Task<IEnumerable<T>> GetAllItems
-        (
-            CancellationToken cancellationToken = default
-        );
+        Task<IEnumerable<T>> GetAllItems(CancellationToken cancellationToken = default);
     }
 }

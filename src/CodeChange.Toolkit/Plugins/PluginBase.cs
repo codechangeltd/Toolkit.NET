@@ -18,11 +18,7 @@
         {
             get
             {
-                return this.GetType().Name.Replace
-                (
-                    "Plugin",
-                    String.Empty
-                );
+                return this.GetType().Name.Replace("Plugin", String.Empty);
             }
         }
 
@@ -40,10 +36,9 @@
             {
                 if (_versionInfo == null)
                 {
-                    _versionInfo = FileVersionInfo.GetVersionInfo
-                    (
-                        Assembly.GetExecutingAssembly().Location
-                    );
+                    var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+
+                    _versionInfo = FileVersionInfo.GetVersionInfo(assemblyLocation);
                 }
 
                 return _versionInfo.CompanyName;
@@ -58,16 +53,9 @@
             get
             {
                 var assembly = this.GetType().Assembly;
+                var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 
-                var fvi = FileVersionInfo.GetVersionInfo
-                (
-                    assembly.Location
-                );
-                
-                return new Version
-                (
-                    fvi.FileVersion
-                );
+                return new Version(fvi.FileVersion);
             }
         }
 
@@ -80,10 +68,7 @@
         /// Upgrades the plug-in from the version specified to the latest version
         /// </summary>
         /// <param name="fromVersion">The version to upgrade from</param>
-        public virtual void Upgrade
-            (
-                Version fromVersion
-            )
+        public virtual void Upgrade(Version fromVersion)
         {
             Validate.IsNotNull(fromVersion);
 
@@ -106,10 +91,7 @@
         /// The default implementation runs the Uninstall() and then Install() methods.
         /// Some plug-ins may require custom upgrade logic.
         /// </remarks>
-        protected virtual void PerformUpgrade
-            (
-                Version fromVersion
-            )
+        protected virtual void PerformUpgrade(Version fromVersion)
         {
             Validate.IsNotNull(fromVersion);
 

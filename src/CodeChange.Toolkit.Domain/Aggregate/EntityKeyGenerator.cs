@@ -20,11 +20,7 @@
                 i *= ((int)b + 1);
             }
 
-            return String.Format
-            (
-                "{0:x}",
-                i - DateTime.UtcNow.Ticks
-            );
+            return String.Format("{0:x}", i - DateTime.UtcNow.Ticks);
         }
     }
 }

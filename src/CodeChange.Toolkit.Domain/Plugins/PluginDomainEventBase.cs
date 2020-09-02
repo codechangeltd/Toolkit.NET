@@ -12,10 +12,7 @@
         /// Constructs a plug-in domain event with a installed plug-in
         /// </summary>
         /// <param name="plug-in">The plug-in reference</param>
-        public PluginDomainEventBase
-            (
-                InstalledPlugin plugin
-            )
+        public PluginDomainEventBase(InstalledPlugin plugin)
         {
             Validate.IsNotNull(plugin);
 

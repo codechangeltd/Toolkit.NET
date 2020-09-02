@@ -16,10 +16,7 @@
         /// <remarks>
         /// The interface type returned will either be IPlugin or a derived type
         /// </remarks>
-        public static Type GetPluginInterfaceType
-            (
-                this IPlugin plugin
-            )
+        public static Type GetPluginInterfaceType(this IPlugin plugin)
         {
             Validate.IsNotNull(plugin);
 
@@ -28,7 +25,7 @@
 
             var interfaceType = pluginInterfaces.FirstOrDefault
             (
-                t => t.IsAssignableFrom(typeof(IPlugin))
+                x => x.IsAssignableFrom(typeof(IPlugin))
             );
 
             return interfaceType;

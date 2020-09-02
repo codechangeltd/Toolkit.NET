@@ -7,7 +7,7 @@
     /// </summary>
     public class SerialNumberGenerator : IKeyGenerator
     {
-        private Random _random;
+        private readonly Random _random;
 
         /// <summary>
         /// Initiates the generator with a new random generator

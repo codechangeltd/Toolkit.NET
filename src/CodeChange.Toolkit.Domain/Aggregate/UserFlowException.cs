@@ -7,10 +7,7 @@
     /// </summary>
     public class UserFlowException : Exception
     {
-        public UserFlowException
-            (
-                string message
-            )
+        public UserFlowException(string message)
             : base(message)
         { }
     }

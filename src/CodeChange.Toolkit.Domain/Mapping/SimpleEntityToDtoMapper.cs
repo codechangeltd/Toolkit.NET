@@ -48,12 +48,7 @@
         /// <param name="entity">The entity to map</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
-        public TDto Map<TEntity, TDto>
-            (
-                TEntity entity,
-                bool mapNestedDtos = true
-            )
-
+        public TDto Map<TEntity, TDto>(TEntity entity, bool mapNestedDtos = true)
             where TEntity : IAggregateEntity
             where TDto : class, new()
         {
@@ -78,12 +73,7 @@
         /// <param name="dto">The DTO to map to</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>The mapped DTO</returns>
-        protected virtual void Map
-            (
-                IAggregateEntity entity,
-                ref object dto,
-                bool mapNestedDtos
-            )
+        protected virtual void Map(IAggregateEntity entity, ref object dto, bool mapNestedDtos)
         {
             if (entity == null)
             {
@@ -107,18 +97,11 @@
 
                     if (isKeyProperty)
                     {
-                        dtoProperty.SetValue
-                        (
-                            dto,
-                            entity.LookupKey
-                        );
+                        dtoProperty.SetValue(dto, entity.LookupKey);
                     }
                     else
                     {
-                        var alreadyMapped = mappedNames.Contains
-                        (
-                            dtoProperty.Name
-                        );
+                        var alreadyMapped = mappedNames.Contains(dtoProperty.Name);
 
                         if (alreadyMapped)
                         {
@@ -127,35 +110,19 @@
 
                         var entityProperty = entityProperties.FirstOrDefault
                         (
-                            p => p.Name == dtoProperty.Name
+                            x => x.Name == dtoProperty.Name
                         );
 
                         if (entityProperty != null)
                         {
-                            TryMapProperty
-                            (
-                                entity,
-                                ref dto,
-                                entityProperty,
-                                dtoProperty,
-                                mapNestedDtos
-                            );
+                            TryMapProperty(entity, ref dto, entityProperty, dtoProperty, mapNestedDtos);
                         }
                         else
                         {
-                            TryMapToMethod
-                            (
-                                entity,
-                                ref dto,
-                                dtoProperty,
-                                mapNestedDtos
-                            );
+                            TryMapToMethod(entity, ref dto, dtoProperty, mapNestedDtos);
                         }
 
-                        mappedNames.Add
-                        (
-                            dtoProperty.Name
-                        );
+                        mappedNames.Add(dtoProperty.Name);
                     }
                 }
             }
@@ -183,51 +150,32 @@
             
             if (dtoPropertyType == entityPropertyType)
             {
-                var entityPropertyValue = entityProperty.GetValue
-                (
-                    entity
-                );
+                var entityPropertyValue = entityProperty.GetValue(entity);
+                var configuration = this.LocaleConfiguration;
 
                 if (dtoPropertyType == typeof(DateTime))
                 {
                     var date = (DateTime)entityPropertyValue;
-
-                    entityPropertyValue = date.ToLocalTime
-                    (
-                        this.LocaleConfiguration
-                    );
+                    
+                    entityPropertyValue = date.ToLocalTime(configuration);
                 }
 
                 if (dtoPropertyType == typeof(DateTime?))
                 {
                     var date = (DateTime?)entityPropertyValue;
 
-                    entityPropertyValue = date.ToLocalTime
-                    (
-                        this.LocaleConfiguration
-                    );
+                    entityPropertyValue = date.ToLocalTime(configuration);
                 }
 
-                dtoProperty.SetValue
-                (
-                    dto,
-                    entityPropertyValue
-                );
+                dtoProperty.SetValue(dto, entityPropertyValue);
             }
             else if (dtoPropertyType == typeof(string))
             {
-                var entityPropertyValue = entityProperty.GetValue
-                (
-                    entity
-                );
+                var entityPropertyValue = entityProperty.GetValue(entity);
 
                 if (entityPropertyValue != null)
                 {
-                    dtoProperty.SetValue
-                    (
-                        dto,
-                        entityPropertyValue.ToString()
-                    );
+                    dtoProperty.SetValue(dto, entityPropertyValue.ToString());
                 }
                 else
                 {
@@ -236,13 +184,7 @@
             }
             else if (mapNestedDtos)
             {
-                MapNestedProperty
-                (
-                    entity,
-                    ref dto,
-                    entityProperty,
-                    dtoProperty
-                );
+                MapNestedProperty(entity, ref dto, entityProperty, dtoProperty);
             }
         }
 
@@ -274,12 +216,7 @@
             {
                 var dtoListType = dtoPropertyType.GetGenericArguments()[0];
                 var entityListType = entityPropertyType.GetGenericArguments()[0];
-
-                var isValidDto = IsValidDtoType
-                (
-                    dtoListType,
-                    entityListType
-                );
+                var isValidDto = IsValidDtoType(dtoListType, entityListType);
 
                 if (false == isValidDto)
                 {
@@ -305,29 +242,14 @@
                     );
                 }
 
-                var dtoList = (IList)Activator.CreateInstance
-                (
-                    dtoPropertyType
-                );
-
-                var entityCollection = (IEnumerable)entityProperty.GetValue
-                (
-                    entity
-                );
+                var dtoList = (IList)Activator.CreateInstance(dtoPropertyType);
+                var entityCollection = (IEnumerable)entityProperty.GetValue(entity);
 
                 foreach (IAggregateEntity childEntity in entityCollection)
                 {
-                    var childDto = Activator.CreateInstance
-                    (
-                        dtoListType
-                    );
+                    var childDto = Activator.CreateInstance(dtoListType);
 
-                    Map
-                    (
-                        childEntity,
-                        ref childDto,
-                        true
-                    );
+                    Map(childEntity, ref childDto, true);
 
                     dtoList.Add(childDto);
                 }
@@ -336,30 +258,14 @@
             }
             else
             {
-                var isValidDto = IsValidDtoType
-                (
-                    dtoPropertyType,
-                    entityPropertyType
-                );
+                var isValidDto = IsValidDtoType(dtoPropertyType, entityPropertyType);
 
                 if (isValidDto)
                 {
-                    var childEntity = (IAggregateEntity)entityProperty.GetValue
-                    (
-                        entity
-                    );
+                    var childEntity = (IAggregateEntity)entityProperty.GetValue(entity);
+                    var childDto = Activator.CreateInstance(dtoPropertyType);
 
-                    var childDto = Activator.CreateInstance
-                    (
-                        dtoPropertyType
-                    );
-
-                    Map
-                    (
-                        childEntity,
-                        ref childDto,
-                        true
-                    );
+                    Map(childEntity, ref childDto, true);
 
                     dtoProperty.SetValue(dto, childDto);
                 }
@@ -380,10 +286,7 @@
         /// </summary>
         /// <param name="propertyType">The property type</param>
         /// <returns>True, if the property type is nested; otherwise false</returns>
-        private bool IsNestedPropertyType
-            (
-                Type propertyType
-            )
+        private bool IsNestedPropertyType(Type propertyType)
         {
             var interfaces = propertyType.GetInterfaces();
 
@@ -423,23 +326,13 @@
 
             var candidates = methods.Where
             (
-                m => m.ReturnType.IsAssignableFrom
-                (
-                    dtoProperty.PropertyType
-                )
-                ||
-                m.ReturnType.ImplementsInterface
-                (
-                    typeof(IAggregateEntity)
-                )
+                x => x.ReturnType.IsAssignableFrom(dtoProperty.PropertyType) ||
+                    x.ReturnType.ImplementsInterface(typeof(IAggregateEntity))
             );
 
             foreach (var method in candidates)
             {
-                var matches = method.Name.Contains
-                (
-                    dtoProperty.Name
-                );
+                var matches = method.Name.Contains(dtoProperty.Name);
 
                 if (matches)
                 {
@@ -449,12 +342,7 @@
 
                     try
                     {
-                        result = method.Invoke
-                        (
-                            entity,
-                            null
-                        );
-
+                        result = method.Invoke(entity, null);
                         success = true;
                     }
                     catch (Exception ex)
@@ -462,52 +350,30 @@
                         // NOTE: we are ignoring errors when mapping to methods
                         success = false;
 
-                        Debug.WriteLine
-                        (
-                            $"Entity Mapping Error: {ex.Message}"
-                        );
+                        Debug.WriteLine($"Entity Mapping Error: {ex.Message}");
                     }
                     
                     if (success)
                     {
                         if (result != null)
                         {
-                            isAggregate = result.GetType().ImplementsInterface
-                            (
-                                typeof(IAggregateEntity)
-                            );
+                            isAggregate = result.GetType().ImplementsInterface(typeof(IAggregateEntity));
                         }
 
                         if (isAggregate)
                         {
                             if (mapNestedDtos)
                             {
-                                var childDto = Activator.CreateInstance
-                                (
-                                    dtoProperty.PropertyType
-                                );
+                                var childDto = Activator.CreateInstance(dtoProperty.PropertyType);
 
-                                Map
-                                (
-                                    (IAggregateEntity)result,
-                                    ref childDto,
-                                    mapNestedDtos
-                                );
+                                Map((IAggregateEntity)result, ref childDto, mapNestedDtos);
 
-                                dtoProperty.SetValue
-                                (
-                                    dto,
-                                    childDto
-                                );
+                                dtoProperty.SetValue(dto, childDto);
                             }
                         }
                         else
                         {
-                            dtoProperty.SetValue
-                            (
-                                dto,
-                                result
-                            );
+                            dtoProperty.SetValue(dto, result);
                         }
                     }
                 }
@@ -520,11 +386,7 @@
         /// <param name="dtoPropertyType">The DTo property type to check</param>
         /// <param name="entityPropertyType">The matching entity type</param>
         /// <returns>True, if the type is a valid DTO type; otherwise false</returns>
-        protected virtual bool IsValidDtoType
-            (
-                Type dtoPropertyType,
-                Type entityPropertyType
-            )
+        protected virtual bool IsValidDtoType(Type dtoPropertyType, Type entityPropertyType)
         {
             var dtoPropertyName = dtoPropertyType.Name;
             var entityPropertyName = entityPropertyType.Name;
@@ -560,12 +422,7 @@
         /// <param name="entities">The collection of entities to map</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
         /// <returns>A collection of mapped DTOs</returns>
-        public IEnumerable<TDto> Map<TEntity, TDto>
-            (
-                IEnumerable<TEntity> entities,
-                bool mapNestedDtos = false
-            )
-
+        public IEnumerable<TDto> Map<TEntity, TDto>(IEnumerable<TEntity> entities, bool mapNestedDtos = false)
             where TEntity : IAggregateEntity
             where TDto : class, new()
         {
@@ -583,10 +440,7 @@
 
                     Map(entity, ref dto, mapNestedDtos);
 
-                    mappedDtos.Add
-                    (
-                        (TDto)dto
-                    );
+                    mappedDtos.Add((TDto)dto);
                 }
 
                 return mappedDtos;
@@ -598,10 +452,7 @@
         /// </summary>
         /// <param name="o">The object</param>
         /// <returns>A collection of matching properties</returns>
-        protected virtual IEnumerable<PropertyInfo> GetMappableProperties
-            (
-                object o
-            )
+        protected virtual IEnumerable<PropertyInfo> GetMappableProperties(object o)
         {
             var type = o.GetType();
 
@@ -611,16 +462,10 @@
             }
             else
             {
-                var properties = type.GetProperties
-                (
-                    BindingFlags.Public | BindingFlags.Instance
-                );
-
-                properties = properties.Where
-                (
-                    p => p.CanRead
-                )
-                .ToArray();
+                var properties = type
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.CanRead)
+                    .ToArray();
 
                 _propertyCache[type] = properties;
 
@@ -633,10 +478,7 @@
         /// </summary>
         /// <param name="o">The object</param>
         /// <returns>A collection of matching methods</returns>
-        protected virtual IEnumerable<MethodInfo> GetMappableMethods
-            (
-                object o
-            )
+        protected virtual IEnumerable<MethodInfo> GetMappableMethods(object o)
         {
             var type = o.GetType();
 
@@ -646,16 +488,10 @@
             }
             else
             {
-                var methods = type.GetMethods
-                (
-                    BindingFlags.Public | BindingFlags.Instance
-                );
-
-                methods = methods.Where
-                (
-                    m => m.GetParameters().Length == 0
-                )
-                .ToArray();
+                var methods = type
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.GetParameters().Length == 0)
+                    .ToArray();
 
                 _methodCache[type] = methods;
 

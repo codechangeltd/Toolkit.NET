@@ -11,10 +11,7 @@
         /// Logs the domain event specified
         /// </summary>
         /// <param name="event">The domain event</param>
-        void LogEvent
-        (
-            IDomainEvent @event
-        );
+        void LogEvent(IDomainEvent @event);
 
         /// <summary>
         /// Logs the domain event specified
@@ -22,11 +19,6 @@
         /// <param name="aggregateKey">The aggregate key</param>
         /// <param name="aggregateType">The aggregate type</param>
         /// <param name="event">The domain event</param>
-        void LogEvent
-        (
-            string aggregateKey,
-            Type aggregateType,
-            IDomainEvent @event
-        );
+        void LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event);
     }
 }
