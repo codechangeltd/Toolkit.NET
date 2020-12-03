@@ -23,10 +23,7 @@
         /// Asynchronously refreshes all objects being tracked with data from the data source
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
-        Task RefreshAllAsync
-        (
-            CancellationToken cancellationToken = default
-        );
+        Task RefreshAllAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Saves all changes made in unit to the underlying database
@@ -39,9 +36,6 @@
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The number of objects written to the underlying database</returns>
-        Task<int> SaveChangesAsync
-        (
-            CancellationToken cancellationToken = default
-        );
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

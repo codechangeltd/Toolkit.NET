@@ -1,6 +1,5 @@
 ﻿namespace CodeChange.Toolkit.EF6
 {
-    using CodeChange.Toolkit.Domain.Aggregate;
     using CodeChange.Toolkit.Domain.Events;
     using CodeChange.Toolkit.Persistence;
     using Nito.AsyncEx.Synchronous;
@@ -15,7 +14,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Represents an Entity Framework unit of work implementation
+    /// Represents an Entity Framework 6 unit of work implementation
     /// </summary>
     public sealed class UnitOfWork : IUnitOfWork
     {
@@ -23,18 +22,7 @@
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IDomainEventLogger _eventLogger;
 
-        /// <summary>
-        /// Constructs the repository with an Entity Framework database context instance
-        /// </summary>
-        /// <param name="context">The database context instance</param>
-        /// <param name="eventDispatcher">The domain event dispatcher</param>
-        /// <param name="eventLogger">The domain event logger</param>
-        public UnitOfWork
-            (
-                DbContext context,
-                IEventDispatcher eventDispatcher,
-                IDomainEventLogger eventLogger
-            )
+        public UnitOfWork(DbContext context, IEventDispatcher eventDispatcher, IDomainEventLogger eventLogger)
         {
             Validate.IsNotNull(context);
             Validate.IsNotNull(eventDispatcher);
@@ -45,9 +33,6 @@
             _eventLogger = eventLogger;
         }
 
-        /// <summary>
-        /// Refreshes all objects being tracked with data from the data source
-        /// </summary>
         public void RefreshAll()
         {
             foreach (var entity in _context.ChangeTracker.Entries())
@@ -56,62 +41,28 @@
             }
         }
 
-        /// <summary>
-        /// Asynchronously refreshes all objects being tracked with data from the data source
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token</param>
-        public async Task RefreshAllAsync
-            (
-                CancellationToken cancellationToken = default
-            )
+        public async Task RefreshAllAsync(CancellationToken cancellationToken = default)
         {
             var tasks = new List<Task>();
 
             foreach (var entity in _context.ChangeTracker.Entries())
             {
-                tasks.Add
-                (
-                    entity.ReloadAsync(cancellationToken)
-                );
+                tasks.Add(entity.ReloadAsync(cancellationToken));
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Saves all changes made in this context to the underlying database
-        /// </summary>
-        /// <returns>The number of objects written to the underlying database</returns>
         public int SaveChanges()
         {
             return SaveChangesAsync(_context).WaitAndUnwrapException();
         }
 
-        /// <summary>
-        /// Asynchronously saves all changes made in unit to the underlying database
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The number of objects written to the underlying database</returns>
-        public async Task<int> SaveChangesAsync
-            (
-                CancellationToken cancellationToken = default
-            )
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var saveTask = SaveChangesAsync
-            (
-                _context,
-                cancellationToken
-            );
-
-            return await saveTask.ConfigureAwait(false);
+            return await SaveChangesAsync(_context, cancellationToken).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Asynchronously saves all changes made in this context to the underlying database
-        /// </summary>
-        /// <param name="context">The database context</param>
-        /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The number of objects written to the underlying database</returns>
         private async Task<int> SaveChangesAsync
             (
                 DbContext context,
@@ -121,22 +72,16 @@
             Validate.IsNotNull(context);
 
             var success = false;
-            var preEventQueue = GenerateEventQueue(true);
-            var postEventQueue = GenerateEventQueue();
-            var aggregates = GetPendingAggregates();
+            var aggregates = _context.GetPendingAggregates().ToArray();
+            var preEventQueue = EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
+            var postEventQueue = EventQueueFactory.CreatePostTransactionEventQueue(aggregates);
             var rows = default(int);
 
-            ProcessEventQueue
-            (
-                preEventQueue,
-                true
-            );
-
-            var executionStrategy = new SqlAzureExecutionStrategy();
+            ProcessEventQueue(preEventQueue, true);
 
             AzureEfConfiguration.SuspendExecutionStrategy = true;
 
-            await executionStrategy.Execute
+            await new SqlAzureExecutionStrategy().Execute
             (
                 async () =>
                 {
@@ -144,31 +89,22 @@
                     {
                         try
                         {
-                            var saveTask = context.SaveChangesAsync
-                            (
-                                cancellationToken
-                            );
-
-                            rows = await saveTask.ConfigureAwait(false);
+                            rows = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                             transaction.Commit();
-
                             success = true;
                         }
                         catch (Exception ex)
                         {
                             transaction.Rollback();
 
-                            if (ex is DBConcurrencyException
-                                || ex is OptimisticConcurrencyException)
+                            if (ex is DBConcurrencyException || ex is OptimisticConcurrencyException)
                             {
                                 // NOTE:
                                 // For concurrency exceptions we want to ensure the 
                                 // entities are not cached in the context so we can 
                                 // stop the same error being raised indefinitely.
 
-                                var refreshTask = RefreshAllAsync(cancellationToken);
-
-                                await refreshTask.ConfigureAwait(false);
+                                await RefreshAllAsync(cancellationToken).ConfigureAwait(false);
                             }
 
                             throw;
@@ -200,21 +136,13 @@
         /// </summary>
         /// <param name="preTransaction">True, if pre-transaction handlers required</param>
         /// <param name="queue">The event queue to process</param>
-        private void ProcessEventQueue
-            (
-                IEventQueue queue,
-                bool preTransaction = false
-            )
+        private void ProcessEventQueue(IEventQueue queue, bool preTransaction = false)
         {
             while (false == queue.IsEmpty())
             {
                 var nextItem = queue.GetNext();
 
-                _eventDispatcher.Dispatch
-                (
-                    nextItem.Event,
-                    preTransaction
-                );
+                _eventDispatcher.Dispatch(nextItem.Event, preTransaction);
 
                 // We don't want to log pre-transaction events
                 if (false == preTransaction)
@@ -229,83 +157,6 @@
             }
         }
 
-        /// <summary>
-        /// Generates a queue of unpublished domain events
-        /// </summary>
-        /// <param name="preTransaction">True, if pre-transaction events are required</param>
-        /// <returns>A collection of domain events</returns>
-        private IEventQueue GenerateEventQueue
-            (
-                bool preTransaction = false
-            )
-        {
-            var aggregates = GetPendingAggregates();
-            var queue = new EventQueue();
-
-            foreach (var aggregate in aggregates)
-            {
-                var aggregateKey = aggregate.GetKeyValue();
-                var aggregateType = aggregate.GetType();
-                var nextEvents = default(IList<IDomainEvent>);
-
-                if (preTransaction)
-                {
-                    nextEvents = aggregate.GetPreTransactionEvents();
-                }
-                else
-                {
-                    nextEvents = aggregate.GetPostTransactionEvents();
-                }
-
-                if (nextEvents != null && nextEvents.Any())
-                {
-                    foreach (var @event in nextEvents)
-                    {
-                        queue.Add
-                        (
-                            aggregateKey,
-                            aggregateType,
-                            @event
-                        );
-                    }
-                }
-            }
-
-            return queue;
-        }
-
-        /// <summary>
-        /// Gets all aggregates that are pending saving
-        /// </summary>
-        /// <returns>A collection of aggregate roots</returns>
-        private IEnumerable<IAggregateRoot> GetPendingAggregates()
-        {
-            var changeTracker = _context.ChangeTracker;
-            
-            var entries = changeTracker.Entries().Where
-            (
-                x => x.Entity.GetType().ImplementsInterface
-                (
-                    typeof(IAggregateRoot)
-                )
-            );
-
-            var aggregates = new List<IAggregateRoot>();
-
-            foreach (var entry in entries.ToList())
-            {
-                aggregates.Add
-                (
-                    (IAggregateRoot)entry.Entity
-                );
-            }
-
-            return aggregates;
-        }
-
-        /// <summary>
-        /// Forces the database context dispose method to run
-        /// </summary>
         public void Dispose()
         {
             // NOTE:

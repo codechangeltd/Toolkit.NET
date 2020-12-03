@@ -64,13 +64,7 @@
         /// Determines if the event queue is empty
         /// </summary>
         /// <returns>True, if the queue is empty; otherwise false</returns>
-        public bool IsEmpty()
-        {
-            return 
-            (
-                _items.Count == 0
-            );
-        }
+        public bool IsEmpty() => (_items.Count == 0);
 
         /// <summary>
         /// Gets an enumerator for the event queue items

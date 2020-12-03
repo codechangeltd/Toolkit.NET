@@ -1,6 +1,8 @@
 ﻿namespace System.Data.Entity
 {
+    using CodeChange.Toolkit.Domain.Aggregate;
     using System;
+    using System.Collections.Generic;
     using System.Data.Entity.Core.Objects;
     using System.Data.Entity.Infrastructure;
     using System.Linq;
@@ -18,10 +20,7 @@
         /// <remarks>
         /// Adapted from http://stackoverflow.com/a/11683020
         /// </remarks>
-        public static void ReadAllDateTimeValuesAsUtc
-            (
-                this DbContext context
-            )
+        public static void ReadAllDateTimeValuesAsUtc(this DbContext context)
         {
             Validate.IsNotNull(context);
 
@@ -35,24 +34,14 @@
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The object materialized event arguments</param>
-        private static void ReadAllDateTimeValuesAsUtc
-            (
-                object sender,
-                ObjectMaterializedEventArgs e
-            )
+        private static void ReadAllDateTimeValuesAsUtc(object sender, ObjectMaterializedEventArgs e)
         {
-            // Extract all DateTime properties of the object type
-            var properties = e.Entity.GetType().GetProperties().Where
-                (
-                    property => property.PropertyType == typeof(DateTime)
-                        || property.PropertyType == typeof(DateTime?)
-                );
+            var properties = e.Entity
+                .GetType()
+                .GetProperties()
+                .Where(_ => _.PropertyType == typeof(DateTime) || _.PropertyType == typeof(DateTime?));
 
-            // Set all DateTimeKinds to UTC
-            properties.ToList().ForEach
-            (
-                property => SpecifyUtcKind(property, e.Entity)
-            );
+            properties.ToList().ForEach(_ => SpecifyUtcKind(_, e.Entity));
         }
 
         /// <summary>
@@ -60,25 +49,15 @@
         /// </summary>
         /// <param name="property">The property to update</param>
         /// <param name="value">The value to set</param>
-        private static void SpecifyUtcKind
-            (
-                PropertyInfo property,
-                object value
-            )
+        private static void SpecifyUtcKind(PropertyInfo property, object value)
         {
             Validate.IsNotNull(property);
 
-            // Get the date time value
             var datetime = property.GetValue(value, null);
 
-            // Set DateTimeKind to UTC
             if (property.PropertyType == typeof(DateTime))
             {
-                datetime = DateTime.SpecifyKind
-                (
-                    (DateTime)datetime,
-                    DateTimeKind.Utc
-                );
+                datetime = DateTime.SpecifyKind((DateTime)datetime, DateTimeKind.Utc);
             }
             else if (property.PropertyType == typeof(DateTime?))
             {
@@ -89,24 +68,37 @@
                     return;
                 }
 
-                datetime = (DateTime?)DateTime.SpecifyKind
-                (
-                    nullable.Value,
-                    DateTimeKind.Utc
-                );
+                datetime = (DateTime?)DateTime.SpecifyKind(nullable.Value, DateTimeKind.Utc);
             }
             else
             {
                 return;
             }
 
-            // And finally set the UTC DateTime value
-            property.SetValue
-            (
-                value,
-                datetime,
-                null
-            );
+            property.SetValue(value, datetime, null);
+        }
+
+        /// <summary>
+        /// Gets all aggregates that are pending saving
+        /// </summary>
+        /// <param name="context">The DbContext</param>
+        /// <returns>A collection of aggregate roots</returns>
+        public static IEnumerable<IAggregateRoot> GetPendingAggregates(this DbContext context)
+        {
+            Validate.IsNotNull(context);
+
+            var entries = context.ChangeTracker
+                .Entries()
+                .Where(_ => _.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)));
+
+            var aggregates = new List<IAggregateRoot>();
+
+            foreach (var entry in entries.ToList())
+            {
+                aggregates.Add((IAggregateRoot)entry.Entity);
+            }
+
+            return aggregates;
         }
     }
 }
