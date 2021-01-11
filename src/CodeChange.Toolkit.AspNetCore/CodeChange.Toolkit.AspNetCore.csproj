@@ -4,16 +4,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing various extensions and tools built on top of the ASP.NET Core framework.</Description>
-    <Copyright>Copyright © Code Change Ltd 2019</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2021</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <Version>1.0.1</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.AspNetCore/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>Updated CodeChange.Toolkit reference.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit WebApi Web API .NET Core DOTNET AspNetCore C#</Tags>
   </PropertyGroup>
   <ItemGroup>
