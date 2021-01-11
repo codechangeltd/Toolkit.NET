@@ -7,36 +7,17 @@
     {
         private readonly StringComparer _comparer;
 
-        /// <summary>
-        /// Constructs a new string data comparer using the default configuration settings
-        /// </summary>
         public StringDataComparer()
         {
             _comparer = StringComparer.CurrentCulture;
         }
 
-        /// <summary>
-        /// Constructs a new string data comparer using the string comparer specified
-        /// </summary>
-        /// <param name="comparer">The string comparer</param>
         public StringDataComparer(StringComparer comparer)
         {
             _comparer = comparer;
         }
 
-        /// <summary>
-        /// Determines if the candidate value matches the target value specified using the data compare operator
-        /// </summary>
-        /// <param name="candidateValue">The candidate value to compare</param>
-        /// <param name="targetValue">The target value to compare against</param>
-        /// <param name="compareOperator">The data comparer operator</param>
-        /// <returns>True, if the candidate value matches the target value using the comparison operator</returns>
-        public bool IsMatch
-            (
-                string candidateValue,
-                string targetValue,
-                DataCompareOperator compareOperator
-            )
+        public bool IsMatch(string candidateValue, string targetValue, DataCompareOperator compareOperator)
         {
             if (String.IsNullOrEmpty(candidateValue) || String.IsNullOrEmpty(targetValue))
             {

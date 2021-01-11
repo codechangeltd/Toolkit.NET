@@ -12,10 +12,9 @@
         /// </summary>
         /// <param name="value">The enum value to get the description for</param>
         /// <returns>A string describing the enum</returns>
-        public static string GetDescription
-            (
-                this object value
-            )
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="System.TypeLoadException"></exception>
+        public static string GetDescription(this object value)
         {
             if (value == null)
             {
@@ -34,11 +33,7 @@
 
                     if (field != null)
                     {
-                        var attr = Attribute.GetCustomAttribute
-                        (
-                            field,
-                            typeof(DescriptionAttribute)
-                        ) as DescriptionAttribute;
+                        var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
 
                         return (attr == null) ? name.Spacify() : attr.Description;
                     }

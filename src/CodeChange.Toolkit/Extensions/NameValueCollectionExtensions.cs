@@ -15,18 +15,11 @@
         /// </summary>
         /// <param name="col">The name value collection</param>
         /// <returns>An enumeration of key value pairs in the name value collection</returns>
-        public static IEnumerable<KeyValuePair<string, string>> AsEnumerable
-            (
-                this NameValueCollection col
-            )
+        public static IEnumerable<KeyValuePair<string, string>> AsEnumerable(this NameValueCollection col)
         {
             foreach (var key in col.AllKeys)
             {
-                yield return new KeyValuePair<string, string>
-                (
-                    key,
-                    col[key]
-                );
+                yield return new KeyValuePair<string, string>(key, col[key]);
             }
         }
 
@@ -35,10 +28,7 @@
         /// </summary>
         /// <param name="col">The name value collection</param>
         /// <returns>A dictionary representing the name value collection</returns>
-        public static Dictionary<string, string> ToDictionary
-            (
-                this NameValueCollection col
-            )
+        public static Dictionary<string, string> ToDictionary(this NameValueCollection col)
         {
             var dict = new Dictionary<string, string>();
 
@@ -57,10 +47,7 @@
         /// <typeparam name="TValue">The value type</typeparam>
         /// <param name="col">The name value collection</param>
         /// <returns>A dictionary representing the name value collection</returns>
-        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>
-            (
-                this NameValueCollection col
-            )
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this NameValueCollection col)
         {
             var dict = new Dictionary<TKey, TValue>();
             var keyConverter = TypeDescriptor.GetConverter(typeof(TKey));
@@ -84,13 +71,7 @@
         /// <param name="index">The index to insert the new item into</param>
         /// <param name="name">The items name</param>
         /// <param name="value">The items value</param>
-        public static void Insert
-            (
-                this NameValueCollection col,
-                int index,
-                string name,
-                string value
-            )
+        public static void Insert(this NameValueCollection col, int index, string name, string value)
         {
             if (index < 0 || index > col.Count)
             {
@@ -110,14 +91,7 @@
                 {
                     var key = col.GetKey(index);
 
-                    items.Add
-                    (
-                        new KeyValuePair<string, string>
-                        (
-                            key,
-                            col.Get(index)
-                        )
-                    );
+                    items.Add(new KeyValuePair<string, string>(key, col.Get(index)));
 
                     col.Remove(key);
                 }
@@ -135,10 +109,7 @@
         /// Inserts a blank item into the name value collection specified
         /// </summary>
         /// <param name="col">The name value collection to update</param>
-        public static void InsertBlank
-            (
-                this NameValueCollection col
-            )
+        public static void InsertBlank(this NameValueCollection col)
         {
             if (col.Count == 0)
             {

@@ -11,12 +11,7 @@
         /// <param name="value">The value</param>
         /// <param name="name">The name</param>
         /// <param name="description">The description</param>
-        internal EnumItemInfo
-            (
-                int value,
-                string name,
-                string description
-            )
+        internal EnumItemInfo(int value, string name, string description)
         {
             this.Value = value;
             this.Name = name;

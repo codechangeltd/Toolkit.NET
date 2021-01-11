@@ -36,15 +36,6 @@
         private const string HtmlPattern = @"<.*?>";
 
         /// <summary>
-        /// Defines a RegEx pattern for matching email addresses
-        /// </summary>
-        private const string EmailAddressPattern = 
-            @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))" +
-            @"|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
-            @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|" +
-            @"(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
-
-        /// <summary>
         /// Defines a compiled RegEx object for matching apostrophes
         /// </summary>
         private static readonly Regex _apostropheRegex = new Regex
@@ -81,26 +72,12 @@
         );
 
         /// <summary>
-        /// Defines a compiled RegEx object for matching email addresses
-        /// </summary>
-        private static readonly Regex _emailRegex = new Regex
-        (
-            StringExtensions.EmailAddressPattern,
-            RegexOptions.IgnoreCase | RegexOptions.Compiled
-        );
-
-        /// <summary>
         /// Truncates a given string to the number of characters specified by the length value
         /// </summary>
         /// <param name="input">The string to truncate</param>
         /// <param name="length">The length to reduce to</param>
         /// <returns>The truncated string</returns>
-        public static string Truncate
-            (
-                this string input,
-                int length,
-                string appendWith = "..."
-            )
+        public static string Truncate(this string input, int length, string appendWith = "...")
         {
             if (String.IsNullOrEmpty(input))
             {
@@ -118,11 +95,7 @@
 
                 if (input.Length > length)
                 {
-                    var truncated = input.Substring
-                    (
-                        0,
-                        length
-                    );
+                    var truncated = input.Substring(0, length);
 
                     return $"{truncated}{appendWith}";
                 }
@@ -139,11 +112,7 @@
         /// <param name="value">The string to format</param>
         /// <param name="args">The args values to merge into the string</param>
         /// <returns>The formatted string</returns>
-        public static string With
-            (
-                this string value,
-                params object[] args
-            )
+        public static string With(this string value, params object[] args)
         {
             Validate.IsNotEmpty(value);
 
@@ -153,89 +122,55 @@
         /// <summary>
         /// Use the current thread's culture info for conversion
         /// </summary>
-        public static string ToTitleCase
-            (
-                this string value
-            )
+        public static string ToTitleCase(this string value)
         {
             Validate.IsNotEmpty(value);
 
             var cultureInfo = Thread.CurrentThread.CurrentCulture;
 
-            return cultureInfo.TextInfo.ToTitleCase
-            (
-                value.ToLower()
-            );
+            return cultureInfo.TextInfo.ToTitleCase(value.ToLower());
         }
 
         /// <summary>
         /// Overload which uses the culture info with the specified name
         /// </summary>
-        public static string ToTitleCase
-            (
-                this string value,
-                string cultureInfoName
-            )
+        public static string ToTitleCase(this string value, string cultureInfoName)
         {
             Validate.IsNotEmpty(value);
 
             var cultureInfo = new CultureInfo(cultureInfoName);
 
-            return cultureInfo.TextInfo.ToTitleCase
-            (
-                value.ToLower()
-            );
+            return cultureInfo.TextInfo.ToTitleCase(value.ToLower());
         }
 
         /// <summary>
         /// Overload which uses the specified culture info
         /// </summary>
-        public static string ToTitleCase
-            (
-                this string value,
-                CultureInfo cultureInfo
-            )
+        public static string ToTitleCase(this string value, CultureInfo cultureInfo)
         {
             Validate.IsNotEmpty(value);
 
-            return cultureInfo.TextInfo.ToTitleCase
-            (
-                value.ToLower()
-            );
+            return cultureInfo.TextInfo.ToTitleCase(value.ToLower());
         }
 
         /// <summary>
         /// Determines if the string has a value
         /// </summary>
-        public static bool HasValue
-            (
-                this string value
-            )
+        public static bool HasValue(this string value)
         {
             Validate.IsNotEmpty(value);
 
-            return 
-            (
-                false == String.IsNullOrEmpty(value) && value.Trim().Length > 0
-            );
+            return (false == String.IsNullOrEmpty(value) && value.Trim().Length > 0);
         }
 
         /// <summary>
         /// Determines if one string has the same value as another
         /// </summary>
-        public static bool IsEqualTo
-            (
-                this string value,
-                string other
-            )
+        public static bool IsEqualTo(this string value, string other)
         {
             Validate.IsNotEmpty(value);
 
-            return value.Equals
-            (
-                other,
-                StringComparison.OrdinalIgnoreCase
-            );
+            return value.Equals(other, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -243,10 +178,7 @@
         /// </summary>
         /// <param name="value">The string value to check</param>
         /// <returns></returns>
-        public static bool IsNumeric
-            (
-                this string value
-            )
+        public static bool IsNumeric(this string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -254,11 +186,7 @@
             }
             else
             {
-                return Double.TryParse
-                (
-                    value,
-                    out double _
-                );
+                return Double.TryParse(value, out double _);
             }
         }
 
@@ -267,10 +195,7 @@
         /// </summary>
         /// <param name="value">The value to check</param>
         /// <returns>True, if the string contains only alpha numeric; otherwise false</returns>
-        public static bool IsAlphaNumeric
-            (
-                this string value
-            )
+        public static bool IsAlphaNumeric(this string value)
         {
             if (String.IsNullOrWhiteSpace(value))
             {
@@ -278,10 +203,7 @@
             }
             else
             {
-                return value.All
-                (
-                    Char.IsLetterOrDigit
-                );
+                return value.All(Char.IsLetterOrDigit);
             }
         }
 
@@ -290,10 +212,7 @@
         /// </summary>
         /// <param name="value">The value to check</param>
         /// <returns>True, if the string contains non-printable characters; otherwise false</returns>
-        public static bool ContainsNonPrintableCharacters
-            (
-                this string value
-            )
+        public static bool ContainsNonPrintableCharacters(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -314,10 +233,7 @@
         /// ASCII encoding replaces non-ASCII with question marks, so we use UTF8 to see 
         /// if multi-byte sequences are there.
         /// </remarks>
-        public static bool ContainsNonAscii
-            (
-                this string value
-            )
+        public static bool ContainsNonAscii(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -336,18 +252,9 @@
         /// <param name="toCheck">The substring to check for</param>
         /// <param name="comparison">The comparison method</param>
         /// <returns>True, if a match was found</returns>
-        public static bool Contains
-            (
-                this string source,
-                string toCheck,
-                StringComparison comparison
-            )
+        public static bool Contains(this string source, string toCheck, StringComparison comparison)
         {
-            var index = source.IndexOf
-            (
-                toCheck,
-                comparison
-            );
+            var index = source.IndexOf(toCheck, comparison);
 
             return index >= 0;
         }
@@ -355,11 +262,7 @@
         /// <summary>
         /// Returns the integer equivalent of the string value
         /// </summary>
-        public static int? ToInt
-            (
-                this string value,
-                int? defaultValue = null
-            )
+        public static int? ToInt(this string value, int? defaultValue = null)
         {
             if (value == null)
             {
@@ -376,18 +279,12 @@
         /// </summary>
         /// <param name="input">The text to clean</param>
         /// <returns>The text without any HTML tags</returns>
-        public static string StripHtml
-            (
-                this string input
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static string StripHtml(this string input)
         {
             if (false == String.IsNullOrEmpty(input))
             {
-                input = _htmlRegex.Replace
-                (
-                    input,
-                    " "
-                );
+                input = _htmlRegex.Replace(input, " ");
             }
 
             return input;
@@ -398,10 +295,8 @@
         /// </summary>
         /// <param name="input">The text to check</param>
         /// <returns>True, if the input contains HTML</returns>
-        public static bool ContainsHtml
-            (
-                this string input
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static bool ContainsHtml(this string input)
         {
             if (String.IsNullOrWhiteSpace(input))
             {
@@ -418,10 +313,7 @@
         /// </summary>
         /// <param name="url">The URL value to check</param>
         /// <returns>True, if the URL is absolute; otherwise false</returns>
-        public static bool IsAbsoluteUrl
-            (
-                this string url
-            )
+        public static bool IsAbsoluteUrl(this string url)
         {
             if (String.IsNullOrEmpty(url))
             {
@@ -429,12 +321,7 @@
             }
             else
             {
-                return Uri.TryCreate
-                (
-                    url,
-                    UriKind.Absolute,
-                    out _
-                );
+                return Uri.TryCreate(url, UriKind.Absolute, out _);
             }
         }
 
@@ -443,10 +330,8 @@
         /// </summary>
         /// <param name="urlToEncode">The URL value to encode</param>
         /// <returns>The encoded URL value</returns>
-        public static string ToFriendlyUrl
-            (
-                this string urlToEncode
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static string ToFriendlyUrl(this string urlToEncode)
         {
             if (urlToEncode == null)
             {
@@ -458,25 +343,13 @@
                 urlToEncode = (urlToEncode + "").ToLower();
 
                 // Remove apostrophes from words
-                urlToEncode = _apostropheRegex.Replace
-                (
-                    urlToEncode,
-                    String.Empty
-                );
+                urlToEncode = _apostropheRegex.Replace(urlToEncode, String.Empty);
 
                 // Replace invalid characters with a space
-                urlToEncode = _urlBadCharRegex.Replace
-                (
-                    urlToEncode,
-                    " "
-                );
+                urlToEncode = _urlBadCharRegex.Replace(urlToEncode, " ");
 
                 // Convert multiple spaces into one dash
-                urlToEncode = _multiSpaceRegex.Replace
-                (
-                    urlToEncode,
-                    "-"
-                );
+                urlToEncode = _multiSpaceRegex.Replace(urlToEncode, "-");
 
                 return urlToEncode.Trim();
             }
@@ -488,11 +361,7 @@
         /// <param name="value">The string value to spacify</param>
         /// <param name="separator">The separator value to use, default is a space</param>
         /// <returns>The spacified string value</returns>
-        public static string Spacify
-            (
-                this string value,
-                string separator = " "
-            )
+        public static string Spacify(this string value, string separator = " ")
         {
             if (String.IsNullOrEmpty(value) || value.Contains(separator))
             {
@@ -507,10 +376,7 @@
                 {
                     if (previousChar != Char.MinValue && Char.IsLetter(currentChar))
                     {
-                        if (
-                            (Char.IsNumber(previousChar) && !Char.IsNumber(currentChar))
-                            || (Char.IsUpper(currentChar) && Char.IsLower(previousChar))
-                            )
+                        if ((Char.IsNumber(previousChar) && !Char.IsNumber(currentChar)) || (Char.IsUpper(currentChar) && Char.IsLower(previousChar)))
                         {
                             result += separator + Convert.ToString(currentChar);
                         }
@@ -529,17 +395,7 @@
 
                 if (false == String.IsNullOrEmpty(result))
                 {
-                    result = result.Replace
-                    (
-                        "_",
-                        separator
-                    );
-                        
-                    result = result.Replace
-                    (
-                        "  ",
-                        " "
-                    );
+                    result = result.Replace("_", separator).Replace("  ", " ");
                 }
 
                 return result;
@@ -551,10 +407,7 @@
         /// </summary>
         /// <param name="value">The value to split into words</param>
         /// <returns>An array of extracted words</returns>
-        public static string[] SplitIntoWords
-            (
-                this string value
-            )
+        public static string[] SplitIntoWords(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -623,10 +476,7 @@
         /// </summary>
         /// <param name="value">The value to remove special characters from</param>
         /// <returns>The string without special characters</returns>
-        public static string RemoveSpecialCharacters
-            (
-                this string value
-            )
+        public static string RemoveSpecialCharacters(this string value)
         {
             Validate.IsNotEmpty(value);
 
@@ -649,11 +499,7 @@
         /// <param name="input">The input value</param>
         /// <param name="alternative">The alternative value</param>
         /// <returns>The first string with a non-empty non-null value</returns>
-        public static string Or
-            (
-                this string input,
-                string alternative
-            )
+        public static string Or(this string input, string alternative)
         {
             if (String.IsNullOrEmpty(input))
             {
@@ -672,12 +518,8 @@
         /// <param name="text">The text to match against</param>
         /// <param name="caseSensitive">If true, a case sensitive match is performed</param>
         /// <returns>True, if the pattern matches the text</returns>
-        public static bool IsLike
-            (
-                this string pattern,
-                string text,
-                bool caseSensitive = false
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static bool IsLike(this string pattern, string text, bool caseSensitive = false)
         {
             Validate.IsNotEmpty(pattern);
 
@@ -687,11 +529,7 @@
             pattern = pattern.Replace(@"\", @"\\");
             pattern = pattern.Replace(" ", @"\s");
 
-            var regex = new Regex
-            (
-                pattern,
-                caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase
-            );
+            var regex = new Regex(pattern, caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
 
             return regex.IsMatch(text);
         }
@@ -699,31 +537,19 @@
         /// <summary>
         /// Creates an MD5 fingerprint of the string value specified
         /// </summary>
-        public static string ToMd5Fingerprint
-            (
-                this string value
-            )
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public static string ToMd5Fingerprint(this string value)
         {
             Validate.IsNotEmpty(value);
 
-            var bytes = Encoding.Unicode.GetBytes
-            (
-                value.ToCharArray()
-            );
+            var bytes = Encoding.Unicode.GetBytes(value.ToCharArray());
 
             using (var provider = new MD5CryptoServiceProvider())
             {
-                var hash = provider.ComputeHash
-                (
-                    bytes
-                );
+                var hash = provider.ComputeHash(bytes);
 
                 // Concatenate the hash bytes into one long string
-                var builder = hash.Aggregate
-                (
-                    new StringBuilder(32),
-                    (sb, b) => sb.Append(b.ToString("X2"))
-                );
+                var builder = hash.Aggregate(new StringBuilder(32), (sb, b) => sb.Append(b.ToString("X2")));
 
                 return builder.ToString();
             }
@@ -735,11 +561,7 @@
         /// <param name="value">The string value to get the line number from</param>
         /// <param name="position">The position to get the line number for</param>
         /// <returns>The line number found</returns>
-        public static int LineFromPosition
-            (
-                this string value,
-                int position
-            )
+        public static int LineFromPosition(this string value, int position)
         {
             Validate.IsNotEmpty(value);
 
@@ -767,11 +589,7 @@
         /// <param name="value">The value to split</param>
         /// <param name="separator">The separator character</param>
         /// <returns>An array of strings parsed from the input string.</returns>
-        public static string[] SplitAndTrim
-            (
-                this string value,
-                char separator
-            )
+        public static string[] SplitAndTrim(this string value, char separator)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -792,11 +610,7 @@
         /// <param name="haystack">The string to search</param>
         /// <param name="needle">The string to search for</param>
         /// <returns>An enumeration of all indexes indicating where the substring was found</returns>
-        public static IEnumerable<int> IndexesOf
-            (
-                this string haystack,
-                string needle
-            )
+        public static IEnumerable<int> IndexesOf(this string haystack, string needle)
         {
             Validate.IsNotEmpty(haystack);
 
@@ -804,11 +618,7 @@
 
             while (true)
             {
-                int index = haystack.IndexOf
-                (
-                    needle,
-                    lastIndex
-                );
+                int index = haystack.IndexOf(needle, lastIndex);
                 
                 if (index == -1)
                 {
@@ -827,11 +637,7 @@
         /// <param name="input">The input string to search</param>
         /// <param name="search">The search string</param>
         /// <returns>The number of occurrences found</returns>
-        public static int Count
-            (
-                this string input,
-                string search
-            )
+        public static int Count(this string input, string search)
         {
             Validate.IsNotEmpty(input);
 
@@ -846,11 +652,7 @@
         /// <param name="input">The input text</param>
         /// <param name="length">The length</param>
         /// <returns>The left characters of the string</returns>
-        public static string Left
-            (
-                this string input,
-                int length
-            )
+        public static string Left(this string input, int length)
         {
             return Truncate(input, length, null);
         }
@@ -861,11 +663,7 @@
         /// <param name="input">The input text</param>
         /// <param name="length">The length</param>
         /// <returns>The right characters of the string</returns>
-        public static string Right
-            (
-                this string input,
-                int length
-            )
+        public static string Right(this string input, int length)
         {
             if (String.IsNullOrEmpty(input))
             {
@@ -875,10 +673,7 @@
             {
                 if (length < 0)
                 {
-                    throw new ArgumentOutOfRangeException
-                    (
-                        "The length must be greater than zero."
-                    );
+                    throw new ArgumentOutOfRangeException("The length must be greater than zero.");
                 }
 
                 if (length >= input.Length)
@@ -900,11 +695,7 @@
         /// <param name="input">The string to search</param>
         /// <param name="value">The matching value</param>
         /// <returns>The string found to the left of the value specified</returns>
-        public static string LeftOf
-            (
-                this string input,
-                string value
-            )
+        public static string LeftOf(this string input, string value)
         {
             Validate.IsNotEmpty(input);
 
@@ -916,11 +707,7 @@
             }
             else
             {
-                return input.Substring
-                (
-                    0,
-                    firstIndex
-                );
+                return input.Substring(0, firstIndex);
             }
         }
 
@@ -930,11 +717,7 @@
         /// <param name="input">The string to search</param>
         /// <param name="value">The matching value</param>
         /// <returns>The string found to the right of the value specified</returns>
-        public static string RightOf
-            (
-                this string input,
-                string value
-            )
+        public static string RightOf(this string input, string value)
         {
             Validate.IsNotEmpty(input);
 
@@ -946,10 +729,7 @@
             }
             else
             {
-                return input.Substring
-                (
-                    lastIndex + 1
-                );
+                return input.Substring(lastIndex + 1);
             }
         }
 
@@ -958,10 +738,8 @@
         /// </summary>
         /// <param name="value">The value to convert</param>
         /// <returns>The slug that was generated</returns>
-        public static string ToUrlSlug
-            (
-                this string value
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static string ToUrlSlug(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -976,34 +754,16 @@
             value = Encoding.ASCII.GetString(bytes);
 
             // Replace spaces
-            value = Regex.Replace
-            (
-                value,
-                @"\s",
-                "-",
-                RegexOptions.Compiled
-            );
+            value = Regex.Replace(value, @"\s", "-", RegexOptions.Compiled);
 
             // Remove invalid chars
-            value = Regex.Replace
-            (
-                value,
-                @"[^a-z0-9\s-_]",
-                String.Empty,
-                RegexOptions.Compiled
-            );
+            value = Regex.Replace(value, @"[^a-z0-9\s-_]", String.Empty, RegexOptions.Compiled);
 
             // Trim dashes from end
             value = value.Trim('-', '_');
 
             // Replace double occurrences of - or _
-            value = Regex.Replace
-            (
-                value,
-                @"([-_]){2,}",
-                "$1",
-                RegexOptions.Compiled
-            );
+            value = Regex.Replace(value, @"([-_]){2,}", "$1", RegexOptions.Compiled);
 
             return value;
         }
@@ -1013,10 +773,8 @@
         /// </summary>
         /// <param name="value">The value to check</param>
         /// <returns>True, if the slug is valid; otherwise false</returns>
-        public static bool IsValidUrlSlug
-            (
-                this string value
-            )
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        public static bool IsValidUrlSlug(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -1026,10 +784,7 @@
             {
                 var generatedSlug = ToUrlSlug(value);
 
-                return value.Equals
-                (
-                    generatedSlug
-                );
+                return value.Equals(generatedSlug);
             }
         }
 
@@ -1038,10 +793,7 @@
         /// </summary>
         /// <param name="value">The value to check</param>
         /// <returns>True, if the string contains a valid email address; otherwise false</returns>
-        public static bool IsValidEmailAddress
-            (
-                this string value
-            )
+        public static bool IsValidEmailAddress(this string value)
         {
             if (String.IsNullOrEmpty(value))
             {
@@ -1049,18 +801,11 @@
             }
             else
             {
-                //return _emailRegex.IsMatch(value);
-
                 try
                 {
                     var addr = new MailAddress(value);
 
-                    return String.Equals
-                    (
-                        addr.Address,
-                        value,
-                        StringComparison.OrdinalIgnoreCase
-                    );
+                    return String.Equals(addr.Address, value, StringComparison.OrdinalIgnoreCase);
                 }
                 catch
                 {
@@ -1075,37 +820,23 @@
         /// <param name="url">The URL</param>
         /// <param name="key">The query string parameter key</param>
         /// <returns>The URL without the query string parameter</returns>
-        public static string RemoveQueryStringByKey
-            (
-                this string url,
-                string key
-            )
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public static string RemoveQueryStringByKey(this string url, string key)
         {
             var uri = new Uri(url);
 
             // this gets all the query string key value pairs as a collection
-            var newQueryString = HttpUtility.ParseQueryString
-            (
-                uri.Query
-            );
+            var newQueryString = HttpUtility.ParseQueryString(uri.Query);
 
             // this removes the key if exists
             newQueryString.Remove(key);
 
             // this gets the page path from root without QueryString
-            var pagePathWithoutQueryString = uri.GetLeftPart
-            (
-                UriPartial.Path
-            );
+            var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
 
             if ( newQueryString.Count > 0)
             {
-                return String.Format
-                (
-                    "{0}?{1}",
-                    pagePathWithoutQueryString,
-                    newQueryString
-                );
+                return String.Format("{0}?{1}", pagePathWithoutQueryString, newQueryString);
             }
             else
             {
@@ -1118,10 +849,7 @@
         /// </summary>
         /// <param name="dateExpression">The date expression</param>
         /// <returns>The date, if it was parsed, otherwise null</returns>
-        public static DateTime? TryParseDate
-            (
-                this string dateExpression
-            )
+        public static DateTime? TryParseDate(this string dateExpression)
         {
             if (String.IsNullOrWhiteSpace(dateExpression))
             {
@@ -1129,11 +857,7 @@
             }
             else
             {
-                var success = DateTime.TryParse
-                (
-                    dateExpression,
-                    out DateTime date
-                );
+                var success = DateTime.TryParse(dateExpression, out DateTime date);
 
                 if (success)
                 {

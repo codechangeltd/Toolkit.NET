@@ -13,12 +13,7 @@
         /// <param name="fileContents">The file contents</param>
         /// <param name="contentType">The files content type</param>
         /// <param name="fileName">The file name (optional)</param>
-        public FileContainer
-            (
-                byte[] fileContents,
-                string contentType,
-                string fileName = null
-            )
+        public FileContainer(byte[] fileContents, string contentType, string fileName = null)
         {
             Validate.IsNotNull(fileContents);
 
@@ -44,10 +39,7 @@
         /// </summary>
         /// <param name="contentType">The content type to check</param>
         /// <returns>True, if the content type is valid; otherwise false</returns>
-        protected virtual bool IsValidContentType
-            (
-                string contentType
-            )
+        protected virtual bool IsValidContentType(string contentType)
         {
             if (String.IsNullOrEmpty(contentType))
             {

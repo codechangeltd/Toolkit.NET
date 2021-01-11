@@ -17,18 +17,11 @@
         /// This algorithm uses the object default equality comparer to check for uniqueness
         /// TODO: create overload that accepts an Comparer[T] argument
         /// </remarks>
-        public static void AddUnique<T>
-            (
-                this List<T> initialList,
-                IEnumerable<T> newCollection
-            )
+        public static void AddUnique<T>(this List<T> initialList, IEnumerable<T> newCollection)
         {
             if (newCollection == null)
             {
-                throw new ArgumentException
-                (
-                    "The new collection cannot be null."
-                );
+                throw new ArgumentException("The new collection cannot be null.");
             }
 
             foreach (var item in newCollection)

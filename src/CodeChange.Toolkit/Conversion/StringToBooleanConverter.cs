@@ -8,12 +8,7 @@
         /// <summary>
         /// Defines a default set of accepted true values
         /// </summary>
-        public readonly string[] DefaultAcceptedTrueValues =
-        {
-            "true",
-            "yes",
-            "1"
-        };
+        public readonly string[] DefaultAcceptedTrueValues = { "true", "yes", "1" };
 
         /// <summary>
         /// Creates a new string to boolean converter with the default conversion options
@@ -27,10 +22,7 @@
         /// Creates a new string to boolean converter with the conversion options specified
         /// </summary>
         /// <param name="acceptedTrueValues">An array of accepted true values</param>
-        public StringToBooleanConverter
-            (
-                string[] acceptedTrueValues
-            )
+        public StringToBooleanConverter(string[] acceptedTrueValues)
         {
             this.AcceptedTrueValues = acceptedTrueValues ?? this.DefaultAcceptedTrueValues;
         }
@@ -53,11 +45,7 @@
             {
                 foreach (var comparer in this.AcceptedTrueValues)
                 {
-                    var comparerFound = value.Trim().StartsWith
-                    (
-                        comparer,
-                        StringComparison.OrdinalIgnoreCase
-                    );
+                    var comparerFound = value.Trim().StartsWith(comparer, StringComparison.OrdinalIgnoreCase);
 
                     if (comparerFound)
                     {

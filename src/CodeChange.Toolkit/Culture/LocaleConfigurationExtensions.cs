@@ -12,10 +12,7 @@
         /// </summary>
         /// <param name="locale">The locale configuration</param>
         /// <returns>The date and time</returns>
-        public static DateTime GetNowLocal
-            (
-                this ILocaleConfiguration locale
-            )
+        public static DateTime GetNowLocal(this ILocaleConfiguration locale)
         {
             return DateTime.UtcNow.UtcToLocalTime(locale);
         }
@@ -25,10 +22,7 @@
         /// </summary>
         /// <param name="locale">The locale configuration</param>
         /// <returns>The date</returns>
-        public static DateTime GetTodayLocal
-            (
-                this ILocaleConfiguration locale
-            )
+        public static DateTime GetTodayLocal(this ILocaleConfiguration locale)
         {
             return GetNowLocal(locale).Date;
         }

@@ -14,20 +14,14 @@
         /// </summary>
         /// <param name="className">The class name</param>
         /// <returns>A collection of matching class types</returns>
-        public Type[] FindTypesByName
-            (
-                string className
-            )
+        /// <exception cref="System.AppDomainUnloadedException"></exception>
+        public Type[] FindTypesByName(string className)
         {
             Validate.IsNotEmpty(className);
             
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            return FindTypesByName
-            (
-                className,
-                assemblies
-            );
+            return FindTypesByName(className, assemblies);
         }
 
         /// <summary>
@@ -36,11 +30,8 @@
         /// <param name="className">The class name</param>
         /// <param name="namespaceSearch">The assembly namespace</param>
         /// <returns>A collection of matching class types</returns>
-        public Type[] FindTypesByName
-            (
-                string className,
-                string namespaceSearch
-            )
+        /// <exception cref="System.AppDomainUnloadedException"></exception>
+        public Type[] FindTypesByName(string className, string namespaceSearch)
         {
             Validate.IsNotEmpty(className);
             Validate.IsNotEmpty(namespaceSearch);
@@ -49,20 +40,13 @@
 
             var filteredAssemblies = allAssemblies.Where
             (
-                m => m.GetLoadableTypes().Any
+                _ => _.GetLoadableTypes().Any
                 (
-                    t => t.Namespace != null && t.Namespace.StartsWith
-                    (
-                        namespaceSearch
-                    )
+                    t => t.Namespace != null && t.Namespace.StartsWith(namespaceSearch)
                 )
             );
 
-            return FindTypesByName
-            (
-                className,
-                filteredAssemblies.ToArray()
-            );
+            return FindTypesByName(className, filteredAssemblies.ToArray());
         }
 
         /// <summary>
@@ -71,11 +55,7 @@
         /// <param name="className">The class name</param>
         /// <param name="assemblies">The assemblies to scan</param>
         /// <returns>A collection of matching class types</returns>
-        public Type[] FindTypesByName
-            (
-                string className,
-                params Assembly[] assemblies
-            )
+        public Type[] FindTypesByName(string className, params Assembly[] assemblies)
         {
             Validate.IsNotEmpty(className);
             Validate.IsNotNull(assemblies);
@@ -86,14 +66,11 @@
             {
                 var assemblyTypes = assembly.GetLoadableTypes();
 
-                for (int j = 0; j < assemblyTypes.Length; j++)
+                for (int i = 0; i < assemblyTypes.Length; i++)
                 {
-                    if (assemblyTypes[j].Name == className)
+                    if (assemblyTypes[i].Name == className)
                     {
-                        matchingTypes.Add
-                        (
-                            assemblyTypes[j]
-                        );
+                        matchingTypes.Add(assemblyTypes[i]);
                     }
                 }
             }

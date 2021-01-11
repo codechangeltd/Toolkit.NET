@@ -19,6 +19,7 @@
         /// Loads all plug-ins into the current AppDomain
         /// </summary>
         /// <returns>A collection of plug-ins that were loaded</returns>
+        /// <exception cref="PathTooLongException"></exception>
         public virtual IEnumerable<Assembly> LoadPluginAssemblies()
         {
             var path = GetPluginPath();
@@ -40,6 +41,7 @@
         /// Gets the path to the plug-ins directory
         /// </summary>
         /// <returns>The path to the plug-in directory</returns>
+        /// <exception cref="PathTooLongException"></exception>
         private string GetPluginPath()
         {
             var assembly = Assembly.GetExecutingAssembly();

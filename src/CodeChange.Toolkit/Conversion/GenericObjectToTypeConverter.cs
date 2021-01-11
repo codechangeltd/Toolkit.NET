@@ -15,6 +15,7 @@
         /// </summary>
         /// <param name="value">The object value to convert</param>
         /// <returns>The converted value</returns>
+        /// <exception cref="System.InvalidCastException">Ignore.</exception>
         public T Convert(object value)
         {
             if (value == null)
@@ -62,11 +63,7 @@
                         convertType = Nullable.GetUnderlyingType(convertType);
                     }
 
-                    return (T)System.Convert.ChangeType
-                    (
-                        value,
-                        convertType
-                    );
+                    return (T)System.Convert.ChangeType(value, convertType);
                 }
                 else
                 {
@@ -82,6 +79,7 @@
         /// </summary>
         /// <param name="value">The string value to convert</param>
         /// <returns>The converted value</returns>
+        /// <exception cref="System.InvalidCastException"></exception>
         private T ConvertFromString(string value)
         {
             var convertedValue = default(object);
@@ -153,10 +151,8 @@
         /// Raises an exception to indicate that the value could not be converted
         /// </summary>
         /// <param name="value">The value that could not be converted</param>
-        private void RaiseCannotConvertException
-            (
-                object value
-            )
+        /// <exception cref="System.InvalidCastException"></exception>
+        private void RaiseCannotConvertException(object value)
         {
             var valueString = value.ToString();
             var typeName = typeof(T).ToString();

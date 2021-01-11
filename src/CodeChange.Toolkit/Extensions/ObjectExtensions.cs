@@ -15,10 +15,7 @@
         /// </summary>
         /// <param name="obj">The object to check</param>
         /// <returns>True, if the object is null or empty; otherwise false</returns>
-        public static bool IsNullOrEmpty
-            (
-                this object obj
-            )
+        public static bool IsNullOrEmpty(this object obj)
         {
             if (obj == null)
             {
@@ -26,10 +23,7 @@
             }
             else
             {
-                return String.IsNullOrWhiteSpace
-                (
-                    obj.ToString()
-                );
+                return String.IsNullOrWhiteSpace(obj.ToString());
             }
         }
 
@@ -38,28 +32,18 @@
         /// </summary>
         /// <param name="obj">The object to check</param>
         /// <returns>True, if the object has all empty properties; otherwise false</returns>
-        public static bool HasNonEmptyProperties
-            (
-                this object obj
-            )
+        /// <exception cref="TargetException"></exception>
+        /// <exception cref="TargetParameterCountException"></exception>
+        /// <exception cref="System.MethodAccessException"></exception>
+        /// <exception cref="TargetInvocationException"></exception>
+        public static bool HasNonEmptyProperties(this object obj)
         {
             var type = obj.GetType();
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            var properties = type.GetProperties
-            (
-                BindingFlags.Public | BindingFlags.Instance
-            );
-
-            var hasProperty = properties.Select
-            (
-                x => x.GetValue(obj, null)
-            )
-            .Any
-            (
-                x => x != null 
-                    && false == x.GetType().IsEnum
-                    && false == x.IsNullOrEmpty()
-            );
+            var hasProperty = properties
+                .Select(_ => _.GetValue(obj, null))
+                .Any(_ => _ != null && false == _.GetType().IsEnum && false == _.IsNullOrEmpty());
 
             return hasProperty;
         }
@@ -69,10 +53,11 @@
         /// </summary>
         /// <param name="obj">The object to generate the hash code for</param>
         /// <returns>The hash code that was generated</returns>
-        public static int GenerateHashCode
-            (
-                this object obj
-            )
+        /// <exception cref="TargetException"></exception>
+        /// <exception cref="TargetParameterCountException"></exception>
+        /// <exception cref="System.MethodAccessException"></exception>
+        /// <exception cref="TargetInvocationException"></exception>
+        public static int GenerateHashCode(this object obj)
         {
             if (obj == null || false == obj.HasNonEmptyProperties())
             {
@@ -133,18 +118,15 @@
         /// </summary>
         /// <param name="value">The value to check</param>
         /// <returns>True, if the object is numeric; otherwise false</returns>
-        public static bool IsNumeric
-            (
-                this object value
-            )
+        public static bool IsNumeric(this object value)
         {
             if (value == null)
             {
                 return false;
             }
-            else if (value is string)
+            else if (value is string @string)
             {
-                return ((string)value).IsNumeric();
+                return @string.IsNumeric();
             }
             else
             {

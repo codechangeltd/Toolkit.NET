@@ -12,17 +12,14 @@
         /// </summary>
         /// <param name="e">The enum</param>
         /// <returns>A collection of matching enum info</returns>
-        public IEnumerable<EnumItemInfo> GetEnumInfo
-            (
-                Enum e
-            )
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="System.TypeLoadException"></exception>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public IEnumerable<EnumItemInfo> GetEnumInfo(Enum e)
         {
             Validate.IsNotNull(e);
 
-            return GetEnumInfo
-            (
-                e.GetType()
-            );
+            return GetEnumInfo(e.GetType());
         }
 
         /// <summary>
@@ -30,10 +27,10 @@
         /// </summary>
         /// <param name="enumType">The enum type</param>
         /// <returns>A collection of matching enum info</returns>
-        public IEnumerable<EnumItemInfo> GetEnumInfo
-            (
-                Type enumType
-            )
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="System.TypeLoadException"></exception>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public IEnumerable<EnumItemInfo> GetEnumInfo(Type enumType)
         {
             Validate.IsNotNull(enumType);
 
@@ -54,12 +51,7 @@
                 var name = entry.ToString();
                 var description = entry.GetDescription();
 
-                var info = new EnumItemInfo
-                (
-                    value,
-                    name,
-                    description
-                );
+                var info = new EnumItemInfo(value, name, description);
 
                 enumInfo.Add(info);
             }

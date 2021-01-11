@@ -14,10 +14,9 @@
         /// </summary>
         /// <param name="assembly">The assembly</param>
         /// <returns>The assembly path</returns>
-        public static string GetFullPath
-            (
-                this Assembly assembly
-            )
+        /// <exception cref="System.Security.SecurityException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        public static string GetFullPath(this Assembly assembly)
         {
             Validate.IsNotNull(assembly);
 
@@ -44,10 +43,7 @@
         /// 
         /// See this article for more https://tinyurl.com/ycloaxgg
         /// </remarks>
-        public static Type[] GetLoadableTypes
-            (
-                this Assembly assembly
-            )
+        public static Type[] GetLoadableTypes(this Assembly assembly)
         {
             Validate.IsNotNull(assembly);
 
@@ -55,14 +51,9 @@
             {
                 return assembly.GetTypes();
             }
-            catch (ReflectionTypeLoadException e)
+            catch (ReflectionTypeLoadException ex)
             {
-                var filteredTypes = e.Types.Where
-                (
-                    t => t != null
-                );
-
-                return filteredTypes.ToArray();
+                return ex.Types.Where(_ => _ != null).ToArray();
             }
         }
     }

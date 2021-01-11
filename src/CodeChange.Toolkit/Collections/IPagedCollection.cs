@@ -19,23 +19,41 @@
         int PageCount { get; }
 
         /// <summary>
-        /// Gets a collection of items at the page number specified
+        /// Gets the total number of items in the collection
+        /// </summary>
+        int ItemCount { get; }
+
+        /// <summary>
+        /// Gets a specific page from the collection
         /// </summary>
         /// <param name="pageNumber">The page number</param>
-        /// <returns>A collection of the items from the page</returns>
-        IEnumerable<T> GetPage(int pageNumber);
+        /// <returns>A paged result</returns>
+        PagedResult<T> GetPage(int pageNumber);
 
         /// <summary>
         /// Gets all pages in the collection
         /// </summary>
-        /// <returns>A collection of collections, each representing a page</returns>
-        IEnumerable<(int PageNumber, IEnumerable<T> Items)> GetAllPages();
+        /// <returns>A collection of paged results</returns>
+        IEnumerable<PagedResult<T>> GetAllPages();
 
         /// <summary>
-        /// Gets a collection of items at the page number specified
+        /// Gets the items within a specific page
+        /// </summary>
+        /// <param name="pageNumber">The page number</param>
+        /// <returns>A collection of the items from the page</returns>
+        IEnumerable<T> GetItems(int pageNumber);
+
+        /// <summary>
+        /// Gets all the items in the collection
+        /// </summary>
+        /// <returns>A collection of items of type T</returns>
+        IEnumerable<T> GetAllItems();
+
+        /// <summary>
+        /// Gets a specific page from the collection
         /// </summary>
         /// <param name="page">The page number</param>
-        /// <returns>A collection of the items from the page</returns>
-        IEnumerable<T> this[int page] { get; }
+        /// <returns>A paged result</returns>
+        PagedResult<T> this[int page] { get; }
     }
 }

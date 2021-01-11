@@ -13,12 +13,7 @@
         /// <param name="fileContents">The file contents</param>
         /// <param name="contentType">The files content type</param>
         /// <param name="fileName">The file name (optional)</param>
-        public ImageFileContainer
-            (
-                byte[] fileContents,
-                string contentType,
-                string fileName = null
-            )
+        public ImageFileContainer(byte[] fileContents, string contentType, string fileName = null)
             : base(fileContents, contentType, fileName)
         { }
 
@@ -27,10 +22,7 @@
         /// </summary>
         /// <param name="contentType">The content type to check</param>
         /// <returns>True, if the content type is valid; otherwise false</returns>
-        protected override bool IsValidContentType
-            (
-                string contentType
-            )
+        protected override bool IsValidContentType(string contentType)
         {
             if (String.IsNullOrEmpty(contentType))
             {
@@ -41,10 +33,10 @@
                 contentType = contentType.ToLower();
 
                 return contentType == "image/jpeg"
-                        || contentType == "image/pjpeg"
-                        || contentType == "image/png"
-                        || contentType == "image/gif"
-                        || contentType == "image/svg+xml";
+                    || contentType == "image/pjpeg"
+                    || contentType == "image/png"
+                    || contentType == "image/gif"
+                    || contentType == "image/svg+xml";
             }
         }
     }

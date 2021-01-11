@@ -17,12 +17,18 @@
         /// <param name="toType">The new type</param>
         /// <param name="fromObject">The current type value</param>
         /// <returns>True, if the type can be converted; otherwise false</returns>
-        public static bool CanConvert
-            (
-                this Type fromType,
-                Type toType,
-                object fromObject
-            )
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="MethodAccessException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.InvalidComObjectException"></exception>
+        /// <exception cref="MissingMethodException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.COMException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="System.Reflection.TargetException"></exception>
+        /// <exception cref="System.Reflection.TargetParameterCountException"></exception>
+        public static bool CanConvert(this Type fromType, Type toType, object fromObject)
         {
             if (fromObject == null)
             {
@@ -36,21 +42,12 @@
                 {
                     return true;
                 }
-                else if (toType.IsAssignableFrom(fromObjectType) 
-                    || fromObjectType.IsAssignableFrom(toType))
+                else if (toType.IsAssignableFrom(fromObjectType) || fromObjectType.IsAssignableFrom(toType))
                 {
                     if (toType.IsInterface)
                     {
-                        var fromConvertable = fromType.ImplementsInterface
-                        (
-                            typeof(IConvertible)
-                        );
-
-                        var toConvertable = toType.ImplementsInterface
-                        (
-                            typeof(IConvertible)
-                        );
-
+                        var fromConvertable = fromType.ImplementsInterface(typeof(IConvertible));
+                        var toConvertable = toType.ImplementsInterface(typeof(IConvertible));
                         var canConvert = (fromConvertable && toConvertable);
 
                         return canConvert;
@@ -62,28 +59,10 @@
                 }
                 else
                 {
-                    var converterType = typeof(TypeConverterChecker<,>).MakeGenericType
-                    (
-                        fromType,
-                        toType
-                    );
-
-                    var instance = Activator.CreateInstance
-                    (
-                        converterType,
-                        fromObject
-                    );
-
-                    var canConvertProperty = converterType.GetProperty
-                    (
-                        "CanConvert"
-                    );
-
-                    var canConvert = (bool)canConvertProperty.GetGetMethod().Invoke
-                    (
-                        instance,
-                        null
-                    );
+                    var converterType = typeof(TypeConverterChecker<,>).MakeGenericType(fromType, toType);
+                    var instance = Activator.CreateInstance(converterType, fromObject);
+                    var canConvertProperty = converterType.GetProperty("CanConvert");
+                    var canConvert = (bool)canConvertProperty.GetGetMethod().Invoke(instance, null);
 
                     return canConvert;
                 }
@@ -93,16 +72,20 @@
         /// <summary>
         /// Gets the default value for a type at runtime
         /// </summary>
-        /// <param name="t">The type to get the default value for</param>
+        /// <param name="type">The type to get the default value for</param>
         /// <returns>The default value</returns>
-        public static object GetDefaultValue
-            (
-                this Type t
-            )
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="MethodAccessException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.InvalidComObjectException"></exception>
+        /// <exception cref="MissingMethodException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.COMException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        public static object GetDefaultValue(this Type type)
         {
-            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+            if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
             {
-                return Activator.CreateInstance(t);
+                return Activator.CreateInstance(type);
             }
             else
             {
@@ -113,16 +96,13 @@
         /// <summary>
         /// Determines if the type has a property with the name specified
         /// </summary>
-        /// <param name="t">The type to check</param>
+        /// <param name="type">The type to check</param>
         /// <param name="propertyName">The name of the property to look for</param>
         /// <returns>True, if the property exists; otherwise false</returns>
-        public static bool HasProperty
-            (
-                this Type t,
-                string propertyName
-            )
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        public static bool HasProperty(this Type type, string propertyName)
         {
-            return t.GetProperty(propertyName) != null;
+            return type.GetProperty(propertyName) != null;
         }
 
         /// <summary>
@@ -132,12 +112,9 @@
         /// <param name="propertyName">The property name</param>
         /// <param name="obj">The object</param>
         /// <returns>The property value</returns>
-        public static object GetPropertyValue
-            (
-                this Type type,
-                string propertyName,
-                object obj
-            )
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static object GetPropertyValue(this Type type, string propertyName, object obj)
         {
             if (false == type.HasProperty(propertyName))
             {
@@ -158,11 +135,8 @@
         /// </summary>
         /// <param name="type">The type to check</param>
         /// <param name="acceptNullables">If true nullable numeric types are also accepted</param>
-        public static bool IsNumericType
-            (
-                this Type type,
-                bool acceptNullables = true
-            )
+        /// <exception cref="InvalidOperationException"></exception>
+        public static bool IsNumericType(this Type type, bool acceptNullables = true)
         {
             if (type == null)
             {
@@ -186,17 +160,11 @@
 
                 case TypeCode.Object:
 
-                    var isNullable = 
-                    (
-                        type.GetGenericTypeDefinition() == typeof(Nullable<>)
-                    );
+                    var isNullable = (type.GetGenericTypeDefinition() == typeof(Nullable<>));
 
                     if (acceptNullables && type.IsGenericType && isNullable)
                     {
-                        return IsNumericType
-                        (
-                            Nullable.GetUnderlyingType(type)
-                        );
+                        return IsNumericType(Nullable.GetUnderlyingType(type));
                     }
 
                     return false;
@@ -210,10 +178,8 @@
         /// </summary>
         /// <param name="type">The type to check</param>
         /// <returns>True, if the type is nullable; otherwise false</returns>
-        public static bool IsNullableType
-            (
-                this Type type
-            )
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        public static bool IsNullableType(this Type type)
         {
             Validate.IsNotNull(type);
 
@@ -223,10 +189,7 @@
             }
             else
             {
-                return
-                (
-                    false == type.IsValueType || (Nullable.GetUnderlyingType(type) != null)
-                );
+                return (false == type.IsValueType || (Nullable.GetUnderlyingType(type) != null));
             }
         }
 
@@ -238,10 +201,8 @@
         /// <remarks>
         /// All enumerable types are allowed, except for string
         /// </remarks>
-        public static bool IsEnumerable
-            (
-                this Type type
-            )
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        public static bool IsEnumerable(this Type type)
         {
             Validate.IsNotNull(type);
 
@@ -251,10 +212,7 @@
             }
             else
             {
-                return type.GetInterfaces().Contains
-                (
-                    typeof(IEnumerable)
-                );
+                return type.GetInterfaces().Contains(typeof(IEnumerable));
             }
         }
 
@@ -263,18 +221,12 @@
         /// </summary>
         /// <param name="type">The type to check</param>
         /// <returns>True, if the type is a dictionary; otherwise false</returns>
-        public static bool IsDictionary
-            (
-                this Type type
-            )
+        /// <exception cref="InvalidOperationException"></exception>
+        public static bool IsDictionary(this Type type)
         {
             Validate.IsNotNull(type);
 
-            return
-            (
-                type.IsGenericType 
-                    && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)
-            );
+            return (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>));
         }
 
         /// <summary>
@@ -282,10 +234,9 @@
         /// </summary>
         /// <param name="collectionType">The collection type</param>
         /// <returns>The enumerable type found</returns>
-        public static Type GetEnumerableType
-            (
-                this Type collectionType
-            )
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static Type GetEnumerableType(this Type collectionType)
         {
             Validate.IsNotNull(collectionType);
 
@@ -323,31 +274,22 @@
         /// <remarks>
         /// By simple type, we mean a value type, enum or string.
         /// </remarks>
-        public static bool IsSimple
-            (
-                this Type type
-            )
+        /// <exception cref="InvalidOperationException"></exception>
+        public static bool IsSimple(this Type type)
         {
             Validate.IsNotNull(type);
 
-            if (type.IsGenericType 
-                && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 // Nullable type, check if the nested type is simple.
-                return IsSimple
-                (
-                    type.GetGenericArguments()[0]
-                );
+                return IsSimple(type.GetGenericArguments()[0]);
             }
             else
             {
-                return
-                (
-                    type.IsPrimitive
-                        || type.IsEnum
-                        || type.Equals(typeof(string))
-                        || type.Equals(typeof(decimal))
-                );
+                return type.IsPrimitive
+                    || type.IsEnum
+                    || type.Equals(typeof(string))
+                    || type.Equals(typeof(decimal));
             }
         }
 
@@ -357,19 +299,12 @@
         /// <param name="type">The type to check</param>
         /// <param name="interfaceType">The interface type</param>
         /// <returns>True, if the type implements the interface; otherwise false</returns>
-        public static bool ImplementsInterface
-            (
-                this Type type,
-                Type interfaceType
-            )
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        public static bool ImplementsInterface(this Type type, Type interfaceType)
         {
             Validate.IsNotNull(type);
-            Validate.IsNotNull(interfaceType);
-
-            return type.GetInterfaces().Contains
-            (
-                interfaceType
-            );
+            
+            return type.GetInterfaces().Contains(interfaceType);
         }
 
         /// <summary>
@@ -377,10 +312,7 @@
         /// </summary>
         /// <param name="type">The type to check</param>
         /// <returns>True, if it is a date time; otherwise false</returns>
-        public static bool IsDateTime
-            (
-                this Type type
-            )
+        public static bool IsDateTime(this Type type)
         {
             Validate.IsNotNull(type);
 

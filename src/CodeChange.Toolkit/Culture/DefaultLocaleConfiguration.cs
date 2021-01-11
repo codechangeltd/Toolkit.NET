@@ -20,11 +20,7 @@
         /// </summary>
         /// <param name="timeZone">The time zone</param>
         /// <param name="culture">The culture</param>
-        public DefaultLocaleConfiguration
-            (
-                TimeZoneInfo timeZone,
-                CultureInfo culture
-            )
+        public DefaultLocaleConfiguration(TimeZoneInfo timeZone, CultureInfo culture)
         {
             Validate.IsNotNull(timeZone);
             Validate.IsNotNull(culture);
@@ -48,10 +44,7 @@
         /// However, the offset is measured in minutes, so the 
         /// range is actually -720 to 840.
         /// </remarks>
-        public void SetTimeZoneOffset
-            (
-                int offset
-            )
+        public void SetTimeZoneOffset(int offset)
         {
             if (offset < -840 || offset > 720)
             {

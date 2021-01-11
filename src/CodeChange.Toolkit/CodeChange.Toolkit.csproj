@@ -4,16 +4,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing various extensions and tools built on top of the .NET Framework Class Library.</Description>
-    <Copyright>Copyright © Code Change Ltd 2020</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2021</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>1.3.0</AssemblyVersion>
-    <Version>1.3.0</Version>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <Version>2.0.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Created synchronous and asynchronous paged collections.</PackageReleaseNotes>
+    <PackageReleaseNotes>Introduced PagedResult for synchronous and asynchronous paged collections.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

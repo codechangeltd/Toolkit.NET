@@ -17,10 +17,7 @@
         /// Sets the time zone offset value
         /// </summary>
         /// <param name="offset">The new offset value</param>
-        void SetTimeZoneOffset
-        (
-            int offset
-        );
+        void SetTimeZoneOffset(int offset);
 
         /// <summary>
         /// Gets the default time zone to use

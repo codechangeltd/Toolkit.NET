@@ -16,12 +16,7 @@
         /// <param name="array2">The second array</param>
         /// <param name="removeDuplicates">If true, all duplicates are removed from the joined array</param>
         /// <returns>The combined arrays</returns>
-        public static T[] JoinArrays<T>
-            (
-                this T[] array1,
-                T[] array2,
-                bool removeDuplicates = true
-            )
+        public static T[] JoinArrays<T>(this T[] array1, T[] array2, bool removeDuplicates = true)
         {
             if (array1.Length == 0)
             {
@@ -53,10 +48,7 @@
         /// </summary>
         /// <param name="array">The array to check</param>
         /// <returns>True, if the numbers are sequential; otherwise false</returns>
-        public static bool IsSequential
-            (
-                this int[] array
-            )
+        public static bool IsSequential(this int[] array)
         {
             if (array == null)
             {
@@ -64,13 +56,9 @@
             }
             else
             {
-                var zipped = array.Zip
-                (
-                    array.Skip(1),
-                    (a, b) => (a + 1) == b
-                );
+                var zipped = array.Zip(array.Skip(1), (a, b) => (a + 1) == b);
 
-                return zipped.All(x => x);
+                return zipped.All(_ => _);
             }
         }
     }

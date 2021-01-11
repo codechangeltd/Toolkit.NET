@@ -13,11 +13,6 @@
         /// <param name="targetValue">The target value to compare against</param>
         /// <param name="compareOperator">The data comparer operator</param>
         /// <returns>True, if the candidate value matches the target value using the comparison operator</returns>
-        bool IsMatch
-        (
-            T candidateValue,
-            T targetValue,
-            DataCompareOperator compareOperator
-        );
+        bool IsMatch(T candidateValue, T targetValue, DataCompareOperator compareOperator);
     }
 }

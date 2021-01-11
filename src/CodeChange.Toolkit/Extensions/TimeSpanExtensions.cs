@@ -10,10 +10,7 @@
         /// </summary>
         /// <param name="span">The time span</param>
         /// <returns>The formatted time difference</returns>
-        public static string ToLongString
-            (
-                this TimeSpan span
-            )
+        public static string ToLongString(this TimeSpan span)
         {
             string template;
 

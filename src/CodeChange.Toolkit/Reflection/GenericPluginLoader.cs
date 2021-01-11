@@ -16,25 +16,20 @@
         /// </summary>
         /// <param name="path">The path to search</param>
         /// <returns>A collection of the assemblies that were loaded</returns>
-        public IEnumerable<Assembly> LoadAssemblies
-            (
-                string path
-            )
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="System.Security.SecurityException"></exception>
+        /// <exception cref="BadImageFormatException"></exception>
+        public IEnumerable<Assembly> LoadAssemblies(string path)
         {
             Validate.IsNotEmpty(path);
 
             if (Directory.Exists(path))
             {
-                var dllFileNames = Directory.GetFiles
-                (
-                    path,
-                    "*.dll"
-                );
-                
-                var assemblies = new List<Assembly>
-                (
-                    dllFileNames.Length
-                );
+                var dllFileNames = Directory.GetFiles(path, "*.dll");
+                var assemblies = new List<Assembly>(dllFileNames.Length);
 
                 foreach (var dllFile in dllFileNames)
                 {
@@ -48,10 +43,7 @@
             }
             else
             {
-                throw new IOException
-                (
-                    $"The path '{path}' does not exist."
-                );
+                throw new IOException($"The path '{path}' does not exist.");
             }
         }
 
@@ -61,11 +53,21 @@
         /// <param name="path">The path of the plug-ins directory</param>
         /// <param name="activator">THe type activator (optional)</param>
         /// <returns>A collection of matching plug-in instances</returns>
-        public IEnumerable<T> LoadPlugins
-            (
-                string path,
-                ITypeActivator activator = null
-            )
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="System.Security.SecurityException"></exception>
+        /// <exception cref="BadImageFormatException"></exception>
+        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="MethodAccessException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.InvalidComObjectException"></exception>
+        /// <exception cref="MissingMethodException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.COMException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        public IEnumerable<T> LoadPlugins(string path, ITypeActivator activator = null)
         {
             Validate.IsNotEmpty(path);
 
@@ -97,10 +99,7 @@
                 }
             }
 
-            var plugins = new List<T>
-            (
-                pluginTypes.Count
-            );
+            var plugins = new List<T>(pluginTypes.Count);
 
             // Build a collection of plug-in instances from the plug-in types
             foreach (var type in pluginTypes)

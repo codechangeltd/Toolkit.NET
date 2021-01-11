@@ -22,11 +22,7 @@
         ///     An object whose value is the sum of the date and time represented by this 
         ///     instance and the number of weeks represented by value.
         /// </returns>
-        public static DateTime AddWeeks
-            (
-                this DateTime dateTime,
-                double value
-            )
+        public static DateTime AddWeeks(this DateTime dateTime, double value)
         {
             return dateTime.AddDays(value * 7);
         }
@@ -45,10 +41,7 @@
         ///     if the converted value is too small to be represented as a System.DateTime
         ///     object.
         /// </returns>
-        public static DateTime? ToLocalTime
-            (
-                this DateTime? dateTime
-            )
+        public static DateTime? ToLocalTime(this DateTime? dateTime)
         {
             return dateTime.HasValue ? dateTime.Value.ToLocalTime() : dateTime;
         }
@@ -59,21 +52,13 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime ToLocalTime
-            (
-                this DateTime date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime ToLocalTime(this DateTime date, ILocaleConfiguration localeConfiguration)
         {
             if (date.HasTime())
             {
                 if (date.Kind == DateTimeKind.Unspecified)
                 {
-                    date = DateTime.SpecifyKind
-                    (
-                        date,
-                        DateTimeKind.Utc
-                    );
+                    date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
                 }
 
                 return date.UtcToLocalTime(localeConfiguration);
@@ -90,19 +75,11 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime? ToLocalTime
-            (
-                this DateTime? date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime? ToLocalTime(this DateTime? date, ILocaleConfiguration localeConfiguration)
         {
             if (date.HasValue)
             {
-                return ToLocalTime
-                (
-                    date.Value,
-                    localeConfiguration
-                );
+                return ToLocalTime(date.Value, localeConfiguration);
             }
             else
             {
@@ -116,11 +93,7 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime UtcToLocalTime
-            (
-                this DateTime date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime UtcToLocalTime(this DateTime date, ILocaleConfiguration localeConfiguration)
         {
             Validate.IsNotNull(localeConfiguration);
 
@@ -139,31 +112,20 @@
 
             if (localeConfiguration.TimeZoneOffset.HasValue)
             {
-                var offset =
-                (
-                    localeConfiguration.TimeZoneOffset.Value * -1
-                );
+                var offset = (localeConfiguration.TimeZoneOffset.Value * -1);
 
                 date = date.AddMinutes(offset);
             }
             else if (localeConfiguration.DefaultTimeZone != null)
             {
-                date = TimeZoneInfo.ConvertTimeFromUtc
-                (
-                    date,
-                    localeConfiguration.DefaultTimeZone
-                );
+                date = TimeZoneInfo.ConvertTimeFromUtc(date, localeConfiguration.DefaultTimeZone);
             }
             else
             {
                 date = date.ToLocalTime();
             }
 
-            date = DateTime.SpecifyKind
-            (
-                date,
-                DateTimeKind.Local
-            );
+            date = DateTime.SpecifyKind(date, DateTimeKind.Local);
 
             return date;
         }
@@ -174,19 +136,11 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime? UtcToLocalTime
-            (
-                this DateTime? date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime? UtcToLocalTime(this DateTime? date, ILocaleConfiguration localeConfiguration)
         {
             if (date.HasValue)
             {
-                return ToLocalTime
-                (
-                    date.Value,
-                    localeConfiguration
-                );
+                return ToLocalTime(date.Value, localeConfiguration);
             }
             else
             {
@@ -200,11 +154,7 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime LocalToUtcTime
-            (
-                this DateTime date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime LocalToUtcTime(this DateTime date, ILocaleConfiguration localeConfiguration)
         {
             if (date.Kind == DateTimeKind.Unspecified)
             {
@@ -227,22 +177,14 @@
             }
             else if (localeConfiguration.DefaultTimeZone != null)
             {
-                date = TimeZoneInfo.ConvertTimeToUtc
-                (
-                    date,
-                    localeConfiguration.DefaultTimeZone
-                );
+                date = TimeZoneInfo.ConvertTimeToUtc(date, localeConfiguration.DefaultTimeZone);
             }
             else
             {
                 return date.ToUniversalTime();
             }
 
-            date = DateTime.SpecifyKind
-            (
-                date,
-                DateTimeKind.Utc
-            );
+            date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
 
             return date;
         }
@@ -253,19 +195,11 @@
         /// <param name="date">The date convert</param>
         /// <param name="localeConfiguration">The locale configuration</param>
         /// <returns>The date in local time</returns>
-        public static DateTime? LocalToUtcTime
-            (
-                this DateTime? date,
-                ILocaleConfiguration localeConfiguration
-            )
+        public static DateTime? LocalToUtcTime(this DateTime? date, ILocaleConfiguration localeConfiguration)
         {
             if (date.HasValue)
             {
-                return LocalToUtcTime
-                (
-                    date.Value,
-                    localeConfiguration
-                );
+                return LocalToUtcTime(date.Value, localeConfiguration);
             }
             else
             {
@@ -286,10 +220,7 @@
         ///     be represented by a System.DateTime object, or System.DateTime.MinValue if
         ///     the converted value is too small to be represented by a System.DateTime object.
         /// </returns>
-        public static DateTime? ToUniversalTime
-            (
-                this DateTime? dateTime
-            )
+        public static DateTime? ToUniversalTime(this DateTime? dateTime)
         {
             return dateTime.HasValue ? dateTime.Value.ToUniversalTime() : dateTime;
         }
@@ -299,10 +230,7 @@
         /// </summary>
         /// <param name="date">The date to check</param>
         /// <returns>True, if there is a time component; otherwise false</returns>
-        public static bool HasTime
-            (
-                this DateTime? date
-            )
+        public static bool HasTime(this DateTime? date)
         {
             if (date.HasValue)
             {
@@ -319,10 +247,7 @@
         /// </summary>
         /// <param name="date">The date to check</param>
         /// <returns>True, if there is a time component; otherwise false</returns>
-        public static bool HasTime
-            (
-                this DateTime date
-            )
+        public static bool HasTime(this DateTime date)
         {
             return (date.TimeOfDay > TimeSpan.Zero);
         }

@@ -113,13 +113,7 @@
                 [CallerMemberName] string memberName = ""
             )
         {
-            IsBetween
-            (
-                (double)input,
-                (double)startRange,
-                (double)endRange,
-                memberName
-            );
+            IsBetween((double)input, (double)startRange, (double)endRange, memberName);
         }
 
         /// <summary>
@@ -184,13 +178,7 @@
                 [CallerMemberName] string memberName = ""
             )
         {
-            IsBetween
-            (
-                (double)input,
-                (double)startRange,
-                (double)endRange,
-                memberName
-            );
+            IsBetween((double)input, (double)startRange, (double)endRange, memberName);
         }
 
         /// <summary>
@@ -255,13 +243,7 @@
                 [CallerMemberName] string memberName = ""
             )
         {
-            IsBetween
-            (
-                (double)input,
-                (double)startRange,
-                (double)endRange,
-                memberName
-            );
+            IsBetween((double)input, (double)startRange, (double)endRange, memberName);
         }
 
         /// <summary>

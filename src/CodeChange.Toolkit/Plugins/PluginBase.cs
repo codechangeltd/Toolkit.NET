@@ -14,13 +14,7 @@
         /// <summary>
         /// Gets a default name for the plug-in
         /// </summary>
-        public virtual string Name
-        {
-            get
-            {
-                return this.GetType().Name.Replace("Plugin", String.Empty);
-            }
-        }
+        public virtual string Name => GetType().Name.Replace("Plugin", String.Empty);
 
         /// <summary>
         /// Gets the description of the plug-in
@@ -30,6 +24,7 @@
         /// <summary>
         /// Gets the name of the plug-ins author
         /// </summary>
+        /// <exception cref="System.IO.FileNotFoundException">Get. Ignore.</exception>
         public virtual string Author
         {
             get
@@ -52,10 +47,18 @@
         {
             get
             {
-                var assembly = this.GetType().Assembly;
-                var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                
-                return new Version(fvi.FileVersion);
+                var assembly = GetType().Assembly;
+
+                try
+                {
+                    var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+                    return new Version(fvi.FileVersion);
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    return new Version();
+                }
             }
         }
 
@@ -68,6 +71,7 @@
         /// Upgrades the plug-in from the version specified to the latest version
         /// </summary>
         /// <param name="fromVersion">The version to upgrade from</param>
+        /// <exception cref="InvalidOperationException">Ignore.</exception>
         public virtual void Upgrade(Version fromVersion)
         {
             Validate.IsNotNull(fromVersion);
