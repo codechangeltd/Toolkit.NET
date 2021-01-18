@@ -92,7 +92,7 @@
         /// <returns>A collection of collections, each representing a page</returns>
         public IEnumerable<PagedResult<T>> GetAllPages()
         {
-            for (var number = 1; number <= this.PageCount; number++)
+            for (var number = 0; number <= this.PageCount-1; number++)
             {
                 yield return GetPage(number);
             }
@@ -105,6 +105,8 @@
         /// <returns>A collection of the items from the page</returns>
         public IEnumerable<T> GetItems(int pageNumber)
         {
+            pageNumber = pageNumber++;
+
             Validate.IsGreaterThan(pageNumber, 0);
             Validate.IsLessThan(pageNumber, this.PageCount);
 

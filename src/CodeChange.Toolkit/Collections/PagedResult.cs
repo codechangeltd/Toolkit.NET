@@ -1,14 +1,13 @@
 ﻿namespace CodeChange.Toolkit.Collections
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     
     /// <summary>
     /// Represents the result of a single page from a paged collection
     /// </summary>
     /// <typeparam name="T">The paged object type</typeparam>
-    public class PagedResult<T> : IEnumerable<T>
+    public class PagedResult<T>
     {
         public PagedResult(int pageNumber, int pageCount, int pageSize, int itemCount, IEnumerable<T> results)
         {
@@ -56,18 +55,6 @@
         /// Gets the objects in the page
         /// </summary>
         public IEnumerable<T> Results { get; }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the collection</returns>
-        public IEnumerator<T> GetEnumerator() => this.Results.GetEnumerator();
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the collection</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.Results.GetEnumerator();
 
         /// <summary>
         /// Gets a description of the paged result
