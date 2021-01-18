@@ -1,11 +1,13 @@
 ﻿namespace CodeChange.Toolkit.EntityFrameworkCore
 {
-    using CodeChange.Toolkit.Collections;
     using CodeChange.Toolkit.Domain;
     using CodeChange.Toolkit.Domain.Aggregate;
     using CSharpFunctionalExtensions;
     using Microsoft.EntityFrameworkCore;
     using Nito.AsyncEx.Synchronous;
+    using Paginator;
+    using Paginator.Async;
+    using Paginator.Async.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -25,14 +27,7 @@
         private readonly DbSet<TRoot> _writeSet;
         private List<PropertyInfo> _navigationProperties;
 
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="context">The database context instance</param>
-        public RepositoryBase
-            (
-                DbContext context
-            )
+        public RepositoryBase(DbContext context)
         {
             Validate.IsNotNull(context);
 
@@ -43,16 +38,7 @@
             this.WriteContext = context;
         }
 
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="readContext">The read database context</param>
-        /// <param name="writeContext">The write database context</param>
-        public RepositoryBase
-            (
-                DbContext readContext,
-                DbContext writeContext
-            )
+        public RepositoryBase(DbContext readContext, DbContext writeContext)
         {
             Validate.IsNotNull(readContext);
             Validate.IsNotNull(writeContext);
@@ -103,10 +89,7 @@
         /// </summary>
         /// <param name="entity">The entity to add</param>
         /// <returns>The result of the operation</returns>
-        protected virtual Result AddEntity
-            (
-                TRoot entity
-            )
+        protected virtual Result AddEntity(TRoot entity)
         {
             return AddEntityAsync(entity).WaitAndUnwrapException();
         }
@@ -117,11 +100,7 @@
         /// <param name="entity">The entity to add</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        protected virtual async Task<Result> AddEntityAsync
-            (
-                TRoot entity,
-                CancellationToken cancellationToken = default
-            )
+        protected virtual async Task<Result> AddEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
         {
             Validate.IsNotNull(entity);
 
@@ -140,10 +119,7 @@
             }
             else
             {
-                return Result.Failure
-                (
-                    $"An item with the key '{key}' has already been added."
-                );
+                return Result.Failure($"An item with the key '{key}' has already been added.");
             }
         }
 
@@ -152,10 +128,7 @@
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
         /// <returns>The result of the operation</returns>
-        protected virtual Result AddOrUpdateEntity
-            (
-                TRoot entity
-            )
+        protected virtual Result AddOrUpdateEntity(TRoot entity)
         {
             return AddOrUpdateEntityAsync(entity).WaitAndUnwrapException();
         }
@@ -176,11 +149,7 @@
 
             var attached = _writeSet.Local.Any
             (
-                x => x.LookupKey.Equals
-                (
-                    entity.LookupKey,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(entity.LookupKey, StringComparison.OrdinalIgnoreCase)
             );
 
             if (attached)
@@ -200,11 +169,7 @@
 
                 var countTask = untrackedSet.CountAsync
                 (
-                    x => x.LookupKey.Equals
-                    (
-                        entity.LookupKey,
-                        StringComparison.OrdinalIgnoreCase
-                    ),
+                    _ => _.LookupKey.Equals(entity.LookupKey, StringComparison.OrdinalIgnoreCase),
                     cancellationToken
                 );
 
@@ -212,21 +177,13 @@
 
                 if (usedCount == 0)
                 {
-                    var addTask = AddEntityAsync
-                    (
-                        entity,
-                        cancellationToken
-                    );
+                    var addTask = AddEntityAsync(entity, cancellationToken);
 
                     return await addTask.ConfigureAwait(false);
                 }
                 else
                 {
-                    var updateTask = UpdateEntityAsync
-                    (
-                        entity,
-                        cancellationToken
-                    );
+                    var updateTask = UpdateEntityAsync(entity, cancellationToken);
 
                     return await updateTask.ConfigureAwait(false);
                 }
@@ -238,10 +195,7 @@
         /// </summary>
         /// <param name="key">The key value to check</param>
         /// <returns>True, if the key has already been used; otherwise false</returns>
-        protected virtual bool KeyUsed
-            (
-                string key
-            )
+        protected virtual bool KeyUsed(string key)
         {
             return KeyUsedAsync(key).WaitAndUnwrapException();
         }
@@ -252,11 +206,7 @@
         /// <param name="key">The key value to check</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>True, if the key has already been used; otherwise false</returns>
-        protected virtual async Task<bool> KeyUsedAsync
-            (
-                string key,
-                CancellationToken cancellationToken = default
-            )
+        protected virtual async Task<bool> KeyUsedAsync(string key, CancellationToken cancellationToken = default)
         {
             if (String.IsNullOrEmpty(key))
             {
@@ -265,11 +215,7 @@
 
             var attached = _writeSet.Local.Any
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
             );
 
             if (attached)
@@ -277,9 +223,7 @@
                 return true;
             }
 
-            var task = ExistsAsync(key, cancellationToken);
-
-            return await task.ConfigureAwait(false);
+            return await ExistsAsync(key, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -288,11 +232,7 @@
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <returns>The result with the matching entity</returns>
-        protected virtual Result<TRoot> GetEntity
-            (
-                string key,
-                bool useEagerLoading = false
-            )
+        protected virtual Result<TRoot> GetEntity(string key, bool useEagerLoading = false)
         {
             return GetEntityAsync(key).WaitAndUnwrapException();
         }
@@ -315,11 +255,7 @@
 
             var task = GetEntityAsync
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                ),
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase),
                 useEagerLoading,
                 cancellationToken
             );
@@ -333,11 +269,7 @@
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <returns>The result with the matching entity</returns>
-        protected virtual Result<TRoot> GetEntity
-            (
-                long id,
-                bool useEagerLoading = false
-            )
+        protected virtual Result<TRoot> GetEntity(long id, bool useEagerLoading = false)
         {
             return GetEntityAsync(id).WaitAndUnwrapException();
         }
@@ -356,12 +288,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = GetEntityAsync
-            (
-                x => x.ID == id,
-                useEagerLoading,
-                cancellationToken
-            );
+            var task = GetEntityAsync(_ => _.ID == id, useEagerLoading, cancellationToken);
 
             return await task.ConfigureAwait(false);
         }
@@ -380,13 +307,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var findTask = FindFirstOrDefaultAsync
-            (
-                predicate,
-                useEagerLoading,
-                cancellationToken
-            );
-
+            var findTask = FindFirstOrDefaultAsync(predicate, useEagerLoading, cancellationToken);
             var entity = await findTask.ConfigureAwait(false);
 
             if (entity == default(TRoot))
@@ -399,10 +320,7 @@
                     .Where(entry => entry.State == EntityState.Added)
                     .Select(entry => entry.Entity);
 
-                entity = addedEntities.FirstOrDefault
-                (
-                    predicate.Compile()
-                );
+                entity = addedEntities.FirstOrDefault(predicate.Compile());
 
                 if (entity == default(TRoot))
                 {
@@ -423,10 +341,7 @@
         /// </summary>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
         /// <returns>A collection of all aggregate root entities in the database</returns>
-        protected virtual IQueryable<TRoot> GetAll
-            (
-                bool useEagerLoading = false
-            )
+        protected virtual IQueryable<TRoot> GetAll(bool useEagerLoading = false)
         {
             var query = (IQueryable<TRoot>)_readSet;
 
@@ -444,11 +359,7 @@
         /// <param name="predicate">The predicate</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
         /// <returns>A query for finding the entities</returns>
-        protected virtual IQueryable<TRoot> FindAll
-            (
-                Expression<Func<TRoot, bool>> predicate,
-                bool useEagerLoading = false
-            )
+        protected virtual IQueryable<TRoot> FindAll(Expression<Func<TRoot, bool>> predicate, bool useEagerLoading = false)
         {
             var query = _readSet.Where(predicate);
 
@@ -466,11 +377,7 @@
         /// <param name="query">The query to filter and paginate</param>
         /// <param name="filter">The filter</param>
         /// <returns>A paged collection</returns>
-        protected virtual IPagedCollection<TRoot> FilterAndPaginate
-            (
-                IQueryable<TRoot> query,
-                AggregateFilter filter
-            )
+        protected virtual IPagedCollection<TRoot> FilterAndPaginate(IQueryable<TRoot> query, AggregateFilter filter)
         {
             Validate.IsNotNull(filter);
 
@@ -504,11 +411,7 @@
         /// <param name="query">The query to filter</param>
         /// <param name="filter">The filter</param>
         /// <returns>The filtered queryable</returns>
-        protected virtual IQueryable<TRoot> Filter
-            (
-                IQueryable<TRoot> query,
-                AggregateFilter filter
-            )
+        protected virtual IQueryable<TRoot> Filter(IQueryable<TRoot> query, AggregateFilter filter)
         {
             Validate.IsNotNull(filter);
 
@@ -517,10 +420,7 @@
                 var startDate = filter.CreatedRange.StartDate;
                 var endDate = filter.CreatedRange.EndDate.AddDays(1);
 
-                query = query.Where
-                (
-                    x => x.DateCreated >= startDate && x.DateCreated < endDate
-                );
+                query = query.Where(_ => _.DateCreated >= startDate && _.DateCreated < endDate);
             }
 
             if (filter.ModifiedRange != null)
@@ -528,32 +428,21 @@
                 var startDate = filter.ModifiedRange.StartDate;
                 var endDate = filter.ModifiedRange.EndDate.AddDays(1);
 
-                query = query.Where
-                (
-                    x => x.DateModified >= startDate && x.DateModified < endDate
-                );
+                query = query.Where(_ => _.DateModified >= startDate && _.DateModified < endDate);
             }
 
             return query;
         }
 
         /// <summary>
-        /// Paginates a query
+        /// Paginates a query synchronously
         /// </summary>
         /// <param name="query">The query to paginate</param>
         /// <param name="pageSize">The maximum page size</param>
         /// <returns>A paged collection</returns>
-        protected virtual IPagedCollection<TRoot> Paginate
-            (
-                IQueryable<TRoot> query,
-                int pageSize
-            )
+        protected virtual IPagedCollection<TRoot> Paginate(IQueryable<TRoot> query, int pageSize)
         {
-            return new PagedCollection<TRoot>
-            (
-                query,
-                pageSize
-            );
+            return new PagedCollection<TRoot>(query, pageSize);
         }
 
         /// <summary>
@@ -562,17 +451,9 @@
         /// <param name="query">The query to paginate</param>
         /// <param name="pageSize">The maximum page size</param>
         /// <returns>An asynchronous paged collection</returns>
-        protected virtual IAsyncPagedCollection<TRoot> PaginateAsync
-            (
-                IQueryable<TRoot> query,
-                int pageSize
-            )
+        protected virtual IAsyncPagedCollection<TRoot> PaginateAsync(IQueryable<TRoot> query, int pageSize)
         {
-            return new AsyncPagedCollection<TRoot>
-            (
-                query,
-                pageSize
-            );
+            return new EfCoreAsyncPagedCollection<TRoot>(query, pageSize);
         }
 
         /// <summary>
@@ -581,11 +462,7 @@
         /// <param name="predicate">The predicate</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
         /// <returns>The matching entity, or the default value if not found</returns>
-        protected virtual TRoot FindFirstOrDefault
-            (
-                Expression<Func<TRoot, bool>> predicate,
-                bool useEagerLoading = false
-            )
+        protected virtual TRoot FindFirstOrDefault(Expression<Func<TRoot, bool>> predicate, bool useEagerLoading = false)
         {
             return FindAll(predicate).FirstOrDefault();
         }
@@ -604,8 +481,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var query = FindAll(predicate);
-            var task = query.FirstOrDefaultAsync(cancellationToken);
+            var task = FindAll(predicate).FirstOrDefaultAsync(cancellationToken);
 
             return await task.ConfigureAwait(false);
         }
@@ -615,10 +491,7 @@
         /// </summary>
         /// <param name="predicate">The predicate</param>
         /// <returns>The number of entities found</returns>
-        protected virtual int Count
-            (
-                Expression<Func<TRoot, bool>> predicate
-            )
+        protected virtual int Count(Expression<Func<TRoot, bool>> predicate)
         {
             return _readSet.Count(predicate);
         }
@@ -635,11 +508,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = _readSet.AsNoTracking().CountAsync
-            (
-                predicate,
-                cancellationToken
-            );
+            var task = _readSet.AsNoTracking().CountAsync(predicate, cancellationToken);
 
             return await task.ConfigureAwait(false);
         }
@@ -649,10 +518,7 @@
         /// </summary>
         /// <param name="key">The lookup key</param>
         /// <returns>True, if the entity was found; otherwise false</returns>
-        protected virtual bool Exists
-            (
-                string key
-            )
+        protected virtual bool Exists(string key)
         {
             return ExistsAsync(key).WaitAndUnwrapException();
         }
@@ -663,19 +529,11 @@
         /// <param name="predicate">The lookup key</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>True, if the entity was found; otherwise false</returns>
-        protected virtual async Task<bool> ExistsAsync
-            (
-                string key,
-                CancellationToken cancellationToken = default
-            )
+        protected virtual async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
         {
             var task = ExistsAsync
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                ),
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase),
                 cancellationToken
             );
 
@@ -689,10 +547,7 @@
         /// </summary>
         /// <param name="predicate">The predicate</param>
         /// <returns>True, if the entity was found; otherwise false</returns>
-        protected virtual bool Exists
-            (
-                Expression<Func<TRoot, bool>> predicate
-            )
+        protected virtual bool Exists(Expression<Func<TRoot, bool>> predicate)
         {
             return ExistsAsync(predicate).WaitAndUnwrapException();
         }
@@ -709,12 +564,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = _readSet.AsNoTracking().CountAsync
-            (
-                predicate,
-                cancellationToken
-            );
-
+            var task = _readSet.AsNoTracking().CountAsync(predicate, cancellationToken);
             var count = await task.ConfigureAwait(false);
 
             return count > 0;
@@ -725,10 +575,7 @@
         /// </summary>
         /// <param name="entity">The entity to update</param>
         /// <returns>The result of the operation</returns>
-        protected virtual Result UpdateEntity
-            (
-                TRoot entity
-            )
+        protected virtual Result UpdateEntity(TRoot entity)
         {
             return UpdateEntityAsync(entity).WaitAndUnwrapException();
         }
@@ -751,11 +598,7 @@
 
             var countTask = CountAsync
             (
-                x => x.ID != entity.ID && x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                ),
+                _ => _.ID != entity.ID && _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase),
                 cancellationToken
             );
 
@@ -782,10 +625,7 @@
             }
             else
             {
-                return Result.Failure
-                (
-                    $"The key '{key}' has already been used by another entity."
-                );
+                return Result.Failure($"The key '{key}' has already been used by another entity.");
             }
         }
 
@@ -794,17 +634,9 @@
         /// </summary>
         /// <param name="id">The ID of the entity to delete</param>
         /// <returns>The result of the operation</returns>
-        protected virtual Result RemoveEntity
-            (
-                long id
-            )
+        protected virtual Result RemoveEntity(long id)
         {
-            var result = GetEntity(id, false);
-
-            return result.Tap
-            (
-                entity => RemoveEntity(entity)
-            );
+            return GetEntity(id, false).Tap(entity => RemoveEntity(entity));
         }
 
         /// <summary>
@@ -812,17 +644,9 @@
         /// </summary>
         /// <param name="key">The lookup key of the entity to delete</param>
         /// <returns>The result of the operation</returns>
-        protected virtual Result RemoveEntity
-            (
-                string key
-            )
+        protected virtual Result RemoveEntity(string key)
         {
-            var result = GetEntity(key, false);
-
-            return result.Tap
-            (
-                entity => RemoveEntity(entity)
-            );
+            return GetEntity(key, false).Tap(entity => RemoveEntity(entity));
         }
 
         /// <summary>
@@ -830,10 +654,7 @@
         /// </summary>
         /// <param name="entity">The entity to delete</param>
         /// <returns>The result of the operation</returns>
-        protected virtual void RemoveEntity
-            (
-                TRoot entity
-            )
+        protected virtual void RemoveEntity(TRoot entity)
         {
             Validate.IsNotNull(entity);
 
@@ -855,10 +676,7 @@
         /// </summary>
         /// <param name="query">The query to apply eager loading to</param>
         /// <returns>The query, with eager loading applied</returns>
-        protected virtual IQueryable<TRoot> ApplyEagerLoading
-            (
-                IQueryable<TRoot> query
-            )
+        protected virtual IQueryable<TRoot> ApplyEagerLoading(IQueryable<TRoot> query)
         {
             if (this.NavigationProperties != null)
             {
@@ -879,9 +697,10 @@
         {
             var entityType = typeof(TRoot);
 
-            var properties = this.ReadContext.Model.GetEntityTypes()
-                .Where(t => t.DefiningEntityType.ClrType == entityType)
-                .SelectMany(t => t.GetNavigations().Select(x => x.PropertyInfo));
+            var properties = this.ReadContext.Model
+                .GetEntityTypes()
+                .Where(_ => _.DefiningEntityType.ClrType == entityType)
+                .SelectMany(_ => _.GetNavigations().Select(nav => nav.PropertyInfo));
 
             return properties.ToList();
         }
