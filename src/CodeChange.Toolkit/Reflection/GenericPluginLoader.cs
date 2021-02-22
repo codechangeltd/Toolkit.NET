@@ -31,10 +31,10 @@
                 var dllFileNames = Directory.GetFiles(path, "*.dll");
                 var assemblies = new List<Assembly>(dllFileNames.Length);
 
-                foreach (var dllFile in dllFileNames)
+                foreach (var relativePath in dllFileNames)
                 {
-                    var an = AssemblyName.GetAssemblyName(dllFile);
-                    var assembly = Assembly.Load(an);
+                    var absolutePath = Path.GetFullPath(relativePath);
+                    var assembly = Assembly.LoadFile(absolutePath);
 
                     assemblies.Add(assembly);
                 }
