@@ -45,10 +45,7 @@
         {
             if (_items.Count == 0)
             {
-                throw new InvalidOperationException
-                (
-                    "There are no items left in the queue."
-                );
+                throw new InvalidOperationException("There are no items left in the queue.");
             }
             else
             {

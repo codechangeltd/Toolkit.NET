@@ -7,18 +7,7 @@
     /// </summary>
     public sealed class EventQueueItem
     {
-        /// <summary>
-        /// Constructs the event queue item with dependencies
-        /// </summary>
-        /// <param name="aggregateKey">The aggregate roots key</param>
-        /// <param name="aggregateType">The aggregate root type</param>
-        /// <param name="event">The domain event</param>
-        public EventQueueItem
-            (
-                string aggregateKey,
-                Type aggregateType,
-                IDomainEvent @event
-            )
+        public EventQueueItem(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
             Validate.IsNotEmpty(aggregateKey);
             Validate.IsNotNull(aggregateType);
@@ -30,18 +19,48 @@
         }
 
         /// <summary>
-        /// Gets the aggregate roots key
+        /// Gets the key of the aggregate root where the event came from
         /// </summary>
         public string AggregateKey { get; private set; }
 
         /// <summary>
-        /// Gets the aggregate root type
+        /// Gets the type of the aggregate root where the event came from
         /// </summary>
         public Type AggregateType { get; private set; }
 
         /// <summary>
-        /// Gets the domain event
+        /// Gets the domain event that is being queued
         /// </summary>
         public IDomainEvent Event { get; private set; }
+
+        public override bool Equals(object obj)
+        {
+            if (this == null && obj == null)
+            {
+                return true;
+            }
+            else if (this == null || obj == null || obj.GetType() != typeof(EventQueueItem))
+            {
+                return false;
+            }
+            else
+            {
+                var item = (EventQueueItem)obj;
+
+                return item.AggregateKey.Equals(this.AggregateKey)
+                    && item.AggregateType.Equals(this.AggregateType)
+                    && item.Event.Equals(this.Event);
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GenerateHashCode();
+        }
+
+        public override string ToString()
+        {
+            return this.Event.ToString();
+        }
     }
 }

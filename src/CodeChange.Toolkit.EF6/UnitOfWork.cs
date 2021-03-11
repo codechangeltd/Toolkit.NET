@@ -63,25 +63,20 @@
             return await SaveChangesAsync(_context, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<int> SaveChangesAsync
-            (
-                DbContext context,
-                CancellationToken cancellationToken = default
-            )
+        private async Task<int> SaveChangesAsync(DbContext context, CancellationToken cancellationToken = default)
         {
             Validate.IsNotNull(context);
 
             var success = false;
-            var aggregates = _context.GetPendingAggregates().ToArray();
-            var preEventQueue = EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
-            var postEventQueue = EventQueueFactory.CreatePostTransactionEventQueue(aggregates);
             var rows = default(int);
 
-            ProcessEventQueue(preEventQueue, true);
+            var aggregates = _context.GetPendingAggregates().ToArray();
+
+            ProcessPreTransactionEvents();
 
             AzureEfConfiguration.SuspendExecutionStrategy = true;
 
-            await new SqlAzureExecutionStrategy().Execute
+            var operation = new Func<Task>
             (
                 async () =>
                 {
@@ -111,12 +106,40 @@
                         }
                     }
                 }
-            ).ConfigureAwait(false);
+            );
+
+            await new SqlAzureExecutionStrategy().Execute(operation).ConfigureAwait(false);
 
             AzureEfConfiguration.SuspendExecutionStrategy = false;
 
             if (success)
             {
+                ProcessPostTransactionEvents();
+            }
+
+            void ProcessPreTransactionEvents()
+            {
+                IEventQueue CreateQueue()
+                {
+                    return EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
+                }
+
+                var eventQueue = CreateQueue();
+
+                while (false == eventQueue.IsEmpty())
+                {
+                    var preProcessItems = eventQueue.ToList();
+
+                    ProcessEventQueue(eventQueue, true);
+
+                    eventQueue = CreateQueue().Remove(preProcessItems);
+                }
+            }
+
+            void ProcessPostTransactionEvents()
+            {
+                var eventQueue = EventQueueFactory.CreatePostTransactionEventQueue(aggregates);
+
                 foreach (var aggregate in aggregates)
                 {
                     if (aggregate.UnpublishedEvents != null)
@@ -125,7 +148,7 @@
                     }
                 }
 
-                ProcessEventQueue(postEventQueue);
+                ProcessEventQueue(eventQueue);
             }
 
             return rows;
