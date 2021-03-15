@@ -8,9 +8,6 @@
     using System.Linq;
     using System.Reflection;
 
-    /// <summary>
-    /// Provides various extension methods for the Entity Framework DbContext
-    /// </summary>
     public static class DbContextExtensions
     {
         /// <summary>

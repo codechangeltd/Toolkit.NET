@@ -2,9 +2,6 @@
 {
     using System;
 
-    /// <summary>
-    /// Represents various extension methods for domain event handlers
-    /// </summary>
     public static class DomainEventHandlerExtensions
     {
         /// <summary>
@@ -18,13 +15,7 @@
         {
             Validate.IsNotNull(handler);
 
-            var hasPreAttribute = Attribute.IsDefined
-            (
-                handler.GetType(),
-                typeof(PreTransactionHandlerAttribute)
-            );
-
-            return hasPreAttribute;
+            return Attribute.IsDefined(handler.GetType(), typeof(PreTransactionHandlerAttribute));
         }
 
         /// <summary>
@@ -38,11 +29,8 @@
         {
             Validate.IsNotNull(handler);
 
-            var hasPreAttribute = Attribute.IsDefined
-            (
-                handler.GetType(),
-                typeof(PreTransactionHandlerAttribute)
-            );
+            var handlerType = handler.GetType();
+            var hasPreAttribute = Attribute.IsDefined(handlerType, typeof(PreTransactionHandlerAttribute));
 
             if (false == hasPreAttribute)
             {
@@ -50,20 +38,7 @@
             }
             else
             {
-                var hasPostAttribute = Attribute.IsDefined
-                (
-                    handler.GetType(),
-                    typeof(PostTransactionHandlerAttribute)
-                );
-
-                if (hasPostAttribute)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return Attribute.IsDefined(handlerType, typeof(PostTransactionHandlerAttribute));
             }
         }
     }

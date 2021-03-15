@@ -68,9 +68,7 @@
             var success = false;
             var rows = default(int);
 
-            var aggregates = _context.GetPendingAggregates().ToArray();
-
-            ProcessPreTransactionEvents();
+            await ProcessPreTransactionEvents().ConfigureAwait(false);
 
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -100,13 +98,15 @@
 
             if (success)
             {
-                ProcessPostTransactionEvents();
+                await ProcessPostTransactionEvents().ConfigureAwait(false);
             }
 
-            void ProcessPreTransactionEvents()
+            async Task ProcessPreTransactionEvents()
             {
                 IEventQueue CreateQueue()
                 {
+                    var aggregates = _context.GetPendingAggregates().ToArray();
+
                     return EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
                 }
 
@@ -116,14 +116,15 @@
                 {
                     var preProcessItems = eventQueue.ToList();
 
-                    ProcessEventQueue(eventQueue, true);
+                    await ProcessEventQueue(eventQueue, true).ConfigureAwait(false);
 
                     eventQueue = CreateQueue().Remove(preProcessItems);
                 }
             }
 
-            void ProcessPostTransactionEvents()
+            async Task ProcessPostTransactionEvents()
             {
+                var aggregates = _context.GetPendingAggregates().ToArray();
                 var eventQueue = EventQueueFactory.CreatePostTransactionEventQueue(aggregates);
 
                 foreach (var aggregate in aggregates)
@@ -134,24 +135,27 @@
                     }
                 }
 
-                ProcessEventQueue(eventQueue);
+                await ProcessEventQueue(eventQueue).ConfigureAwait(false);
             }
 
             return rows;
         }
 
         /// <summary>
-        /// Processes an event queue by dispatching the events
+        /// Asynchronously processes an event queue by dispatching the events
         /// </summary>
         /// <param name="preTransaction">True, if pre-transaction handlers required</param>
         /// <param name="queue">The event queue to process</param>
-        private void ProcessEventQueue(IEventQueue queue, bool preTransaction = false)
+        private async Task ProcessEventQueue(IEventQueue queue, bool preTransaction = false)
         {
+            var dispatchTasks = new List<Task>();
+
             while (false == queue.IsEmpty())
             {
                 var nextItem = queue.GetNext();
+                var task = _eventDispatcher.DispatchAsync(nextItem.Event, preTransaction);
 
-                _eventDispatcher.Dispatch(nextItem.Event, preTransaction);
+                dispatchTasks.Add(task);
 
                 // We don't want to log pre-transaction events
                 if (false == preTransaction)
@@ -164,6 +168,8 @@
                     );
                 }
             }
+
+            await Task.WhenAll(dispatchTasks).ConfigureAwait(false);
         }
 
         public void Dispose()

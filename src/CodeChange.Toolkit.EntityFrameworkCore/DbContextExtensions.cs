@@ -6,9 +6,6 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Provides various extension methods for the Entity Framework DbContext
-    /// </summary>
     public static class DbContextExtensions
     {
         /// <summary>
@@ -22,7 +19,8 @@
 
             var entries = context.ChangeTracker
                 .Entries()
-                .Where(_ => _.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)));
+                .Where(_ => _.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)))
+                .Where(_ => _.State != EntityState.Detached && _.State != EntityState.Unchanged);
 
             var aggregates = new List<IAggregateRoot>();
 
