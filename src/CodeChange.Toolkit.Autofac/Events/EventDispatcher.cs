@@ -15,7 +15,8 @@
     public sealed class EventDispatcher : IEventDispatcher
     {
         private readonly IComponentContext _container;
-        private readonly MethodInfo _genericDispatcher;
+        private readonly MethodInfo _synchronousGenericDispatcher;
+        private readonly MethodInfo _asynchronousGenericDispatcher;
 
         public EventDispatcher(IComponentContext context)
         {
@@ -23,9 +24,13 @@
 
             _container = context;
 
-            _genericDispatcher = GetType()
+            _synchronousGenericDispatcher = GetType()
                 .GetMethods()
-                .First(x => x.Name == "Dispatch" && x.IsGenericMethod);
+                .First(_ => _.Name == nameof(Dispatch) && _.IsGenericMethod);
+
+            _asynchronousGenericDispatcher = GetType()
+                .GetMethods()
+                .First(_ => _.Name == nameof(DispatchAsync) && _.IsGenericMethod);
         }
 
         [Obsolete]
@@ -39,7 +44,7 @@
         {
             Validate.IsNotNull(@event);
 
-            var dispatcher = _genericDispatcher.MakeGenericMethod(@event.GetType());
+            var dispatcher = _synchronousGenericDispatcher.MakeGenericMethod(@event.GetType());
 
             dispatcher.Invoke
             (
@@ -85,7 +90,7 @@
         {
             Validate.IsNotNull(@event);
 
-            var dispatcher = _genericDispatcher.MakeGenericMethod(@event.GetType());
+            var dispatcher = _asynchronousGenericDispatcher.MakeGenericMethod(@event.GetType());
             var task = (Task)dispatcher.Invoke(this, new object[] { @event, preTransaction });
 
             await task.ConfigureAwait(false);
