@@ -49,7 +49,7 @@
 
                 return item.AggregateKey.Equals(this.AggregateKey)
                     && item.AggregateType.Equals(this.AggregateType)
-                    && item.Event.Equals(this.Event);
+                    && item.Event.GenerateHashCode() == this.Event.GenerateHashCode();
             }
         }
 

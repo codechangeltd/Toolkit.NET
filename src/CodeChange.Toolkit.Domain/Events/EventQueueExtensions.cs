@@ -18,7 +18,7 @@
 
             foreach (var item in queueItems)
             {
-                var matchFound = itemsToRemove.Any(_ => _.Equals(item));
+                var matchFound = itemsToRemove.Any(_ => _.GetHashCode() == item.GetHashCode());
 
                 if (false == matchFound)
                 {
