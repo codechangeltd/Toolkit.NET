@@ -6,15 +6,15 @@
     <Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
     <Copyright>Copyright © Code Change Ltd 2021</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>2.4.0</AssemblyVersion>
-    <Version>2.4.0</Version>
+    <AssemblyVersion>3.0.0</AssemblyVersion>
+    <Version>3.0.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Domain/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Added EventQueue.Remove() extension method and EventQueue.Equals() override.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added async support for event dispatching and improved event queue management.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

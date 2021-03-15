@@ -120,6 +120,7 @@
                 IEventQueue CreateQueue()
                 {
                     var aggregates = _context.GetPendingAggregates().ToArray();
+
                     return EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
                 }
 
