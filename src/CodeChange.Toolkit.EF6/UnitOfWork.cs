@@ -70,8 +70,6 @@
             var success = false;
             var rows = default(int);
 
-            var aggregates = _context.GetPendingAggregates().ToArray();
-
             await ProcessPreTransactionEvents().ConfigureAwait(false);
 
             AzureEfConfiguration.SuspendExecutionStrategy = true;
@@ -121,6 +119,7 @@
             {
                 IEventQueue CreateQueue()
                 {
+                    var aggregates = _context.GetPendingAggregates().ToArray();
                     return EventQueueFactory.CreatePreTransactionEventQueue(aggregates);
                 }
 
@@ -138,6 +137,7 @@
 
             async Task ProcessPostTransactionEvents()
             {
+                var aggregates = _context.GetPendingAggregates().ToArray();
                 var eventQueue = EventQueueFactory.CreatePostTransactionEventQueue(aggregates);
 
                 foreach (var aggregate in aggregates)
