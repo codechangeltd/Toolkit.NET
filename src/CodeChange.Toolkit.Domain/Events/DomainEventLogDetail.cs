@@ -19,16 +19,9 @@
         /// <param name="log">The domain event log</param>
         /// <param name="model">The model</param>
         /// <param name="property">The property information</param>
-        protected internal DomainEventLogDetail
-            (
-                DomainEventLog log,
-                object model,
-                PropertyInfo property
-            )
+        protected internal DomainEventLogDetail(DomainEventLog log, object model, PropertyInfo property)
         {
             Validate.IsNotNull(log);
-            Validate.IsNotNull(model);
-            Validate.IsNotNull(property);
             
             this.LookupKey = new EntityKeyGenerator().GenerateKey();
             this.NestedDetails = new Collection<DomainEventLogDetail>();
@@ -43,19 +36,9 @@
         /// <param name="parent">The parent log detail</param>
         /// <param name="model">The model</param>
         /// <param name="property">The property information</param>
-        protected internal DomainEventLogDetail
-            (
-                DomainEventLogDetail parent,
-                object model,
-                PropertyInfo property
-            )
-
+        protected internal DomainEventLogDetail(DomainEventLogDetail parent, object model, PropertyInfo property)
             : this(parent.Log, model, property)
         {
-            Validate.IsNotNull(parent);
-            Validate.IsNotNull(model);
-            Validate.IsNotNull(property);
-
             this.Parent = parent;
         }
 
@@ -65,12 +48,7 @@
         /// <param name="parent">The parent log detail</param>
         /// <param name="propertyName">The property name</param>
         /// <param name="propertyValue">The property value</param>
-        protected internal DomainEventLogDetail
-            (
-                DomainEventLogDetail parent,
-                string propertyName,
-                string propertyValue
-            )
+        protected internal DomainEventLogDetail(DomainEventLogDetail parent, string propertyName, string propertyValue)
         {
             Validate.IsNotNull(parent);
             Validate.IsNotEmpty(propertyName);
@@ -100,10 +78,7 @@
         /// Gets the aggregate entities unique key value
         /// </summary>
         /// <returns>The key value</returns>
-        public virtual string GetKeyValue()
-        {
-            return this.LookupKey;
-        }
+        public virtual string GetKeyValue() => this.LookupKey;
 
         /// <summary>
         /// Gets the associated event log
@@ -130,11 +105,7 @@
         /// </summary>
         /// <param name="model">The model</param>
         /// <param name="property">The property info</param>
-        protected virtual void PopulateDetails
-            (
-                object model,
-                PropertyInfo property
-            )
+        protected virtual void PopulateDetails(object model, PropertyInfo property)
         {
             Validate.IsNotNull(model);
             Validate.IsNotNull(property);
@@ -144,11 +115,7 @@
             this.PropertyName = property.Name;
             this.PropertyTypeName = propertyType.Name;
 
-            var propertyValue = property.GetValue
-            (
-                model,
-                null
-            );
+            var propertyValue = property.GetValue(model, null);
 
             if (propertyValue != null)
             {
@@ -159,18 +126,11 @@
                 if (false == (isSimple || propertyType.IsDateTime()))
                 {
                     var interfaces = propertyType.GetInterfaces();
-
-                    var isAggregate = interfaces.Contains
-                    (
-                        typeof(IAggregateEntity)
-                    );
+                    var isAggregate = interfaces.Contains(typeof(IAggregateEntity));
 
                     if (false == isAggregate)
                     {
-                        var isCollection = interfaces.Contains
-                        (
-                            typeof(IEnumerable)
-                        );
+                        var isCollection = interfaces.Contains(typeof(IEnumerable));
 
                         if (isCollection && propertyType != typeof(string))
                         {
@@ -195,29 +155,19 @@
                             
                             if (isStringCollection)
                             {
-                                GenerateNestedDetails
-                                (
-                                    property.Name,
-                                    (IEnumerable<string>)propertyValue
-                                );
+                                GenerateNestedDetails(property.Name, (IEnumerable<string>)propertyValue);
                             }
                             else
                             {
                                 foreach (var item in propertyValue as IEnumerable)
                                 {
-                                    GenerateNestedDetails
-                                    (
-                                        item
-                                    );
+                                    GenerateNestedDetails(item);
                                 }
                             }
                         }
                         else if (false == isAggregate)
                         {
-                            GenerateNestedDetails
-                            (
-                                propertyValue
-                            );
+                            GenerateNestedDetails(propertyValue);
                         }
                     }
                 }
@@ -229,35 +179,16 @@
         /// </summary>
         /// <param name="propertyName">The property name</param>
         /// <param name="collection">The string collection</param>
-        protected virtual void GenerateNestedDetails
-            (
-                string propertyName,
-                IEnumerable<string> collection
-            )
+        protected virtual void GenerateNestedDetails(string propertyName, IEnumerable<string> collection)
         {
             var index = 0;
 
             foreach (var value in collection)
             {
-                var itemName = String.Format
-                (
-                    "{0}[{1}]",
-                    propertyName,
-                    index
-                );
+                var itemName = $"{propertyName}[{index}]";
+                var detail = new DomainEventLogDetail(this, itemName, value);
 
-                var detail = new DomainEventLogDetail
-                (
-                    this,
-                    itemName,
-                    value
-                );
-
-                this.NestedDetails.Add
-                (
-                    detail
-                );
-
+                this.NestedDetails.Add(detail);
                 this.HasNestedDetails = true;
 
                 index++;
@@ -268,36 +199,18 @@
         /// Generates a collection of nested details for a model
         /// </summary>
         /// <param name="model">The model</param>
-        protected virtual void GenerateNestedDetails
-            (
-                object model
-            )
+        protected virtual void GenerateNestedDetails(object model)
         {
-            var properties = model.GetType().GetProperties
-            (
-                BindingFlags.Public | BindingFlags.Instance
-            );
-
-            properties = properties.Where
-            (
-                p => p.CanRead
-            )
-            .ToArray();
+            var properties = model.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(_ => _.CanRead)
+                .ToArray();
 
             foreach (var property in properties)
             {
-                var detail = new DomainEventLogDetail
-                (
-                    this,
-                    model,
-                    property
-                );
+                var detail = new DomainEventLogDetail(this, model, property);
 
-                this.NestedDetails.Add
-                (
-                    detail
-                );
-
+                this.NestedDetails.Add(detail);
                 this.HasNestedDetails = true;
             }
         }
@@ -325,10 +238,6 @@
         /// <summary>
         /// Gets a collection of nested details
         /// </summary>
-        public virtual ICollection<DomainEventLogDetail> NestedDetails
-        {
-            get;
-            protected set;
-        }
+        public virtual ICollection<DomainEventLogDetail> NestedDetails { get; protected set; }
     }
 }

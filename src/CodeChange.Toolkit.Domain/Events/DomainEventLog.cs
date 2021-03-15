@@ -24,13 +24,8 @@
         /// Constructs the domain event log
         /// </summary>
         /// <param name="event">The domain event</param>
-        protected DomainEventLog
-            (
-                IDomainEvent @event
-            )
+        protected DomainEventLog(IDomainEvent @event)
         {
-            Validate.IsNotNull(@event);
-
             this.LookupKey = new EntityKeyGenerator().GenerateKey();
             this.UnpublishedEvents = new List<IDomainEvent>();
             this.Details = new Collection<DomainEventLogDetail>();
@@ -46,19 +41,12 @@
         /// <param name="aggregateKey">The aggregate key</param>
         /// <param name="aggregateType">The aggregate type</param>
         /// <param name="event">The domain event</param>
-        protected DomainEventLog
-            (
-                string aggregateKey,
-                Type aggregateType,
-                IDomainEvent @event
-            )
-
+        protected DomainEventLog(string aggregateKey, Type aggregateType, IDomainEvent @event)
             : this(@event)
         {
             Validate.IsNotEmpty(aggregateKey);
             Validate.IsNotNull(aggregateType);
-            Validate.IsNotNull(@event);
-
+            
             this.AggregateKey = aggregateKey;
             this.AggregateTypeName = aggregateType.Name;
         }
@@ -68,17 +56,9 @@
         /// </summary>
         /// <param name="event">The domain event</param>
         /// <returns>The event log created</returns>
-        public static DomainEventLog CreateLog
-            (
-                IDomainEvent @event
-            )
+        public static DomainEventLog CreateLog(IDomainEvent @event)
         {
-            Validate.IsNotNull(@event);
-
-            return new DomainEventLog
-            (
-                @event
-            );
+            return new DomainEventLog(@event);
         }
 
         /// <summary>
@@ -88,23 +68,9 @@
         /// <param name="aggregateType">The aggregate type</param>
         /// <param name="event">The domain event</param>
         /// <returns>The event log created</returns>
-        public static DomainEventLog CreateLog
-            (
-                string aggregateKey,
-                Type aggregateType,
-                IDomainEvent @event
-            )
+        public static DomainEventLog CreateLog(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
-            Validate.IsNotEmpty(aggregateKey);
-            Validate.IsNotNull(aggregateType);
-            Validate.IsNotNull(@event);
-
-            return new DomainEventLog
-            (
-                aggregateKey,
-                aggregateType,
-                @event
-            );
+            return new DomainEventLog(aggregateKey, aggregateType, @event);
         }
 
         /// <summary>
@@ -121,10 +87,7 @@
         /// Gets the aggregate entities unique key value
         /// </summary>
         /// <returns>The key value</returns>
-        public virtual string GetKeyValue()
-        {
-            return this.LookupKey;
-        }
+        public virtual string GetKeyValue() => this.LookupKey;
 
         /// <summary>
         /// Gets a list of unpublished domain events
@@ -154,10 +117,7 @@
         /// Populates the domain event log
         /// </summary>
         /// <param name="event">The domain event</param>
-        protected void PopulateLog
-            (
-                IDomainEvent @event
-            )
+        protected void PopulateLog(IDomainEvent @event)
         {
             Validate.IsNotNull(@event);
             
@@ -171,32 +131,18 @@
         /// Populates the domain event logs details
         /// </summary>
         /// <param name="event">The domain event</param>
-        protected void PopulateDetails
-            (
-                IDomainEvent @event
-            )
+        protected void PopulateDetails(IDomainEvent @event)
         {
             Validate.IsNotNull(@event);
 
-            var properties = @event.GetType().GetProperties
-            (
-                BindingFlags.Public | BindingFlags.Instance
-            );
-
-            properties = properties.Where
-            (
-                p => p.CanRead
-            )
-            .ToArray();
+            var properties = @event.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(_ => _.CanRead)
+                .ToArray();
 
             foreach (var property in properties)
             {
-                var detail = new DomainEventLogDetail
-                (
-                    this,
-                    @event,
-                    property
-                );
+                var detail = new DomainEventLogDetail(this, @event, property);
 
                 this.Details.Add(detail);
             }
@@ -225,10 +171,6 @@
         /// <summary>
         /// Gets a collection of domain event log details
         /// </summary>
-        public virtual ICollection<DomainEventLogDetail> Details
-        {
-            get;
-            protected set;
-        }
+        public virtual ICollection<DomainEventLogDetail> Details { get; protected set; }
     }
 }

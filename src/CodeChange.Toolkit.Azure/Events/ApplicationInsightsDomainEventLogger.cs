@@ -9,45 +9,24 @@
     /// <summary>
     /// An Azure ApplicationInsights implementation of a domain event logger
     /// </summary>
-    public sealed class DomainEventLogger : IDomainEventLogger
+    public sealed class ApplicationInsightsDomainEventLogger : IDomainEventLogger
     {
         private readonly TelemetryClient _telemetry;
 
-        public DomainEventLogger()
+        public ApplicationInsightsDomainEventLogger(TelemetryClient telemetry)
         {
-            _telemetry = new TelemetryClient();
-        }
+            Validate.IsNotNull(telemetry);
 
-        /// <summary>
-        /// Logs the domain event specified
-        /// </summary>
-        /// <param name="event">The domain event</param>
-        public void LogEvent
-            (
-                IDomainEvent @event
-            )
+            _telemetry = telemetry;
+        }
+        public void LogEvent(IDomainEvent @event)
         {
             var properties = CompileEventProperties(@event);
 
-            _telemetry.TrackEvent
-            (
-                @event.ToString(),
-                properties
-            );
+            _telemetry.TrackEvent(@event.ToString(), properties);
         }
 
-        /// <summary>
-        /// Logs the domain event specified
-        /// </summary>
-        /// <param name="aggregateKey">The aggregate key</param>
-        /// <param name="aggregateType">The aggregate type</param>
-        /// <param name="event">The domain event</param>
-        public void LogEvent
-            (
-                string aggregateKey,
-                Type aggregateType,
-                IDomainEvent @event
-            )
+        public void LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
             Validate.IsNotEmpty(aggregateKey);
             Validate.IsNotNull(aggregateType);
@@ -57,11 +36,7 @@
             properties.Add("AggregateKey", aggregateKey);
             properties.Add("AggregateType", aggregateType.Name);
 
-            _telemetry.TrackEvent
-            (
-                @event.ToString(),
-                properties
-            );
+            _telemetry.TrackEvent(@event.ToString(), properties);
         }
 
         /// <summary>
@@ -69,10 +44,7 @@
         /// </summary>
         /// <param name="event">The domain event</param>
         /// <returns>The event details as a dictionary</returns>
-        private Dictionary<string, string> CompileEventProperties
-            (
-                IDomainEvent @event
-            )
+        private Dictionary<string, string> CompileEventProperties(IDomainEvent @event)
         {
             Validate.IsNotNull(@event);
 
@@ -82,18 +54,11 @@
                 { "EventDescription", @event.ToString() }
             };
 
-            var eventLog = DomainEventLog.CreateLog
-            (
-                @event
-            );
+            var eventLog = DomainEventLog.CreateLog(@event);
 
             foreach (var detail in eventLog.Details)
             {
-                AppendDetail
-                (
-                    ref properties,
-                    detail
-                );
+                AppendDetail(ref properties, detail);
             }
 
             return properties;
@@ -104,11 +69,7 @@
         /// </summary>
         /// <param name="properties">The event properties</param>
         /// <param name="detail">The event log detail to append</param>
-        private void AppendDetail
-            (
-                ref Dictionary<string, string> properties,
-                DomainEventLogDetail detail
-            )
+        private void AppendDetail(ref Dictionary<string, string> properties, DomainEventLogDetail detail)
         {
             var path = String.Empty;
             var parentDetail = detail.Parent;
@@ -124,8 +85,7 @@
 
             var usedCount = properties.Count
             (
-                pair => pair.Key == key
-                    || (pair.Key.StartsWith(key) && pair.Key.EndsWith("]"))
+                pair => pair.Key == key || (pair.Key.StartsWith(key) && pair.Key.EndsWith("]"))
             );
 
             if (usedCount > 0)
@@ -138,11 +98,7 @@
                     properties.Add($"{key}[0]", tempValue);
                 }
 
-                properties.Add
-                (
-                    $"{key}[{usedCount}]",
-                    value
-                );
+                properties.Add($"{key}[{usedCount}]", value);
             }
             else
             {
@@ -151,11 +107,7 @@
 
             foreach (var nestedDetail in detail.NestedDetails)
             {
-                AppendDetail
-                (
-                    ref properties,
-                    nestedDetail
-                );
+                AppendDetail(ref properties, nestedDetail);
             }
         }
     }
