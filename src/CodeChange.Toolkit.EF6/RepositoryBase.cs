@@ -9,7 +9,7 @@
     using System.Reflection;
 
     /// <summary>
-    /// Represents the base class for all Entity Framework repositories
+    /// Represents the base class for all Entity Framework 6 repositories
     /// </summary>
     /// <typeparam name="TRoot">The aggregate root entity type</typeparam>
     public abstract class RepositoryBase<TRoot> : IAggregateRepository<TRoot>
@@ -17,14 +17,7 @@
     {
         private List<PropertyInfo> _navigationProperties;
 
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="context">The database context instance</param>
-        public RepositoryBase
-            (
-                DbContext context
-            )
+        public RepositoryBase(DbContext context)
         {
             Validate.IsNotNull(context);
 
@@ -32,16 +25,7 @@
             this.WriteContext = context;
         }
 
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="readContext">The read database context</param>
-        /// <param name="writeContext">The write database context</param>
-        public RepositoryBase
-            (
-                DbContext readContext,
-                DbContext writeContext
-            )
+        public RepositoryBase(DbContext readContext, DbContext writeContext)
         {
             Validate.IsNotNull(readContext);
             Validate.IsNotNull(writeContext);
@@ -88,10 +72,7 @@
         /// Adds a new entity to the set in the database context
         /// </summary>
         /// <param name="entity">The entity to add</param>
-        protected virtual void AddEntity
-            (
-                TRoot entity
-            )
+        protected virtual void AddEntity(TRoot entity)
         {
             Validate.IsNotNull(entity);
 
@@ -118,21 +99,14 @@
         /// Adds or updates an entity in the repository
         /// </summary>
         /// <param name="entity">The entity to add or update</param>
-        protected virtual void AddOrUpdateEntity
-            (
-                TRoot entity
-            )
+        protected virtual void AddOrUpdateEntity(TRoot entity)
         {
             var context = this.WriteContext;
             var set = context.Set<TRoot>();
 
             var attached = set.Local.Any
             (
-                x => x.LookupKey.Equals
-                (
-                    entity.LookupKey,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(entity.LookupKey, StringComparison.OrdinalIgnoreCase)
             );
 
             if (attached)
@@ -148,11 +122,7 @@
             {
                 var usedCount = set.AsNoTracking().Count
                 (
-                    x => x.LookupKey.Equals
-                    (
-                        entity.LookupKey,
-                        StringComparison.OrdinalIgnoreCase
-                    )
+                    _ => _.LookupKey.Equals(entity.LookupKey, StringComparison.OrdinalIgnoreCase)
                 );
 
                 if (usedCount == 0)
@@ -171,10 +141,7 @@
         /// </summary>
         /// <param name="key">The key value to check</param>
         /// <returns>True, if the key has already been used; otherwise false</returns>
-        protected virtual bool HasKeyBeenUsed
-            (
-                string key
-            )
+        protected virtual bool HasKeyBeenUsed(string key)
         {
             if (String.IsNullOrEmpty(key))
             {
@@ -185,11 +152,7 @@
 
             var attached = set.Local.Any
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
             );
 
             if (attached)
@@ -199,11 +162,7 @@
 
             var usedCount = set.AsNoTracking().Count
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
             );
 
             return usedCount > 0;
@@ -215,21 +174,13 @@
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntityByLookupKey
-            (
-                string key,
-                bool useEagerLoading = false
-            )
+        protected virtual TRoot GetEntityByLookupKey(string key, bool useEagerLoading = false)
         {
             Validate.IsNotEmpty(key);
 
             var entity = GetAll(useEagerLoading).FirstOrDefault
             (
-                x => x.LookupKey.Equals
-                (
-                    key,
-                    StringComparison.OrdinalIgnoreCase
-                )
+                _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
             );
 
             if (entity == default(TRoot))
@@ -239,16 +190,12 @@
                 var tracker = this.WriteContext.ChangeTracker;
 
                 var addedEntities = tracker.Entries<TRoot>()
-                    .Where(x => x.State == EntityState.Added)
-                    .Select(x => x.Entity);
+                    .Where(_ => _.State == EntityState.Added)
+                    .Select(_ => _.Entity);
 
                 entity = addedEntities.FirstOrDefault
                 (
-                    x => x.LookupKey.Equals
-                    (
-                        key,
-                        StringComparison.OrdinalIgnoreCase
-                    )
+                    _ => _.LookupKey.Equals(key, StringComparison.OrdinalIgnoreCase)
                 );
 
                 if (entity == default(TRoot))
@@ -272,13 +219,9 @@
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <returns>The matching entity</returns>
-        protected virtual TRoot GetEntityById
-            (
-                long id,
-                bool useEagerLoading = false
-            )
+        protected virtual TRoot GetEntityById(long id, bool useEagerLoading = false)
         {
-            var entity = GetAll(useEagerLoading).FirstOrDefault(x => x.ID == id);
+            var entity = GetAll(useEagerLoading).FirstOrDefault(_ => _.ID == id);
 
             if (entity == default(TRoot))
             {
@@ -297,10 +240,7 @@
         /// </summary>
         /// <param name="useEagerLoading">If true, eager loading is applied to the query</param>
         /// <returns>A collection of all aggregate root entities in the database</returns>
-        protected virtual IQueryable<TRoot> GetAll
-            (
-                bool useEagerLoading = false
-            )
+        protected virtual IQueryable<TRoot> GetAll(bool useEagerLoading = false)
         {
             var set = this.ReadContext.Set<TRoot>();
             var query = (IQueryable<TRoot>)set;
@@ -317,10 +257,7 @@
         /// Updates a single entity and notifies the database context tracking manager
         /// </summary>
         /// <param name="entity">The entity to update</param>
-        protected virtual void UpdateEntity
-            (
-                TRoot entity
-            )
+        protected virtual void UpdateEntity(TRoot entity)
         {
             Validate.IsNotNull(entity);
 
@@ -343,10 +280,7 @@
             // Ensure the entity has been attached to the object state manager
             if (entry.State == EntityState.Detached)
             {
-                context.Set<TRoot>().Attach
-                (
-                    entity
-                );
+                context.Set<TRoot>().Attach(entity);
             }
 
             if (entry.State != EntityState.Added)
@@ -359,10 +293,7 @@
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="id">The ID of the entity to delete</param>
-        protected virtual void RemoveEntity
-            (
-                long id
-            )
+        protected virtual void RemoveEntity(long id)
         {
             var entity = GetEntityById(id, false);
 
@@ -373,10 +304,7 @@
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="key">The lookup key of the entity to delete</param>
-        protected virtual void RemoveEntity
-            (
-                string key
-            )
+        protected virtual void RemoveEntity(string key)
         {
             var entity = GetEntityByLookupKey(key, false);
 
@@ -387,10 +315,7 @@
         /// Deletes a single entity from the collection in the database context
         /// </summary>
         /// <param name="entity">The entity to delete</param>
-        protected virtual void RemoveEntity
-            (
-                TRoot entity
-            )
+        protected virtual void RemoveEntity(TRoot entity)
         {
             Validate.IsNotNull(entity);
 
@@ -413,10 +338,7 @@
         /// </summary>
         /// <param name="query">The query to apply eager loading to</param>
         /// <returns>The query, with eager loading applied</returns>
-        protected virtual IQueryable<TRoot> ApplyEagerLoading
-            (
-                IQueryable<TRoot> query
-            )
+        protected virtual IQueryable<TRoot> ApplyEagerLoading(IQueryable<TRoot> query)
         {
             var properties = this.NavigationProperties;
 
