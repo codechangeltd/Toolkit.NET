@@ -86,7 +86,8 @@
 
             var entries = context.ChangeTracker
                 .Entries()
-                .Where(_ => _.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)));
+                .Where(_ => _.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)))
+                .Where(_ => _.State != EntityState.Detached && _.State != EntityState.Unchanged);
 
             var aggregates = new List<IAggregateRoot>();
 
