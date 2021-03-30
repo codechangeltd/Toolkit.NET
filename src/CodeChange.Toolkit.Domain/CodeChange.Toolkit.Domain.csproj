@@ -17,7 +17,15 @@
     <PackageReleaseNotes>Added async support for event dispatching and improved event queue management.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
   </ItemGroup>

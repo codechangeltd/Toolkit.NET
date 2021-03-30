@@ -17,7 +17,15 @@
     <PackageReleaseNotes>Fixed bug in UnitOfWork where aggregates were cleared before calling ProcessPostTransactionEvents().</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
     <LangVersion>7.1</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />

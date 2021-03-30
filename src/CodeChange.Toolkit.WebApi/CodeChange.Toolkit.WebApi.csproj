@@ -16,7 +16,16 @@
 		<PackageReleaseNotes>Updated CodeChange.Toolkit reference.</PackageReleaseNotes>
 		<Tags>CodeChange Toolkit WebApi Web API .NET DOTNET C#</Tags>
 		<LangVersion>7.1</LangVersion>
-	</PropertyGroup>
+	
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
 		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.7" />

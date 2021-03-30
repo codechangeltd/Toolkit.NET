@@ -15,7 +15,15 @@
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <PackageReleaseNotes>Updated CodeChange.Toolkit reference.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit WebApi Web API .NET Core DOTNET AspNetCore C#</Tags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />

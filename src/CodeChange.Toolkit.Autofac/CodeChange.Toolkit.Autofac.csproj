@@ -16,7 +16,15 @@
     <PackageReleaseNotes>Added async support for EventDispatcher.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Autofac .NET DOTNET C#</Tags>
     <LangVersion>7.1</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.0.0" />
