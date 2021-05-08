@@ -163,28 +163,30 @@
         /// <param name="queue">The event queue to process</param>
         private async Task ProcessEventQueue(IEventQueue queue, bool preTransaction = false)
         {
-            var dispatchTasks = new List<Task>();
+            var queueTasks = new List<Task>();
 
             while (false == queue.IsEmpty())
             {
                 var nextItem = queue.GetNext();
-                var task = _eventDispatcher.DispatchAsync(nextItem.Event, preTransaction);
+                var dispatchTask = _eventDispatcher.DispatchAsync(nextItem.Event, preTransaction);
 
-                dispatchTasks.Add(task);
+                queueTasks.Add(dispatchTask);
 
                 // We don't want to log pre-transaction events
                 if (false == preTransaction)
                 {
-                    _eventLogger.LogEvent
+                    var logTask = _eventLogger.LogEventAsync
                     (
                         nextItem.AggregateKey,
                         nextItem.AggregateType,
                         nextItem.Event
                     );
+
+                    queueTasks.Add(logTask);
                 }
             }
 
-            await Task.WhenAll(dispatchTasks).ConfigureAwait(false);
+            await Task.WhenAll(queueTasks).ConfigureAwait(false);
         }
 
         public void Dispose()

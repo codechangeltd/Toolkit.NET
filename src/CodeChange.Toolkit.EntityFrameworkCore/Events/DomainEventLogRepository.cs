@@ -1,103 +1,63 @@
 ﻿namespace CodeChange.Toolkit.EntityFrameworkCore.Events
 {
-    using CodeChange.Toolkit.Domain.Aggregate;
     using CodeChange.Toolkit.Domain.Events;
+    using CSharpFunctionalExtensions;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents an EF Core implementation for the domain event log repository
     /// </summary>
-    public sealed class DomainEventLogRepository
-        : RepositoryBase<DomainEventLog>, IDomainEventLogRepository
+    public sealed class DomainEventLogRepository : RepositoryBase<DomainEventLog>, IDomainEventLogRepository
     {
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="context">The database context instance</param>
-        public DomainEventLogRepository
-            (
-                DbContext context
-            )
+        public DomainEventLogRepository(DbContext context)
             : base(context)
         { }
 
-        /// <summary>
-        /// Adds a single domain event log
-        /// </summary>
-        /// <param name="log">The event log to add</param>
-        public void AddLog
-            (
-                DomainEventLog log
-            )
+        public Result AddLog(DomainEventLog log)
         {
-            AddEntity(log);
+            return AddEntity(log);
         }
 
-        /// <summary>
-        /// Gets a single domain event log from the repository
-        /// </summary>
-        /// <param name="key">The log key</param>
-        /// <returns>The domain event log</returns>
-        public DomainEventLog GetLog
-            (
-                string key
-            )
+        public async Task<Result> AddLogAsync(DomainEventLog log, CancellationToken cancellationToken = default)
         {
-            var result = GetEntity(key, true);
-
-            if (result.IsSuccess)
-            {
-                return result.Value;
-            }
-            else
-            {
-                throw new EntityNotFoundException
-                (
-                    key,
-                    "No event log was found matching the key"
-                );
-            }
+            return await AddEntityAsync(log, cancellationToken).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Gets a all domain event logs in the repository
-        /// </summary>
-        /// <returns>A collection of domain event logs</returns>
-        public IEnumerable<DomainEventLog> GetAllLogs()
+        public Maybe<DomainEventLog> GetLog(string key)
         {
-            return GetAll().OrderByDescending(a => a.DateCreated);
+            return GetEntity(key, true);
         }
 
-        /// <summary>
-        /// Gets domain event logs for a date range
-        /// </summary>
-        /// <returns>A collection of domain event logs</returns>
-        public IEnumerable<DomainEventLog> GetLogs
-            (
-                DateTime startDate,
-                DateTime? endDate
-            )
+        public async Task<Maybe<DomainEventLog>> GetLogAsync(string key, CancellationToken cancellationToken = default)
         {
-            var logs = GetAll().Where
-            (
-                m => m.DateCreated >= startDate
-            );
+            return await GetEntityAsync(key, true, cancellationToken).ConfigureAwait(false);
+        }
+
+        public IEnumerable<DomainEventLog> GetLogs(DateTime startDate, DateTime? endDate)
+        {
+            return GenerateLogQuery(startDate, endDate);
+        }
+
+        public async Task<IEnumerable<DomainEventLog>> GetLogsAsync(DateTime startDate, DateTime? endDate, CancellationToken cancellationToken = default)
+        {
+            return await GenerateLogQuery(startDate, endDate).ToListAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        private IQueryable<DomainEventLog> GenerateLogQuery(DateTime startDate, DateTime? endDate)
+        {
+            var query = GetAll().Where(_ => _.DateCreated >= startDate);
 
             if (endDate.HasValue)
             {
-                logs = logs.Where
-                (
-                    m => m.DateCreated <= endDate.Value
-                );
+                query = query.Where(_ => _.DateCreated <= endDate.Value);
             }
 
-            return logs.OrderByDescending
-            (
-                a => a.DateCreated
-            );
+            return query.OrderByDescending(_ => _.DateCreated);
         }
     }
 }

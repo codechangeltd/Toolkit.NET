@@ -1,10 +1,13 @@
 ﻿namespace CodeChange.Toolkit.Azure.Events
 {
     using CodeChange.Toolkit.Domain.Events;
+    using CSharpFunctionalExtensions;
     using Microsoft.ApplicationInsights;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// An Azure ApplicationInsights implementation of a domain event logger
@@ -19,14 +22,21 @@
 
             _telemetry = telemetry;
         }
-        public void LogEvent(IDomainEvent @event)
+        public Result LogEvent(IDomainEvent @event)
         {
             var properties = CompileEventProperties(@event);
 
             _telemetry.TrackEvent(@event.ToString(), properties);
+
+            return Result.Success();
         }
 
-        public void LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event)
+        public Task<Result> LogEventAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(LogEvent(@event));
+        }
+
+        public Result LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
             Validate.IsNotEmpty(aggregateKey);
             Validate.IsNotNull(aggregateType);
@@ -37,6 +47,13 @@
             properties.Add("AggregateType", aggregateType.Name);
 
             _telemetry.TrackEvent(@event.ToString(), properties);
+
+            return Result.Success();
+        }
+
+        public Task<Result> LogEventAsync(string aggregateKey, Type aggregateType, IDomainEvent @event, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(LogEvent(aggregateKey, aggregateType, @event));
         }
 
         /// <summary>

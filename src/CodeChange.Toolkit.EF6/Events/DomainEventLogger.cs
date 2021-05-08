@@ -1,8 +1,11 @@
 ﻿namespace CodeChange.Toolkit.EF6.Events
 {
     using CodeChange.Toolkit.Domain.Events;
+    using CSharpFunctionalExtensions;
     using System;
     using System.Data.Entity;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents an EF6 implementation of a domain event logger
@@ -21,26 +24,28 @@
             _dbContext = dbContext;
         }
 
-        public void LogEvent(IDomainEvent @event)
+        public Result LogEvent(IDomainEvent @event)
         {
-            Validate.IsNotNull(@event);
-
             var log = DomainEventLog.CreateLog(@event);
 
-            _logRepository.AddLog(log);
-            _dbContext.SaveChanges();
+            return _logRepository.AddLog(log).Tap(() => _dbContext.SaveChanges());
         }
 
-        public void LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event)
+        public Result LogEvent(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
-            Validate.IsNotEmpty(aggregateKey);
-            Validate.IsNotNull(aggregateType);
-            Validate.IsNotNull(@event);
-
             var log = DomainEventLog.CreateLog(aggregateKey, aggregateType, @event);
 
-            _logRepository.AddLog(log);
-            _dbContext.SaveChanges();
+            return _logRepository.AddLog(log).Tap(() => _dbContext.SaveChanges());
+        }
+
+        public Task<Result> LogEventAsync(IDomainEvent @event, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> LogEventAsync(string aggregateKey, Type aggregateType, IDomainEvent @event, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

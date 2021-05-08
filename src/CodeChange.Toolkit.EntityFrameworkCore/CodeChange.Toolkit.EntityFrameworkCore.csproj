@@ -6,24 +6,23 @@
     <Description>A library containing Entity Framework Core tools, base classes and interface implementations.</Description>
     <Copyright>Copyright © Code Change Ltd 2021</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>4.0.1</AssemblyVersion>
-    <Version>4.0.1</Version>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
+    <Version>5.0.0</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Fixed bug in UnitOfWork where aggregates were cleared before calling ProcessPostTransactionEvents().</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed RepositoryBase GetEntity methods to return a Maybe instead of a Result.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
-    <PackageReference Include="Humanizer.Core" Version="2.7.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.2" />
-    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.15.1" />
+    <PackageReference Include="Humanizer.Core" Version="2.10.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.5" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="Paginator.NET.EntityFrameworkCore" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>

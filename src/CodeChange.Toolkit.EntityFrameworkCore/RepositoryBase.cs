@@ -231,8 +231,8 @@
         /// </summary>
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
-        /// <returns>The result with the matching entity</returns>
-        protected virtual Result<TRoot> GetEntity(string key, bool useEagerLoading = false)
+        /// <returns>The matching entity wrapped into a Maybe</returns>
+        protected virtual Maybe<TRoot> GetEntity(string key, bool useEagerLoading = false)
         {
             return GetEntityAsync(key).WaitAndUnwrapException();
         }
@@ -243,8 +243,8 @@
         /// <param name="key">The entities key value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The result with the matching entity</returns>
-        protected virtual async Task<Result<TRoot>> GetEntityAsync
+        /// <returns>The matching entity wrapped into a Maybe</returns>
+        protected virtual async Task<Maybe<TRoot>> GetEntityAsync
             (
                 string key,
                 bool useEagerLoading = false,
@@ -268,8 +268,8 @@
         /// </summary>
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
-        /// <returns>The result with the matching entity</returns>
-        protected virtual Result<TRoot> GetEntity(long id, bool useEagerLoading = false)
+        /// <returns>The matching entity wrapped into a Maybe</returns>
+        protected virtual Maybe<TRoot> GetEntity(long id, bool useEagerLoading = false)
         {
             return GetEntityAsync(id).WaitAndUnwrapException();
         }
@@ -280,8 +280,8 @@
         /// <param name="id">The entities ID value</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The result with the matching entity</returns>
-        protected virtual async Task<Result<TRoot>> GetEntityAsync
+        /// <returns>The matching entity wrapped into a Maybe</returns>
+        protected virtual async Task<Maybe<TRoot>> GetEntityAsync
             (
                 long id,
                 bool useEagerLoading = false,
@@ -299,8 +299,8 @@
         /// <param name="predicate">The search predicate</param>
         /// <param name="useEagerLoading">If true, eager loading is applied to the entity</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The result with the matching entity</returns>
-        private async Task<Result<TRoot>> GetEntityAsync
+        /// <returns>The matching entity wrapped into a Maybe</returns>
+        private async Task<Maybe<TRoot>> GetEntityAsync
             (
                 Expression<Func<TRoot, bool>> predicate,
                 bool useEagerLoading = false,
@@ -321,19 +321,9 @@
                     .Select(entry => entry.Entity);
 
                 entity = addedEntities.FirstOrDefault(predicate.Compile());
-
-                if (entity == default(TRoot))
-                {
-                    var typeName = typeof(TRoot).Name;
-
-                    return Result.Failure<TRoot>
-                    (
-                        $"Key does not match any {typeName} entities in the repository."
-                    );
-                }
             }
 
-            return Result.Success(entity);
+            return entity;
         }
 
         /// <summary>
@@ -392,11 +382,7 @@
         /// <param name="query">The query to filter and paginate</param>
         /// <param name="filter">The filter</param>
         /// <returns>An asynchronous paged collection</returns>
-        protected virtual IAsyncPagedCollection<TRoot> FilterAndPaginateAsync
-            (
-                IQueryable<TRoot> query,
-                AggregateFilter filter
-            )
+        protected virtual IAsyncPagedCollection<TRoot> FilterAndPaginateAsync(IQueryable<TRoot> query, AggregateFilter filter)
         {
             Validate.IsNotNull(filter);
 
@@ -586,11 +572,7 @@
         /// <param name="entity">The entity to update</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        protected virtual async Task<Result> UpdateEntityAsync
-            (
-                TRoot entity,
-                CancellationToken cancellationToken = default
-            )
+        protected virtual async Task<Result> UpdateEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
         {
             Validate.IsNotNull(entity);
 
@@ -636,21 +618,49 @@
         /// <returns>The result of the operation</returns>
         protected virtual Result RemoveEntity(long id)
         {
-            return GetEntity(id, false).Tap(entity => RemoveEntity(entity));
+            return GetEntity(id, false)
+                .ToResult("The entity could not be removed because it was not found.")
+                .Tap(entity => RemoveEntity(entity));
         }
 
         /// <summary>
-        /// Deletes a single entity from the collection in the database context
+        /// Asynchronously removes a single entity from the collection in the database context
+        /// </summary>
+        /// <param name="id">The ID of the entity to delete</param>
+        /// <returns>The result of the operation</returns>
+        protected virtual async Task<Result> RemoveEntityAsync(long id)
+        {
+            return await GetEntityAsync(id, false)
+                .ToResult("The entity could not be removed because it was not found.")
+                .Tap(entity => RemoveEntity(entity));
+        }
+
+        /// <summary>
+        /// Removes a single entity from the collection in the database context
         /// </summary>
         /// <param name="key">The lookup key of the entity to delete</param>
         /// <returns>The result of the operation</returns>
         protected virtual Result RemoveEntity(string key)
         {
-            return GetEntity(key, false).Tap(entity => RemoveEntity(entity));
+            return GetEntity(key, false)
+                .ToResult("The entity could not be removed because it was not found.")
+                .Tap(entity => RemoveEntity(entity));
         }
 
         /// <summary>
-        /// Deletes a single entity from the collection in the database context
+        /// Asynchronously removes a single entity from the collection in the database context
+        /// </summary>
+        /// <param name="key">The lookup key of the entity to delete</param>
+        /// <returns>The result of the operation</returns>
+        protected virtual async Task<Result> RemoveEntityAsync(string key)
+        {
+            return await GetEntityAsync(key, false)
+                .ToResult("The entity could not be removed because it was not found.")
+                .Tap(entity => RemoveEntity(entity));
+        }
+
+        /// <summary>
+        /// Removes a single entity from the collection in the database context
         /// </summary>
         /// <param name="entity">The entity to delete</param>
         /// <returns>The result of the operation</returns>
