@@ -15,29 +15,19 @@
         {
             var uri = new Uri(url);
 
-            this.Address = url;
-            this.Scheme = uri.Scheme;
-            this.Host = uri.Host;
+            Address = url;
+            Scheme = uri.Scheme;
+            Host = uri.Host;
         }
 
-        public static Result<WebAddress> Create
-            (
-                string url
-            )
+        public static Result<WebAddress> Create(string url)
         {
             if (String.IsNullOrWhiteSpace(url))
             {
-                return Result.Failure<WebAddress>
-                (
-                    "The website address must contain a value."
-                );
+                return Result.Failure<WebAddress>("The web address must contain a value.");
             }
 
-            var isValid = Uri.IsWellFormedUriString
-            (
-                url,
-                UriKind.Absolute
-            );
+            var isValid = Uri.IsWellFormedUriString(url, UriKind.Absolute);
 
             if (isValid)
             {
@@ -47,27 +37,22 @@
             }
             else
             {
-                return Result.Failure<WebAddress>
-                (
-                    $"The website address '{url}' is invalid."
-                );
+                return Result.Failure<WebAddress>($"The web address '{url}' is invalid.");
             }
         }
 
         public string Address { get; private set; }
-
         public string Scheme { get; private set; }
-
         public string Host { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.Address.ToUpper();
+            yield return Address.ToUpper();
         }
 
         public override string ToString()
         {
-            return this.Address;
+            return Address;
         }
     }
 }

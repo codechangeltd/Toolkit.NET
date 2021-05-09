@@ -14,13 +14,10 @@
 
         private PhoneNumber(string number)
         {
-            this.Number = number.Trim();
+            Number = number.Trim();
         }
 
-        public static Result<PhoneNumber> Create
-            (
-                string number
-            )
+        public static Result<PhoneNumber> Create(string number)
         {
             var isValid = true;
             var failureMessage = String.Empty;
@@ -45,10 +42,7 @@
             }
             else
             {
-                return Result.Failure<PhoneNumber>
-                (
-                    failureMessage
-                );
+                return Result.Failure<PhoneNumber>(failureMessage);
             }
         }
 
@@ -56,12 +50,12 @@
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.Number.ToUpper();
+            yield return Number.ToUpper();
         }
 
         public override string ToString()
         {
-            return this.Number;
+            return Number;
         }
     }
 }

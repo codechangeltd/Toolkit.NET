@@ -16,22 +16,16 @@
         {
             var parts = email.Split('@');
 
-            this.Address = email;
-            this.User = parts[0];
-            this.Host = parts[1];
+            Address = email;
+            User = parts[0];
+            Host = parts[1];
         }
 
-        public static Result<Email> Create
-            (
-                string email
-            )
+        public static Result<Email> Create(string email)
         {
             if (String.IsNullOrWhiteSpace(email))
             {
-                return Result.Failure<Email>
-                (
-                    "The email address must contain a value."
-                );
+                return Result.Failure<Email>("The email address must contain a value.");
             }
 
             bool isValid;
@@ -58,27 +52,22 @@
             }
             else
             {
-                return Result.Failure<Email>
-                (
-                    $"The email address '{email}' is invalid."
-                );
+                return Result.Failure<Email>($"The email address '{email}' is invalid.");
             }
         }
 
         public string Address { get; private set; }
-
         public string Host { get; private set; }
-
         public string User { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.Address.ToUpper();
+            yield return Address.ToUpper();
         }
 
         public override string ToString()
         {
-            return this.Address;
+            return Address;
         }
     }
 }

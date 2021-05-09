@@ -7,7 +7,7 @@
     using System.Text;
 
     /// <summary>
-    /// Represents a persons name
+    /// Represents a persons full name
     /// </summary>
     public class PersonName : ValueObject
     {
@@ -22,11 +22,11 @@
                 string suffix = null
             )
         {
-            this.FirstName = firstName;
-            this.MiddleName = middleName;
-            this.LastName = lastName;
-            this.Title = title;
-            this.Suffix = suffix;
+            FirstName = firstName;
+            MiddleName = middleName;
+            LastName = lastName;
+            Title = title;
+            Suffix = suffix;
         }
 
         public static Result<PersonName> Create
@@ -45,10 +45,7 @@
                 lastName
             };
 
-            var allEmpty = allNames.All
-            (
-                name => String.IsNullOrWhiteSpace(name)
-            );
+            var allEmpty = allNames.All(name => String.IsNullOrWhiteSpace(name));
 
             if (allEmpty)
             {
@@ -72,59 +69,62 @@
             }
         }
 
+        /// <summary>
+        /// Auto formats the person name to ensure it uses title case
+        /// </summary>
+        public virtual void AutoFormat()
+        {
+            FirstName = CorrectCase(FirstName);
+            MiddleName = CorrectCase(MiddleName);
+            LastName = CorrectCase(LastName);
+            Title = CorrectCase(Title);
+            Suffix = CorrectCase(Suffix);
+
+            string CorrectCase(string name)
+            {
+                if (String.IsNullOrEmpty(name))
+                {
+                    return name;
+                }
+                else
+                {
+                    var isAllUpper = name.All(c => Char.IsUpper(c));
+                    var isAllLower = name.All(c => Char.IsLower(c));
+
+                    if (isAllUpper || isAllLower)
+                    {
+                        return name.ToTitleCase();
+                    }
+                    else
+                    {
+                        return name;
+                    }
+                }
+            }
+        }
+
         public string FirstName { get; private set; }
-
         public string MiddleName { get; private set; }
-
         public string LastName { get; private set; }
-        
         public string Title { get; private set; }
-
         public string Suffix { get; private set; }
 
         /// <summary>
         /// Gets a display name for presentation purposes (excluding title and suffix)
         /// </summary>
-        public string DisplayName
-        {
-            get
-            {
-                return Concat
-                (
-                    this.FirstName,
-                    this.MiddleName,
-                    this.LastName
-                );
-            }
-        }
+        public string DisplayName => Concat(FirstName, MiddleName, LastName);
 
         /// <summary>
         /// Gets the full name of the person (including title and suffix)
         /// </summary>
-        public string FullName
-        {
-            get
-            {
-                return Concat
-                (
-                    this.Title,
-                    this.FirstName,
-                    this.MiddleName,
-                    this.LastName,
-                    this.Suffix
-                );
-            }
-        }
+        public string FullName => Concat(Title, FirstName, MiddleName, LastName, Suffix);
 
         /// <summary>
         /// Concatenates an array of words into a single string separated by spaces
         /// </summary>
         /// <param name="words">The words to concatenate</param>
         /// <returns>The concatenated string</returns>
-        private string Concat
-            (
-                params string[] words
-            )
+        private string Concat(params string[] words)
         {
             var builder = new StringBuilder();
 
@@ -141,16 +141,16 @@
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return this.FirstName.ToUpper();
-            yield return this.MiddleName.ToUpper();
-            yield return this.LastName.ToUpper();
-            yield return this.Title.ToUpper();
-            yield return this.Suffix.ToUpper();
+            yield return FirstName.ToUpper();
+            yield return MiddleName.ToUpper();
+            yield return LastName.ToUpper();
+            yield return Title.ToUpper();
+            yield return Suffix.ToUpper();
         }
 
         public override string ToString()
         {
-            return this.DisplayName;
+            return DisplayName;
         }
     }
 }

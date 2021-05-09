@@ -31,11 +31,7 @@
         {
             if (_built)
             {
-                var message = String.Format
-                (
-                    "An instance of {0} has already been built.",
-                    typeof(T).ToString()
-                );
+                var message = $"An instance of {typeof(T)} has already been built.";
 
                 throw new InvalidOperationException(message);
             }

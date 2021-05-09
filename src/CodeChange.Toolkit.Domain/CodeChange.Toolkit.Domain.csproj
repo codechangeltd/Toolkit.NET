@@ -6,15 +6,15 @@
     <Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
     <Copyright>Copyright © Code Change Ltd 2021</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>4.0.0</AssemblyVersion>
-    <Version>4.0.0</Version>
+    <AssemblyVersion>4.0.1</AssemblyVersion>
+    <Version>4.0.1</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Domain/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Added async domain event logging methods.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added AutoFormat() to PersonName.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
