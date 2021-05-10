@@ -177,15 +177,11 @@
 
                 if (usedCount == 0)
                 {
-                    var addTask = AddEntityAsync(entity, cancellationToken);
-
-                    return await addTask.ConfigureAwait(false);
+                    return await AddEntityAsync(entity, cancellationToken).ConfigureAwait(false);
                 }
                 else
                 {
-                    var updateTask = UpdateEntityAsync(entity, cancellationToken);
-
-                    return await updateTask.ConfigureAwait(false);
+                    return await UpdateEntityAsync(entity, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
