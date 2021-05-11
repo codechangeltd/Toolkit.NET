@@ -36,9 +36,7 @@
 
             if (isValid)
             {
-                var pn = new PhoneNumber(number);
-
-                return Result.Success(pn);
+                return new PhoneNumber(number);
             }
             else
             {

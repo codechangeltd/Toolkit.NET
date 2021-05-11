@@ -46,9 +46,7 @@
 
             if (isValid)
             {
-                var address = new Email(email);
-
-                return Result.Success(address);
+                return new Email(email);
             }
             else
             {

@@ -30,9 +30,7 @@
                 }
             }
 
-            var range = new DateRange(startDate, endDate);
-
-            return Result.Success(range);
+            return new DateRange(startDate, endDate);
         }
 
         public DateTime StartDate { get; private set; }
@@ -54,7 +52,7 @@
             var startDisplay = FormatDate(StartDate);
             var endDisplay = FormatDate(EndDate);
 
-            string FormatDate(DateTime date)
+            static string FormatDate(DateTime date)
             {
                 return date.ToShortDateString();
             }

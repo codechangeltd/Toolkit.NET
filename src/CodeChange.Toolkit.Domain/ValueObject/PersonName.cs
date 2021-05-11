@@ -1,5 +1,6 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
+    using BinaryFog.NameParser;
     using CSharpFunctionalExtensions;
     using System;
     using System.Collections.Generic;
@@ -56,16 +57,33 @@
             }
             else
             {
-                var personName = new PersonName
-                (
-                    firstName,
-                    middleName,
-                    lastName,
-                    title,
-                    suffix
-                );
+                return new PersonName(firstName, middleName, lastName, title, suffix);
+            }
+        }
 
-                return Result.Success(personName);
+        /// <summary>
+        /// Parses a full name into its name parts then constructs a new PersonName
+        /// </summary>
+        /// <param name="fullName">The full name to parse</param>
+        /// <returns>The PersonName constructed from the name parts</returns>
+        public static Result<PersonName> Parse(string fullName)
+        {
+            if (String.IsNullOrEmpty(fullName))
+            {
+                return Result.Failure<PersonName>("The name must contain a value.");
+            }
+            else
+            {
+                var parsedName = FullNameParser.Parse(fullName);
+
+                return Create
+                (
+                    parsedName.FirstName,
+                    parsedName.MiddleName,
+                    parsedName.LastName,
+                    parsedName.Title,
+                    parsedName.Suffix
+                );
             }
         }
 
@@ -80,7 +98,7 @@
             Title = CorrectCase(Title);
             Suffix = CorrectCase(Suffix);
 
-            string CorrectCase(string name)
+            static string CorrectCase(string name)
             {
                 if (String.IsNullOrEmpty(name))
                 {

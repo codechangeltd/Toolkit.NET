@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit", "CodeChange.Toolkit\CodeChange.Toolkit.csproj", "{F666D9B6-FA2A-4022-81BE-88FBF5701CCB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.Tests", "CodeChange.Toolkit.Tests\CodeChange.Toolkit.Tests.csproj", "{B7EF1099-B65D-45E2-82A3-AF96A3CD9DD3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.WebApi", "CodeChange.Toolkit.WebApi\CodeChange.Toolkit.WebApi.csproj", "{49D3FB52-1753-4437-9DD6-C34DBFC253B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.Domain", "CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj", "{C44E4807-F37D-4D11-AE28-BDF417D2A6C3}"
@@ -19,13 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.Autofac"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{6C01A5C1-337E-49CF-81B6-318195D9E313}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.Domain.Tests", "Testing\CodeChange.Toolkit.Domain.Tests\CodeChange.Toolkit.Domain.Tests.csproj", "{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.AspNetCore", "CodeChange.Toolkit.AspNetCore\CodeChange.Toolkit.AspNetCore.csproj", "{A91DE194-4C00-4AAE-B5EB-395319D1EB43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.EntityFrameworkCore", "CodeChange.Toolkit.EntityFrameworkCore\CodeChange.Toolkit.EntityFrameworkCore.csproj", "{103E178A-D3D5-4A71-B097-B155561CB436}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeChange.Toolkit.EF6", "CodeChange.Toolkit.EF6\CodeChange.Toolkit.EF6.csproj", "{B3F4E589-B7FB-41E0-A9A0-7C7292DF9FCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeChange.Toolkit.EF6", "CodeChange.Toolkit.EF6\CodeChange.Toolkit.EF6.csproj", "{B3F4E589-B7FB-41E0-A9A0-7C7292DF9FCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +33,6 @@ Global
 		{F666D9B6-FA2A-4022-81BE-88FBF5701CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F666D9B6-FA2A-4022-81BE-88FBF5701CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F666D9B6-FA2A-4022-81BE-88FBF5701CCB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7EF1099-B65D-45E2-82A3-AF96A3CD9DD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7EF1099-B65D-45E2-82A3-AF96A3CD9DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7EF1099-B65D-45E2-82A3-AF96A3CD9DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7EF1099-B65D-45E2-82A3-AF96A3CD9DD3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49D3FB52-1753-4437-9DD6-C34DBFC253B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,10 +53,6 @@ Global
 		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBF56BF5-CEAD-452C-9C90-834BF0B70C7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A91DE194-4C00-4AAE-B5EB-395319D1EB43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A91DE194-4C00-4AAE-B5EB-395319D1EB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A91DE194-4C00-4AAE-B5EB-395319D1EB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -80,9 +68,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A8E66179-C747-4ABF-8D1D-8C4492D0A0E8} = {6C01A5C1-337E-49CF-81B6-318195D9E313}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {321F7234-4A40-4F48-BC07-708960EC1AA9}
