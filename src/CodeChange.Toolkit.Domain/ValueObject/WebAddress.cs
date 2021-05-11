@@ -31,9 +31,7 @@
 
             if (isValid)
             {
-                var address = new WebAddress(url);
-
-                return Result.Success(address);
+                return new WebAddress(url);
             }
             else
             {

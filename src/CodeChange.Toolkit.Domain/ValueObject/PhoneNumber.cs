@@ -10,11 +10,16 @@
     /// </summary>
     public class PhoneNumber : ValueObject
     {
-        private PhoneNumber() { }
+        private PhoneNumber()
+        {
+            Number = String.Empty;
+            HasValue = false;
+        }
 
         private PhoneNumber(string number)
         {
             Number = number.Trim();
+            HasValue = true;
         }
 
         public static Result<PhoneNumber> Create(string number)
@@ -44,7 +49,13 @@
             }
         }
 
+        public static PhoneNumber Empty()
+        {
+            return new PhoneNumber();
+        }
+
         public string Number { get; private set; }
+        public bool HasValue { get; private set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
