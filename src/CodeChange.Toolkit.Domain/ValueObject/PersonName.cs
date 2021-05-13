@@ -75,15 +75,43 @@
             else
             {
                 var parsedName = FullNameParser.Parse(fullName);
+                var firstName = parsedName.FirstName;
+                var middleName = parsedName.MiddleName;
+                var lastName = parsedName.LastName;
+                var title = parsedName.Title;
+                var suffix = parsedName.Suffix;
 
-                return Create
-                (
-                    parsedName.FirstName,
-                    parsedName.MiddleName,
-                    parsedName.LastName,
-                    parsedName.Title,
-                    parsedName.Suffix
-                );
+                // NOTE:
+                // The name parser works for most names, but there are
+                // some valid edge cases that do not work.
+                //
+                // For example, the name 'Mary Sarah-Jane Lucy' fails 
+                // because the middle name contains a hyphen, which the 
+                // parser can't handle.
+                //
+                // The following code is a failsafe for these cases.
+                // It simply uses the first and last words as the first
+                // and last names, then anything in between gets treated 
+                // as the middle name.
+
+                if (parsedName.Results.Count == 0)
+                {
+                    var names = fullName.Split(' ');
+
+                    firstName = names.FirstOrDefault();
+
+                    if (names.Length > 1)
+                    {
+                        lastName = names.LastOrDefault();
+                    }
+
+                    if (names.Length > 2)
+                    {
+                        middleName = String.Join(" ", names.Skip(1).Take(names.Length - 2));
+                    }
+                }
+
+                return Create(firstName, middleName, lastName, title, suffix);
             }
         }
 
