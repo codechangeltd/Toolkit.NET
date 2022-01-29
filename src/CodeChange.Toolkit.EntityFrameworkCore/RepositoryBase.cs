@@ -284,9 +284,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = GetEntityAsync(_ => _.ID == id, useEagerLoading, cancellationToken);
-
-            return await task.ConfigureAwait(false);
+            return await GetEntityAsync(_ => _.ID == id, useEagerLoading, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -623,10 +621,11 @@
         /// Asynchronously removes a single entity from the collection in the database context
         /// </summary>
         /// <param name="id">The ID of the entity to delete</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        protected virtual async Task<Result> RemoveEntityAsync(long id)
+        protected virtual async Task<Result> RemoveEntityAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await GetEntityAsync(id, false)
+            return await GetEntityAsync(id, false, cancellationToken)
                 .ToResult("The entity could not be removed because it was not found.")
                 .Tap(entity => RemoveEntity(entity));
         }
@@ -647,10 +646,11 @@
         /// Asynchronously removes a single entity from the collection in the database context
         /// </summary>
         /// <param name="key">The lookup key of the entity to delete</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        protected virtual async Task<Result> RemoveEntityAsync(string key)
+        protected virtual async Task<Result> RemoveEntityAsync(string key, CancellationToken cancellationToken = default)
         {
-            return await GetEntityAsync(key, false)
+            return await GetEntityAsync(key, false, cancellationToken)
                 .ToResult("The entity could not be removed because it was not found.")
                 .Tap(entity => RemoveEntity(entity));
         }

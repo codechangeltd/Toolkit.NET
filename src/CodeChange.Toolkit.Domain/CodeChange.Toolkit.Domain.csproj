@@ -18,8 +18,8 @@
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BinaryFog.NameParser" Version="3.2.0" />
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.15.1" />
+    <PackageReference Include="BinaryFog.NameParser" Version="3.2.3" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.27.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
