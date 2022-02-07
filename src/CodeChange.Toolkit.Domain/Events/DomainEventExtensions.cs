@@ -2,9 +2,6 @@
 {
     using System;
     
-    /// <summary>
-    /// Represents various extension methods for domain events
-    /// </summary>
     public static class DomainEventExtensions
     {
         /// <summary>
@@ -16,13 +13,7 @@
         {
             Validate.IsNotNull(@event);
 
-            var hasPreAttribute = Attribute.IsDefined
-            (
-                @event.GetType(),
-                typeof(PreTransactionEventAttribute)
-            );
-
-            return hasPreAttribute;
+            return Attribute.IsDefined(@event.GetType(), typeof(PreTransactionEventAttribute));
         }
 
         /// <summary>
@@ -34,11 +25,8 @@
         {
             Validate.IsNotNull(@event);
 
-            var hasPreAttribute = Attribute.IsDefined
-            (
-                @event.GetType(),
-                typeof(PreTransactionEventAttribute)
-            );
+            var eventType = @event.GetType();
+            var hasPreAttribute = Attribute.IsDefined(eventType, typeof(PreTransactionEventAttribute));
 
             if (false == hasPreAttribute)
             {
@@ -46,11 +34,7 @@
             }
             else
             {
-                var hasPostAttribute = Attribute.IsDefined
-                (
-                    @event.GetType(),
-                    typeof(PostTransactionEventAttribute)
-                );
+                var hasPostAttribute = Attribute.IsDefined(eventType, typeof(PostTransactionEventAttribute));
 
                 if (hasPostAttribute)
                 {

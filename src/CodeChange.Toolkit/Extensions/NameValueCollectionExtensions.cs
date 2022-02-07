@@ -5,9 +5,6 @@
     using System.ComponentModel;
     using System.Linq;
     
-    /// <summary>
-    /// Represents various extension methods for the NameValueCollection class
-    /// </summary>
     public static class NameValueCollectionExtensions
     {
         /// <summary>

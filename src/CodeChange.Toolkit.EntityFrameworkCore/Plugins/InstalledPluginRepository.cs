@@ -8,60 +8,24 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Represents an Entity Framework installed plugins repository
-    /// </summary>
-    public sealed class InstalledPluginRepository
-        : RepositoryBase<InstalledPlugin>, IInstalledPluginRepository
+    public sealed class InstalledPluginRepository : RepositoryBase<InstalledPlugin>, IInstalledPluginRepository
     {
-        /// <summary>
-        /// Constructs the repository with a database context instance
-        /// </summary>
-        /// <param name="context">The database context instance</param>
-        public InstalledPluginRepository
-            (
-                DbContext context
-            )
+        public InstalledPluginRepository(DbContext context)
             : base(context)
         { }
 
-        /// <summary>
-        /// Determines if a plug-in has already been installed
-        /// </summary>
-        /// <param name="pluginName">The plug-in name</param>
-        /// <returns>True, if the plug-in has already been installed; otherwise false</returns>
-        public bool IsPluginInstalled
-            (
-                string pluginName
-            )
+        public bool IsPluginInstalled(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            return GetAll().Any
-            (
-                m => m.PluginName.Equals
-                (
-                    pluginName,
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
+            return GetAll().Any(_ => _.PluginName.Equals(pluginName, StringComparison.OrdinalIgnoreCase));
         }
 
-        /// <summary>
-        /// Adds a installed plug-in to the repository
-        /// </summary>
-        /// <param name="plugin">The installed plug-in to add</param>
-        public void AddInstallation
-            (
-                InstalledPlugin plugin
-            )
+        public void AddInstallation(InstalledPlugin plugin)
         {
             Validate.IsNotNull(plugin);
 
-            var installed = IsPluginInstalled
-            (
-                plugin.PluginName
-            );
+            var installed = IsPluginInstalled(plugin.PluginName);
 
             if (installed)
             {
@@ -76,26 +40,12 @@
             AddEntity(plugin);
         }
 
-        /// <summary>
-        /// Gets a single installed plug-in from the repository
-        /// </summary>
-        /// <param name="pluginName">The name of the plug-in</param>
-        /// <returns>The matching installed plug-in</returns>
-        public InstalledPlugin GetInstallation
-            (
-                string pluginName
-            )
+        public InstalledPlugin GetInstallation(string pluginName)
         {
             Validate.IsNotEmpty(pluginName);
 
-            var plugin = GetAll().FirstOrDefault
-            (
-                m => m.PluginName.Equals
-                (
-                    pluginName,
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
+            var plugin = GetAll()
+                .FirstOrDefault(_ => _.PluginName.Equals(pluginName, StringComparison.OrdinalIgnoreCase));
 
             if (plugin == null)
             {
@@ -109,89 +59,41 @@
             return plugin;
         }
 
-        /// <summary>
-        /// Gets a collection of all installed plug-ins
-        /// </summary>
-        /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetAllInstallations()
         {
-            return GetAll().OrderBy(a => a.PluginName);
+            return GetAll().OrderBy(_ => _.PluginName);
         }
 
-        /// <summary>
-        /// Gets a collection of installed plug-ins for the type specified
-        /// </summary>
-        /// <typeparam name="T">The plug-in type</typeparam>
-        /// <returns>A collection of matching installed plug-ins</returns>
-        public IEnumerable<InstalledPlugin> GetInstallations<T>()
-            where T : IPlugin
+        public IEnumerable<InstalledPlugin> GetInstallations<T>() where T : IPlugin
         {
             var typeName = typeof(T).Name;
 
-            var query = GetAll().Where
-            (
-                m => m.PluginInterfaceTypeName == typeName
-            );
-
-            return query.OrderBy(a => a.PluginName);
+            return GetAll()
+                .Where(_ => _.PluginInterfaceTypeName == typeName)
+                .OrderBy(_ => _.PluginName);
         }
 
-        /// <summary>
-        /// Gets a collection of enabled installed plug-ins
-        /// </summary>
-        /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetEnabledInstallations()
         {
-            var query = GetAll().Where
-            (
-                x => false == x.Disabled
-            );
-
-            return query.OrderBy(a => a.PluginName);
+            return GetAll().Where(_ => false == _.Disabled).OrderBy(_ => _.PluginName);
         }
 
-        /// <summary>
-        /// Gets a collection of disabled installed plug-ins
-        /// </summary>
-        /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetDisabledInstallations()
         {
-            var plugins = GetAll().Where
-            (
-                x => x.Disabled
-            );
-
-            return plugins.OrderBy(a => a.PluginName);
+            return GetAll().Where(_ => _.Disabled).OrderBy(_ => _.PluginName);
         }
 
-        /// <summary>
-        /// Updates a single installed plug-in
-        /// </summary>
-        /// <param name="plugin">The installed plug-in to update</param>
-        public void UpdateInstallation
-            (
-                InstalledPlugin plugin
-            )
+        public void UpdateInstallation(InstalledPlugin plugin)
         {
             var result = UpdateEntity(plugin);
 
             if (result.IsFailure)
             {
-                throw new InvalidOperationException
-                (
-                    "A duplicate plugin key was found."
-                );
+                throw new InvalidOperationException("A duplicate plugin key was found.");
             }
         }
 
-        /// <summary>
-        /// Removes a single installed plug-in from the repository
-        /// </summary>
-        /// <param name="pluginName">The plug-in name</param>
-        public void RemoveInstallation
-            (
-                string pluginName
-            )
+        public void RemoveInstallation(string pluginName)
         {
             var plugin = GetInstallation(pluginName);
 

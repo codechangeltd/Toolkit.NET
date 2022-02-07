@@ -12,18 +12,11 @@
     /// </summary>
     public class DomainEventLog : IAggregateRoot
     {
-        /// <summary>
-        /// Default protected parameter less constructor for the ORM to initialise the entity
-        /// </summary>
         protected DomainEventLog()
         {
             this.UnpublishedEvents = new List<IDomainEvent>();
         }
 
-        /// <summary>
-        /// Constructs the domain event log
-        /// </summary>
-        /// <param name="event">The domain event</param>
         protected DomainEventLog(IDomainEvent @event)
         {
             this.LookupKey = new EntityKeyGenerator().GenerateKey();
@@ -35,12 +28,6 @@
             PopulateLog(@event);
         }
 
-        /// <summary>
-        /// Constructs the domain event log
-        /// </summary>
-        /// <param name="aggregateKey">The aggregate key</param>
-        /// <param name="aggregateType">The aggregate type</param>
-        /// <param name="event">The domain event</param>
         protected DomainEventLog(string aggregateKey, Type aggregateType, IDomainEvent @event)
             : this(@event)
         {
@@ -51,23 +38,11 @@
             this.AggregateTypeName = aggregateType.Name;
         }
 
-        /// <summary>
-        /// Creates a new domain event log
-        /// </summary>
-        /// <param name="event">The domain event</param>
-        /// <returns>The event log created</returns>
         public static DomainEventLog CreateLog(IDomainEvent @event)
         {
             return new DomainEventLog(@event);
         }
 
-        /// <summary>
-        /// Creates a new domain event log
-        /// </summary>
-        /// <param name="aggregateKey">The aggregate key</param>
-        /// <param name="aggregateType">The aggregate type</param>
-        /// <param name="event">The domain event</param>
-        /// <returns>The event log created</returns>
         public static DomainEventLog CreateLog(string aggregateKey, Type aggregateType, IDomainEvent @event)
         {
             return new DomainEventLog(aggregateKey, aggregateType, @event);

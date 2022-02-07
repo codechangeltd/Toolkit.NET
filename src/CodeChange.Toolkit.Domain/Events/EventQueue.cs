@@ -5,16 +5,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// The default implementation of a domain event queue
-    /// </summary>
     public sealed class EventQueue : IEventQueue
     {
         private readonly List<EventQueueItem> _items;
 
-        /// <summary>
-        /// Constructs the event queue with a new collection
-        /// </summary>
         public EventQueue()
         {
             _items = new List<EventQueueItem>();

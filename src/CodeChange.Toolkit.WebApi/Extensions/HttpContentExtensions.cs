@@ -7,9 +7,6 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Various extension methods for the HttpContent class
-    /// </summary>
     public static class HttpContentExtensions
     {
         /// <summary>
@@ -20,25 +17,12 @@
         /// <remarks>
         /// See http://chris.59north.com/post/Uploading-files-using-ASPNET-Web-Api
         /// </remarks>
-        public static async Task<HttpPostedData> ParseMultipartAsync
-            (
-                this HttpContent postedContent
-            )
+        public static async Task<HttpPostedData> ParseMultipartAsync(this HttpContent postedContent)
         {
-            var provider = await postedContent.ReadAsMultipartAsync().ConfigureAwait
-            (
-                false
-            );
+            var provider = await postedContent.ReadAsMultipartAsync().ConfigureAwait(false);
 
-            var files = new Dictionary<string, HttpPostedFile>
-            (
-                StringComparer.InvariantCultureIgnoreCase
-            );
-
-            var fields = new Dictionary<string, HttpPostedField>
-            (
-                StringComparer.InvariantCultureIgnoreCase
-            );
+            var files = new Dictionary<string, HttpPostedFile>(StringComparer.InvariantCultureIgnoreCase);
+            var fields = new Dictionary<string, HttpPostedField>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var content in provider.Contents)
             {
@@ -47,36 +31,20 @@
 
                 if (false == String.IsNullOrEmpty(headers.ContentDisposition.FileName))
                 {
-                    var fileContents = await content.ReadAsByteArrayAsync().ConfigureAwait
-                    (
-                        false
-                    );
+                    var fileContents = await content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
                     var contentType = headers.ContentType.ToString();
                     var fileName = headers.ContentDisposition.FileName.Trim('"');
 
-                    var postedFile = new HttpPostedFile
-                    (
-                        fieldName,
-                        fileName,
-                        fileContents,
-                        contentType
-                    );
+                    var postedFile = new HttpPostedFile(fieldName, fileName, fileContents, contentType);
 
                     files.Add(fieldName, postedFile);
                 }
                 else
                 {
-                    var data = await content.ReadAsStringAsync().ConfigureAwait
-                    (
-                        false
-                    );
+                    var data = await content.ReadAsStringAsync().ConfigureAwait(false);
 
-                    var postedField = new HttpPostedField
-                    (
-                        fieldName,
-                        data
-                    );
+                    var postedField = new HttpPostedField(fieldName, data);
 
                     fields.Add(fieldName, postedField);
                 }
@@ -90,10 +58,7 @@
         /// </summary>
         /// <param name="postedData">The HTTP posted data</param>
         /// <returns>The name value collection</returns>
-        public static NameValueCollection AsNameValueCollection
-            (
-                this HttpPostedData postedData
-            )
+        public static NameValueCollection AsNameValueCollection(this HttpPostedData postedData)
         {
             Validate.IsNotNull(postedData);
 
@@ -103,11 +68,7 @@
             {
                 var field = item.Value;
 
-                collection.Add
-                (
-                    field.Name,
-                    field.Value
-                );
+                collection.Add(field.Name, field.Value);
             }
 
             return collection;
@@ -118,10 +79,7 @@
         /// </summary>
         /// <param name="postedData">The HTTP posted data</param>
         /// <returns>The file container dictionary</returns>
-        public static Dictionary<string, FileContainer> AsFileContainerDictionary
-            (
-                this HttpPostedData postedData
-            )
+        public static Dictionary<string, FileContainer> AsFileContainerDictionary(this HttpPostedData postedData)
         {
             Validate.IsNotNull(postedData);
 
@@ -133,18 +91,9 @@
 
                 if (file.FileContents.Length > 0)
                 {
-                    var container = new FileContainer
-                    (
-                        file.FileContents,
-                        file.ContentType,
-                        file.Filename
-                    );
+                    var container = new FileContainer(file.FileContents, file.ContentType, file.Filename);
 
-                    dictionary.Add
-                    (
-                        item.Key,
-                        container
-                    );
+                    dictionary.Add(item.Key, container);
                 }
             }
 

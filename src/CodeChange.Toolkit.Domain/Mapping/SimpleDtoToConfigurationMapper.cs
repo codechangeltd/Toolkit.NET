@@ -11,8 +11,7 @@
     /// </summary>
     public class SimpleDtoToConfigurationMapper : IDtoToConfigurationMapper
     {
-        private static readonly Dictionary<Type, PropertyInfo[]> _propertyCache 
-            = new Dictionary<Type, PropertyInfo[]>();
+        private static readonly Dictionary<Type, PropertyInfo[]> _propertyCache = new Dictionary<Type, PropertyInfo[]>();
 
         /// <summary>
         /// Maps a DTO to a new configuration object
@@ -46,21 +45,14 @@
         {
             if (dtos == null)
             {
-                throw new ArgumentException
-                (
-                    "The DTO collection cannot be null."
-                );
+                throw new ArgumentException("The DTO collection cannot be null.");
             }
 
             var configurations = new List<TConfiguration>();
 
             foreach (var dto in dtos)
             {
-                var configuration = (TConfiguration)Map
-                (
-                    dto,
-                    new TConfiguration()
-                );
+                var configuration = (TConfiguration)Map(dto, new TConfiguration());
 
                 configurations.Add(configuration);
             }
@@ -122,11 +114,7 @@
 
                 var dtoProperty = dtoProperties.FirstOrDefault
                 (
-                    x => x.Name.Equals
-                    (
-                        configProperty.Name,
-                        StringComparison.OrdinalIgnoreCase
-                    )
+                    _ => _.Name.Equals(configProperty.Name, StringComparison.OrdinalIgnoreCase)
                 );
 
                 if (dtoProperty != null)
@@ -137,11 +125,7 @@
                     // Check if we need to convert the value before setting it
                     if (configPropertyType != dtoProperty.PropertyType)
                     {
-                        var canConvertDirectly = dtoProperty.PropertyType.CanConvert
-                        (
-                            configPropertyType,
-                            valueToSet
-                        );
+                        var canConvertDirectly = dtoProperty.PropertyType.CanConvert(configPropertyType, valueToSet);
 
                         if (canConvertDirectly)
                         {
@@ -155,11 +139,7 @@
                             // (e.g. nested collection of DTOs that can be mapped to a
                             // collection of configurations).
 
-                            var canConvertIndirectly = CanConvertComplexType
-                            (
-                                dtoProperty,
-                                configProperty
-                            );
+                            var canConvertIndirectly = CanConvertComplexType(dtoProperty, configProperty);
 
                             if (canConvertIndirectly)
                             {
@@ -278,11 +258,7 @@
                     // by creating a new array instance of the type expected
                     // and then setting its values to those in the list.
 
-                    var newArray = Array.CreateInstance
-                    (
-                        collectionType,
-                        nestedConfigList.Count
-                    );
+                    var newArray = Array.CreateInstance(collectionType, nestedConfigList.Count);
 
                     for (var i = 0; i < nestedConfigList.Count; i++)
                     {
@@ -299,17 +275,10 @@
                     // dynamically creating a new list of the type expected 
                     // and then populating it with the original list.
 
-                    var listType = typeof(List<>).MakeGenericType
-                    (
-                        new[] { collectionType }
-                    );
-
+                    var listType = typeof(List<>).MakeGenericType(new[] { collectionType });
                     var convertedList = (IList)Activator.CreateInstance(listType);
 
-                    nestedConfigList.ForEach
-                    (
-                        item => convertedList.Add(item)
-                    );
+                    nestedConfigList.ForEach(item => convertedList.Add(item));
 
                     convertedValue = convertedList;
                 }

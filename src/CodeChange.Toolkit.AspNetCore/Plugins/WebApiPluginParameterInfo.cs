@@ -12,11 +12,7 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <param name="valueType">The parameter value type</param>
-        internal WebApiPluginParameterInfo
-            (
-                string name,
-                Type valueType
-            )
+        internal WebApiPluginParameterInfo(string name, Type valueType)
         {
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);
@@ -32,13 +28,7 @@
         /// <param name="valueType">The parameter value type</param>
         /// <param name="defaultValue">The default value</param>
         /// <param name="allowNull">True, if null is allowed</param>
-        internal WebApiPluginParameterInfo
-            (
-                string name,
-                Type valueType,
-                object defaultValue,
-                bool allowNull
-            )
+        internal WebApiPluginParameterInfo(string name, Type valueType, object defaultValue, bool allowNull)
         {
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);

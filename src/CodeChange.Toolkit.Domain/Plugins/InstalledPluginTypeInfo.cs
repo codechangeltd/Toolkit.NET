@@ -8,23 +8,11 @@
 	/// </summary>
 	public class InstalledPluginTypeInfo : IAggregateEntity
 	{
-		/// <summary>
-		/// Default protected parameter less constructor for the ORM to initialise the entity
-		/// </summary>
 		protected InstalledPluginTypeInfo()
 			: base()
 		{ }
 
-		/// <summary>
-		/// Constructs the type information with the registered plugin and a type
-		/// </summary>
-		/// <param name="installedPlugin">The installed plug-in</param>
-		/// <param name="type">The class type</param>
-		protected internal InstalledPluginTypeInfo
-			(
-				InstalledPlugin installedPlugin,
-				Type type
-			)
+		protected internal InstalledPluginTypeInfo(InstalledPlugin installedPlugin, Type type)
 		{
 			Validate.IsNotNull(installedPlugin);
 			Validate.IsNotNull(type);
@@ -51,19 +39,16 @@
 		/// </summary>
 		public string LookupKey { get; protected set; }
 
-		/// <summary>
-		/// Gets the aggregate entities unique key value
-		/// </summary>
-		/// <returns>The key value</returns>
-		public virtual string GetKeyValue()
-		{
-			return this.LookupKey;
-		}
+        /// <summary>
+        /// Gets the aggregate entities unique key value
+        /// </summary>
+        /// <returns>The key value</returns>
+        public virtual string GetKeyValue() => this.LookupKey;
 
-		/// <summary>
-		/// Gets the installed plug-in reference
-		/// </summary>
-		public InstalledPlugin InstalledPlugin { get; protected set; }
+        /// <summary>
+        /// Gets the installed plug-in reference
+        /// </summary>
+        public InstalledPlugin InstalledPlugin { get; protected set; }
 
 		/// <summary>
 		/// Gets the ID of the installed plug-in

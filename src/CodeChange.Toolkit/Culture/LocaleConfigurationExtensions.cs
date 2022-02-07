@@ -2,9 +2,6 @@
 {
     using System;
     
-    /// <summary>
-    /// Represents various extension methods for locale configurations
-    /// </summary>
     public static class LocaleConfigurationExtensions
     {
         /// <summary>

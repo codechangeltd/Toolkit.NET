@@ -5,9 +5,6 @@
     using System.Linq;
     using System.Reflection;
 
-    /// <summary>
-    /// Various extension helper methods for objects
-    /// </summary>
     public static class ObjectExtensions
     {
         /// <summary>

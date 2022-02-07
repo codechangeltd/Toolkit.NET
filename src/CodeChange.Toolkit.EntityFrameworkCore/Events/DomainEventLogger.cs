@@ -7,9 +7,6 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Represents an EF Core implementation of a domain event logger
-    /// </summary>
     public sealed class DomainEventLogger : IDomainEventLogger
     {
         private readonly IDomainEventLogRepository _logRepository;

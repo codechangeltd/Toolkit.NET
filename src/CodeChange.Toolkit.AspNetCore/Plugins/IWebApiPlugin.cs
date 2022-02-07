@@ -19,19 +19,13 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <returns>The matching parameter information</returns>
-        WebApiPluginParameterInfo GetParameter
-        (
-            string name
-        );
+        WebApiPluginParameterInfo GetParameter(string name);
 
         /// <summary>
         /// Executes the plug-in using a HTTP request
         /// </summary>
         /// <param name="request">The HTTP request</param>
         /// <returns>The result of the plugin execution</returns>
-        ActionResult Execute
-        (
-            HttpRequest request
-        );
+        ActionResult Execute(HttpRequest request);
     }
 }

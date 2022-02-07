@@ -5,19 +5,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Represents a standard implementation of a plugin registrar
-    /// </summary>
     public sealed class PluginManager : IPluginManager
     {
         private readonly IPluginRepository _pluginRepository;
         private readonly IInstalledPluginRepository _installationRepository;
 
-        /// <summary>
-        /// Constructs the service with required dependencies
-        /// </summary>
-        /// <param name="pluginRepository">The plug-in repository</param>
-        /// <param name="installationRepository">The installed plug-in repository</param>
         public PluginManager
             (
                 IPluginRepository pluginRepository,

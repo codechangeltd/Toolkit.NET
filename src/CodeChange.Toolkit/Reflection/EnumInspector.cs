@@ -2,9 +2,6 @@
 {
     using System.Collections.Generic;
     
-    /// <summary>
-    /// Provides various methods for inspecting enums
-    /// </summary>
     public class EnumInspector
     {
         /// <summary>

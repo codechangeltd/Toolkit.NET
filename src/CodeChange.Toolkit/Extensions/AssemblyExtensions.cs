@@ -4,9 +4,6 @@
     using System.IO;
     using System.Linq;
 
-    /// <summary>
-    /// Represents various extension methods for the Assembly class
-    /// </summary>
     public static class AssemblyExtensions
     {
         /// <summary>

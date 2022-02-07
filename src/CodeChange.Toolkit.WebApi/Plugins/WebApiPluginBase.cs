@@ -22,17 +22,7 @@
         /// <summary>
         /// Overrides the name so we can remove the WebApi part
         /// </summary>
-        public override string Name
-        {
-            get
-            {
-                return base.Name.Replace
-                (
-                    "WebApi",
-                    String.Empty
-                );
-            }
-        }
+        public override string Name => base.Name.Replace("WebApi", String.Empty);
 
         /// <summary>
         /// Gets an array of parameters for the Web API call
@@ -57,21 +47,11 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <param name="allowNull">True, if null values are allowed</param>
-        protected void DefineParameter
-            (
-                string name,
-                bool allowNull = true
-            )
+        protected void DefineParameter(string name, bool allowNull = true)
         {
             Validate.IsNotEmpty(name);
 
-            var parameter = new WebApiPluginParameterInfo
-            (
-                name,
-                typeof(string),
-                null,
-                allowNull
-            );
+            var parameter = new WebApiPluginParameterInfo(name, typeof(string), null, allowNull);
 
             DefineParameter(parameter);
         }
@@ -81,22 +61,12 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <param name="valueType">The parameter value type</param>
-        protected void DefineParameter
-            (
-                string name,
-                Type valueType
-            )
+        protected void DefineParameter(string name, Type valueType)
         {
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);
 
-            var parameter = new WebApiPluginParameterInfo
-            (
-                name,
-                valueType,
-                null,
-                true
-            );
+            var parameter = new WebApiPluginParameterInfo(name, valueType, null, true);
 
             DefineParameter(parameter);
         }
@@ -108,24 +78,12 @@
         /// <param name="valueType">The parameter value type</param>
         /// <param name="defaultValue">The default value</param>
         /// <param name="allowNull">True, if null is allowed</param>
-        protected void DefineParameter
-            (
-                string name,
-                Type valueType,
-                object defaultValue,
-                bool allowNull
-            )
+        protected void DefineParameter(string name, Type valueType, object defaultValue, bool allowNull)
         {
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);
 
-            var parameter = new WebApiPluginParameterInfo
-            (
-                name,
-                valueType,
-                defaultValue,
-                allowNull
-            );
+            var parameter = new WebApiPluginParameterInfo(name, valueType, defaultValue, allowNull);
 
             DefineParameter(parameter);
         }
@@ -134,10 +92,7 @@
         /// Defines a parameter
         /// </summary>
         /// <param name="parameter">The parameter information</param>
-        private void DefineParameter
-            (
-                WebApiPluginParameterInfo parameter
-            )
+        private void DefineParameter(WebApiPluginParameterInfo parameter)
         {
             Validate.IsNotNull(parameter);
 
@@ -148,10 +103,7 @@
                 _actionParameters = new List<WebApiPluginParameterInfo>();
             }
 
-            var matchFound = this.Parameters.Any
-            (
-                m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
-            );
+            var matchFound = Parameters.Any(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
             if (matchFound)
             {
@@ -169,17 +121,11 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <returns>The matching parameter information</returns>
-        public virtual WebApiPluginParameterInfo GetParameter
-            (
-                string name
-            )
+        public virtual WebApiPluginParameterInfo GetParameter(string name)
         {
             Validate.IsNotEmpty(name);
 
-            var parameter = this.Parameters.FirstOrDefault
-            (
-                m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
-            );
+            var parameter = Parameters.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
             if (parameter == null)
             {
@@ -199,11 +145,7 @@
         /// <param name="parameterValues">A collection of parameter values</param>
         /// <param name="name">The parameter name</param>
         /// <returns>The parameter value as the type specified</returns>
-        protected virtual T GetParameterValue<T>
-            (
-                Dictionary<string, string> parameterValues,
-                string name
-            )
+        protected virtual T GetParameterValue<T>(Dictionary<string, string> parameterValues, string name)
         {
             Validate.IsNotNull(parameterValues);
             Validate.IsNotEmpty(name);
@@ -215,20 +157,14 @@
             {
                 var rawValue = parameterValues[name];
 
-                return new GenericObjectToTypeConverter<T>().Convert
-                (
-                    rawValue
-                );
+                return new GenericObjectToTypeConverter<T>().Convert(rawValue);
             }
             else
             {
                 var parameter = GetParameter(name);
                 var defaultValue = parameter.DefaultValue;
 
-                return new GenericObjectToTypeConverter<T>().Convert
-                (
-                    defaultValue
-                );
+                return new GenericObjectToTypeConverter<T>().Convert(defaultValue);
             }
         }
 
@@ -236,22 +172,17 @@
         /// Validates the parameter values specified against the parameters
         /// </summary>
         /// <param name="parameterValues">The parameter values</param>
-        protected virtual void ValidateParameterValues
-            (
-                Dictionary<string, string> parameterValues
-            )
+        protected virtual void ValidateParameterValues(Dictionary<string, string> parameterValues)
         {
             Validate.IsNotNull(parameterValues);
 
-            var parameters = this.Parameters;
-
-            if (parameters.Length == 0)
+            if (Parameters.Length == 0)
             {
                 return;
             }
             else
             {
-                foreach (var parameter in parameters)
+                foreach (var parameter in Parameters)
                 {
                     var name = parameter.Name;
 
@@ -282,10 +213,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>A HTTP response message containing the execution results</returns>
-        public virtual HttpResponseMessage Execute
-            (
-                HttpRequestMessage request
-            )
+        public virtual HttpResponseMessage Execute(HttpRequestMessage request)
         {
             Validate.IsNotNull(request);
 
@@ -296,11 +224,7 @@
             
             try
             {
-                var result = InvokeMethod
-                (
-                    request,
-                    parameterValues
-                );
+                var result = InvokeMethod(request, parameterValues);
 
                 return CreateSuccessResponse(request, result);
             }
@@ -310,11 +234,7 @@
                 {
                     if (ex.Response is HttpWebResponse response)
                     {
-                        return request.CreateResponse
-                        (
-                            response.StatusCode,
-                            ex.Message
-                        );
+                        return request.CreateResponse(response.StatusCode, ex.Message);
                     }
                     else
                     {
@@ -342,11 +262,7 @@
                     ex = ex.InnerException;
                 }
 
-                return request.CreateResponse
-                (
-                    HttpStatusCode.InternalServerError,
-                    ex.Message
-                );
+                return request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -356,31 +272,19 @@
         /// <param name="request">The HTTP request message</param>
         /// <param name="value">The value to output</param>
         /// <returns>The HTTP response message created</returns>
-        protected virtual HttpResponseMessage CreateSuccessResponse
-            (
-                HttpRequestMessage request,
-                object value
-            )
+        protected virtual HttpResponseMessage CreateSuccessResponse(HttpRequestMessage request, object value)
         {
             Validate.IsNotNull(request);
 
             if (value == null)
             {
-                return request.CreateResponse
-                (
-                    HttpStatusCode.OK
-                );
+                return request.CreateResponse(HttpStatusCode.OK);
             }
             else
             {
                 var formatter = GetMediaTypeFormatter();
 
-                return request.CreateResponse
-                (
-                    HttpStatusCode.OK,
-                    value,
-                    formatter
-                );
+                return request.CreateResponse(HttpStatusCode.OK, value, formatter);
             }
         }
 
@@ -400,10 +304,7 @@
                 }
             };
 
-            jsonFormatter.SerializerSettings.Converters.Add
-            (
-                new StringEnumConverter()
-            );
+            jsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
 
             return jsonFormatter;
         }
@@ -417,32 +318,21 @@
         /// <remarks>
         /// For methods that return void, null should be returned instead.
         /// </remarks>
-        protected abstract object InvokeMethod
-        (
-            HttpRequestMessage request,
-            Dictionary<string, string> parameterValues
-        );
+        protected abstract object InvokeMethod(HttpRequestMessage request, Dictionary<string, string> parameterValues);
 
         /// <summary>
         /// Logs an error using the exception and HTTP request specified
         /// </summary>
         /// <param name="ex">The exception to log</param>
         /// <param name="request">The HTTP request</param>
-        protected virtual void LogError
-            (
-                Exception ex,
-                HttpRequestMessage request
-            )
+        protected virtual void LogError(Exception ex, HttpRequestMessage request)
         {
             Validate.IsNotNull(ex);
 
             var message = ex.Message;
             var url = request.RequestUri.ToString();
 
-            Debug.WriteLine
-            (
-                $"The following error occurred '{message}' while invoking {url}."
-            );
+            Debug.WriteLine($"The following error occurred '{message}' while invoking {url}.");
         }
     }
 }

@@ -4,9 +4,6 @@
     using System.ComponentModel;
     using System.Linq;
     
-    /// <summary>
-    /// Various extension methods for the IEnumerable interface
-    /// </summary>
     public static class EnumerableExtensions
     {
         /// <summary>

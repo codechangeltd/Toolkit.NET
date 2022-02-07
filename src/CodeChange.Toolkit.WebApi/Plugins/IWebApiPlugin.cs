@@ -18,19 +18,13 @@
         /// </summary>
         /// <param name="name">The parameter name</param>
         /// <returns>The matching parameter information</returns>
-        WebApiPluginParameterInfo GetParameter
-        (
-            string name
-        );
+        WebApiPluginParameterInfo GetParameter(string name);
 
         /// <summary>
         /// Executes the plug-in using a HTTP request message
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>A HTTP response message containing the execution results</returns>
-        HttpResponseMessage Execute
-        (
-            HttpRequestMessage request
-        );
+        HttpResponseMessage Execute(HttpRequestMessage request);
     }
 }

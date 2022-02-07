@@ -2,9 +2,6 @@
 {
     using System.ComponentModel;
 
-    /// <summary>
-    /// Useful extension methods for enum struct types
-    /// </summary>
     public static class EnumExtensions
     {
         /// <summary>

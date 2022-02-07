@@ -3,9 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// Various extension methods for manipulating arrays
-    /// </summary>
     public static class ArrayExtensions
     {
         /// <summary>

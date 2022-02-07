@@ -4,9 +4,6 @@
     using System.Linq;
     using System.Reflection;
 
-    /// <summary>
-    /// Various extension methods for dictionaries
-    /// </summary>
     public static class DictionaryExtensions
     {
         /// <summary>

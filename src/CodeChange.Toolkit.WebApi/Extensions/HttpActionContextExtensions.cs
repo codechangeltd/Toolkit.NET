@@ -7,9 +7,6 @@
     using System.Net.Http;
     using System.Web.Http.Controllers;
 
-    /// <summary>
-    /// Represents extension methods for the HttpActionContext class
-    /// </summary>
     public static class HttpActionContextExtensions
     {
         /// <summary>
@@ -18,12 +15,7 @@
         /// <typeparam name="TService">The service type to resolve</typeparam>
         /// <param name="actionContext">The HTTP action context</param>
         /// <returns>The service instance</returns>
-        public static TService ResolveService<TService>
-            (
-                this HttpActionContext actionContext
-            )
-
-            where TService : class
+        public static TService ResolveService<TService>(this HttpActionContext actionContext) where TService : class
         {
             Validate.IsNotNull(actionContext);
 
@@ -60,11 +52,7 @@
         /// <param name="actionContext">The action context</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>The parameter value</returns>
-        public static string GetParameterValue
-            (
-                this HttpActionContext actionContext,
-                string parameterName
-            )
+        public static string GetParameterValue(this HttpActionContext actionContext, string parameterName)
         {
             Validate.IsNotNull(actionContext);
             Validate.IsNotNull(parameterName);

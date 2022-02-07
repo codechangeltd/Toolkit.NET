@@ -21,15 +21,9 @@
     /// </remarks>
     public class SimpleEntityToDtoMapper : IEntityToDtoMapper
     {
-        private readonly static Dictionary<Type, PropertyInfo[]> _propertyCache
-            = new Dictionary<Type, PropertyInfo[]>();
+        private readonly static Dictionary<Type, PropertyInfo[]> _propertyCache = new Dictionary<Type, PropertyInfo[]>();
+        private readonly static Dictionary<Type, MethodInfo[]> _methodCache = new Dictionary<Type, MethodInfo[]>();
 
-        private readonly static Dictionary<Type, MethodInfo[]> _methodCache
-            = new Dictionary<Type, MethodInfo[]>();
-
-        /// <summary>
-        /// Constructs the mapper with default configuration
-        /// </summary>
         public SimpleEntityToDtoMapper()
         {
             this.LocaleConfiguration = new DefaultLocaleConfiguration();
@@ -89,11 +83,7 @@
 
                 foreach (var dtoProperty in dtoProperties)
                 {
-                    var isKeyProperty = dtoProperty.Name.Equals
-                    (
-                        "Key",
-                        StringComparison.InvariantCultureIgnoreCase
-                    );
+                    var isKeyProperty = dtoProperty.Name.Equals("Key", StringComparison.InvariantCultureIgnoreCase);
 
                     if (isKeyProperty)
                     {
@@ -108,10 +98,7 @@
                             continue;
                         }
 
-                        var entityProperty = entityProperties.FirstOrDefault
-                        (
-                            x => x.Name == dtoProperty.Name
-                        );
+                        var entityProperty = entityProperties.FirstOrDefault(_ => _.Name == dtoProperty.Name);
 
                         if (entityProperty != null)
                         {
@@ -206,11 +193,7 @@
             var entityPropertyType = entityProperty.PropertyType;
             var dtoPropertyType = dtoProperty.PropertyType;
 
-            var isList =
-            (
-                dtoPropertyType.IsGenericType
-                    && dtoPropertyType.GetGenericTypeDefinition() == typeof(List<>)
-            );
+            var isList = (dtoPropertyType.IsGenericType && dtoPropertyType.GetGenericTypeDefinition() == typeof(List<>));
 
             if (isList)
             {
@@ -220,16 +203,10 @@
 
                 if (false == isValidDto)
                 {
-                    throw new InvalidOperationException
-                    (
-                        "The list type is not a valid DTO."
-                    );
+                    throw new InvalidOperationException("The list type is not a valid DTO.");
                 }
 
-                var isValidEntityCollection = entityListType.ImplementsInterface
-                (
-                    typeof(IAggregateEntity)
-                );
+                var isValidEntityCollection = entityListType.ImplementsInterface(typeof(IAggregateEntity));
 
                 if (false == isValidEntityCollection)
                 {
@@ -292,15 +269,15 @@
 
             var isCollection = interfaces.Any
             (
-                x => x == typeof(ICollection) || x == typeof(IList)
+                _ => _ == typeof(ICollection) || _ == typeof(IList)
                     ||
                     (
-                        x.IsGenericType
-                            &&
-                            (
-                                x.GetGenericTypeDefinition() == typeof(ICollection<>)
-                                    || x.GetGenericTypeDefinition() == typeof(IList<>)
-                            )
+                        _.IsGenericType
+                        &&
+                        (
+                            _.GetGenericTypeDefinition() == typeof(ICollection<>)
+                                || _.GetGenericTypeDefinition() == typeof(IList<>)
+                        )
                     )
             );
 
@@ -314,20 +291,14 @@
         /// <param name="dto">The DTO</param>
         /// <param name="dtoProperty">The DTO property</param>
         /// <param name="mapNestedDtos">If true, all nested DTOs are mapped</param>
-        protected virtual void TryMapToMethod
-            (
-                IAggregateEntity entity,
-                ref object dto,
-                PropertyInfo dtoProperty,
-                bool mapNestedDtos = false
-            )
+        protected virtual void TryMapToMethod(IAggregateEntity entity, ref object dto, PropertyInfo dtoProperty, bool mapNestedDtos = false)
         {
             var methods = GetMappableMethods(entity);
 
             var candidates = methods.Where
             (
-                x => x.ReturnType.IsAssignableFrom(dtoProperty.PropertyType) ||
-                    x.ReturnType.ImplementsInterface(typeof(IAggregateEntity))
+                _ => _.ReturnType.IsAssignableFrom(dtoProperty.PropertyType) ||
+                    _.ReturnType.ImplementsInterface(typeof(IAggregateEntity))
             );
 
             foreach (var method in candidates)

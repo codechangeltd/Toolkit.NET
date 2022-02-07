@@ -7,32 +7,20 @@
     /// <summary>
     /// Represents an entity type database schema configuration for an domain event log detail
     /// </summary>
-    public class DomainEventLogDetailConfiguration
-        : AggregateEntityTypeConfiguration<DomainEventLogDetail>
+    public class DomainEventLogDetailConfiguration : AggregateEntityTypeConfiguration<DomainEventLogDetail>
     {
-        public DomainEventLogDetailConfiguration()
-            : base()
+        public DomainEventLogDetailConfiguration() : base()
         {
             this.DisableKeyAutoBuild = true;
         }
 
-        protected override void ApplyCustomConfiguration
-            (
-                EntityTypeBuilder<DomainEventLogDetail> builder
-            )
+        protected override void ApplyCustomConfiguration(EntityTypeBuilder<DomainEventLogDetail> builder)
         {
-            builder.HasKey
-            (
-                m => new
-                {
-                    m.ID,
-                    m.LogId
-                }
-            );
+            builder.HasKey(_ => new { _.ID, _.LogId });
 
-            builder.HasOne(m => m.Log)
-                .WithMany(m => m.Details)
-                .HasForeignKey(m => new { m.LogId })
+            builder.HasOne(_ => _.Log)
+                .WithMany(_ => _.Details)
+                .HasForeignKey(_ => new { _.LogId })
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

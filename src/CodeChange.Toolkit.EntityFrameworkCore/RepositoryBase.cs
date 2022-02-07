@@ -20,8 +20,7 @@
     /// A base class for Entity Framework Core repositories
     /// </summary>
     /// <typeparam name="TRoot">The aggregate root type</typeparam>
-    public abstract class RepositoryBase<TRoot> : IAggregateRepository<TRoot>
-        where TRoot : class, IAggregateRoot
+    public abstract class RepositoryBase<TRoot> : IAggregateRepository<TRoot> where TRoot : class, IAggregateRoot
     {
         private readonly DbSet<TRoot> _readSet;
         private readonly DbSet<TRoot> _writeSet;
@@ -139,11 +138,7 @@
         /// <param name="entity">The entity to add or update</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        protected virtual async Task<Result> AddOrUpdateEntityAsync
-            (
-                TRoot entity,
-                CancellationToken cancellationToken = default
-            )
+        protected virtual async Task<Result> AddOrUpdateEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
         {
             var context = this.WriteContext;
 
@@ -461,9 +456,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = FindAll(predicate).FirstOrDefaultAsync(cancellationToken);
-
-            return await task.ConfigureAwait(false);
+            return await FindAll(predicate).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -488,9 +481,7 @@
                 CancellationToken cancellationToken = default
             )
         {
-            var task = _readSet.AsNoTracking().CountAsync(predicate, cancellationToken);
-
-            return await task.ConfigureAwait(false);
+            return await _readSet.AsNoTracking().CountAsync(predicate, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -517,9 +508,7 @@
                 cancellationToken
             );
 
-            var exists = await task.ConfigureAwait(false);
-
-            return exists;
+            return await task.ConfigureAwait(false);
         }
 
         /// <summary>

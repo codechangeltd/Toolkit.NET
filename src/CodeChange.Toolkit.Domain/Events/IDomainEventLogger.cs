@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Defines a contract for a domain event logger that is responsible for logging domain events
+    /// Defines a contract for a service that logs domain events
     /// </summary>
     public interface IDomainEventLogger
     {

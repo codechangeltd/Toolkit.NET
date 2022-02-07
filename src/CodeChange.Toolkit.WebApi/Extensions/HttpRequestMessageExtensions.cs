@@ -5,9 +5,6 @@
     using System.Net.Http;
     using System.Text;
 
-    /// <summary>
-    /// Various extension methods for the HttpRequestMessage class
-    /// </summary>
     public static class HttpRequestMessageExtensions
     {
         /// <summary>
@@ -18,10 +15,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>A dictionary of query string name values</returns>
-        public static Dictionary<string, string> GetQueryStrings
-            (
-                this HttpRequestMessage request
-            )
+        public static Dictionary<string, string> GetQueryStrings(this HttpRequestMessage request)
         {
             return request.GetQueryNameValuePairs().ToDictionary
             (
@@ -37,11 +31,7 @@
         /// <param name="request">The HTTP request message</param>
         /// <param name="key">The key of the query string item to get</param>
         /// <returns>The value of the query string item requested</returns>
-        public static string GetQueryString
-            (
-                this HttpRequestMessage request,
-                string key
-            )
+        public static string GetQueryString(this HttpRequestMessage request, string key)
         {
             var queryStrings = request.GetQueryNameValuePairs();
 
@@ -50,10 +40,7 @@
                 return null;
             }
 
-            var match = queryStrings.FirstOrDefault
-            (
-                kv => string.Compare(kv.Key, key, true) == 0
-            );
+            var match = queryStrings.FirstOrDefault(x => String.Compare(x.Key, key, true) == 0);
 
             if (string.IsNullOrEmpty(match.Value))
             {
@@ -69,19 +56,11 @@
         /// <param name="request">The HTTP request message</param>
         /// <param name="key">The key of the header value to get</param>
         /// <returns>The header value found</returns>
-        public static string GetHeader
-            (
-                this HttpRequestMessage request,
-                string key
-            )
+        public static string GetHeader(this HttpRequestMessage request, string key)
         {
             Validate.IsNotNull(request);
 
-            var headerFound = request.Headers.TryGetValues
-            (
-                key,
-                out IEnumerable<string> keys
-            );
+            var headerFound = request.Headers.TryGetValues(key, out IEnumerable<string> keys);
 
             if (false == headerFound)
             {
@@ -97,18 +76,11 @@
         /// <param name="request">The HTTP request message</param>
         /// <param name="cookieName">The name of the cookie to get</param>
         /// <returns>The cookie value found</returns>
-        public static string GetCookie
-            (
-                this HttpRequestMessage request,
-                string cookieName
-            )
+        public static string GetCookie(this HttpRequestMessage request, string cookieName)
         {
             Validate.IsNotNull(request);
 
-            var cookies = request.Headers?.GetCookies
-            (
-                cookieName
-            );
+            var cookies = request.Headers?.GetCookies(cookieName);
 
             if (cookies != null)
             {
@@ -128,10 +100,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>The referrer URL</returns>
-        public static string GetReferrerUrl
-            (
-                this HttpRequestMessage request
-            )
+        public static string GetReferrerUrl(this HttpRequestMessage request)
         {
             return request?.Headers?.Referrer?.AbsoluteUri;
         }
@@ -141,10 +110,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>The requested URL</returns>
-        public static string GetRequestUrl
-            (
-                this HttpRequestMessage request
-            )
+        public static string GetRequestUrl(this HttpRequestMessage request)
         {
             return request?.RequestUri?.AbsoluteUri;
         }
@@ -154,10 +120,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>The user agent</returns>
-        public static string GetUserAgent
-            (
-                this HttpRequestMessage request
-            )
+        public static string GetUserAgent(this HttpRequestMessage request)
         {
             Validate.IsNotNull(request);
 
@@ -178,10 +141,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>A string containing comma separated cookie data values</returns>
-        public static string AggregateCookieData
-            (
-                this HttpRequestMessage request
-            )
+        public static string AggregateCookieData(this HttpRequestMessage request)
         {
             Validate.IsNotNull(request);
 
@@ -209,10 +169,7 @@
         /// </summary>
         /// <param name="request">The HTTP request message</param>
         /// <returns>A string containing comma separated header values</returns>
-        public static string AggregateHeaders
-            (
-                this HttpRequestMessage request
-            )
+        public static string AggregateHeaders(this HttpRequestMessage request)
         {
             Validate.IsNotNull(request);
 
@@ -232,17 +189,11 @@
                     // Trim the trailing space and add item to the dictionary
                     header = header.TrimEnd(" ".ToCharArray());
 
-                    headerBuilder.Append
-                    (
-                        $"{item.Key}: {header}{Environment.NewLine}"
-                    );
+                    headerBuilder.Append($"{item.Key}: {header}{Environment.NewLine}");
                 }
             }
 
-            return headerBuilder.ToString().TrimEnd
-            (
-                Environment.NewLine.ToArray()
-            );
+            return headerBuilder.ToString().TrimEnd(Environment.NewLine.ToArray());
         }
     }
 }

@@ -5,9 +5,6 @@
     using System.Collections.Generic;
     using System.Linq;
     
-    /// <summary>
-    /// Useful extension methods for handling types at runtime
-    /// </summary>
     public static class TypeExtensions
     {
         /// <summary>

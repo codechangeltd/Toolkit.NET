@@ -1,8 +1,5 @@
 ﻿namespace System
 {
-    /// <summary>
-    /// Various extension methods for the TimeSpan class
-    /// </summary>
     public static class TimeSpanExtensions
     {
         /// <summary>

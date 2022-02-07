@@ -8,9 +8,6 @@
     using System.Net.Http.Headers;
     using System.Web.Helpers;
 
-    /// <summary>
-    /// Various extension methods for Web API controllers
-    /// </summary>
     public static class ControllerExtensions
     {
         /// <summary>
@@ -18,30 +15,19 @@
         /// </summary>
         /// <param name="controller">The controller</param>
         /// <returns>The image that was uploaded</returns>
-        public static ImageFileContainer GetUploadedImage
-            (
-                this ApiController controller
-            )
+        public static ImageFileContainer GetUploadedImage(this ApiController controller)
         {
             var image = WebImage.GetImageFromRequest();
 
             if (image == null)
             {
-                throw new InvalidOperationException
-                (
-                    "No image was supplied."
-                );
+                throw new InvalidOperationException("No image was supplied.");
             }
 
             var contentType = "image/{image.ImageFormat}";
             var imageContents = image.GetBytes();
 
-            return new ImageFileContainer
-            (
-                imageContents,
-                contentType,
-                image.FileName
-            );
+            return new ImageFileContainer(imageContents, contentType, image.FileName);
         }
 
         /// <summary>
@@ -64,52 +50,28 @@
         {
             if (fileContents == null || fileContents.Length == 0)
             {
-                throw new ArgumentException
-                (
-                    "An empty file cannot be streamed."
-                );
+                throw new ArgumentException("An empty file cannot be streamed.");
             }
 
             if (String.IsNullOrEmpty(fileName))
             {
-                var fileExtension = MimeTypeMap.GetExtension
-                (
-                    contentType
-                );
+                var fileExtension = MimeTypeMap.GetExtension(contentType);
 
                 fileName = $"Attachment.{fileExtension}";
             }
 
             // Remove commas from the file name as they are not supported
-            fileName = fileName.Replace
-            (
-                ",",
-                String.Empty
-            );
+            fileName = fileName.Replace(",", String.Empty);
 
-            var result = new HttpResponseMessage
-            (
-                HttpStatusCode.OK
-            );
-
-            var contentTypeHeader = new MediaTypeHeaderValue
-            (
-                contentType
-            );
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            var contentTypeHeader = new MediaTypeHeaderValue(contentType);
             
-            var dispositionHeader = new ContentDispositionHeaderValue
-                (
-                    dispositionType
-                )
+            var dispositionHeader = new ContentDispositionHeaderValue(dispositionType)
             {
                 FileName = fileName
             };
 
-            result.Content = new ByteArrayContent
-            (
-                fileContents
-            );
-
+            result.Content = new ByteArrayContent(fileContents);
             result.Content.Headers.ContentType = contentTypeHeader;
             result.Content.Headers.ContentLength = fileContents.Length;
             result.Content.Headers.ContentDisposition = dispositionHeader;
@@ -133,10 +95,7 @@
         {
             if (fileContainer == null)
             {
-                throw new ArgumentNullException
-                (
-                    "fileContainer"
-                );
+                throw new ArgumentNullException("fileContainer");
             }
             else
             {
@@ -161,11 +120,7 @@
         /// <param name="controller">The Web API controller</param>
         /// <param name="imageContainer">The image file container</param>
         /// <returns>A HTTP response message containing the image</returns>
-        public static HttpResponseMessage StreamImage
-            (
-                this ApiController controller,
-                ImageFileContainer imageContainer
-            )
+        public static HttpResponseMessage StreamImage(this ApiController controller, ImageFileContainer imageContainer)
         {
             if (imageContainer == null)
             {
@@ -176,12 +131,7 @@
                 var content = imageContainer.FileContents;
                 var contentType = imageContainer.ContentType;
 
-                return StreamImage
-                (
-                    controller,
-                    content,
-                    contentType
-                );
+                return StreamImage(controller, content, contentType);
             }
         }
 
@@ -192,28 +142,14 @@
         /// <param name="fileContents">The image file contents</param>
         /// <param name="fileContentType">The image file content type</param>
         /// <returns>A HTTP response message containing the image</returns>
-        public static HttpResponseMessage StreamImage
-            (
-                this ApiController controller,
-                byte[] fileContents,
-                string fileContentType
-            )
+        public static HttpResponseMessage StreamImage(this ApiController controller, byte[] fileContents, string fileContentType)
         {
-            var result = new HttpResponseMessage
-                (
-                    HttpStatusCode.OK
-                )
+            var result = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new ByteArrayContent
-                (
-                    fileContents
-                )
+                Content = new ByteArrayContent(fileContents)
             };
 
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue
-            (
-                fileContentType
-            );
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue(fileContentType);
 
             return result;
         }
@@ -223,31 +159,15 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>An action result with the streamed pixel data</returns>
-        public static HttpResponseMessage StreamPixel
-            (
-                this ApiController controller
-            )
+        public static HttpResponseMessage StreamPixel(this ApiController controller)
         {
-            var result = new HttpResponseMessage
-            (
-                HttpStatusCode.OK
-            );
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
 
             // Below is the base 64 encoding for a transparent GIF
-            var content = Convert.FromBase64String
-            (
-                "R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-            );
+            var content = Convert.FromBase64String("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
 
-            result.Content = new ByteArrayContent
-            (
-                content
-            );
-
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue
-            (
-                "image/gif"
-            );
+            result.Content = new ByteArrayContent(content);
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/gif");
 
             return result;
         }
@@ -257,10 +177,7 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>The referrer URL</returns>
-        public static string GetReferrerUrl
-            (
-                this ApiController controller
-            )
+        public static string GetReferrerUrl(this ApiController controller)
         {
             Validate.IsNotNull(controller);
 
@@ -272,10 +189,7 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>The requested URL</returns>
-        public static string GetRequestUrl
-            (
-                this ApiController controller
-            )
+        public static string GetRequestUrl(this ApiController controller)
         {
             Validate.IsNotNull(controller);
 
@@ -287,10 +201,7 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>A string containing comma separated cookie data values</returns>
-        public static string AggregateCookieData
-            (
-                this ApiController controller
-            )
+        public static string AggregateCookieData(this ApiController controller)
         {
             Validate.IsNotNull(controller);
 
@@ -302,10 +213,7 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>A string containing comma separated header values</returns>
-        public static string AggregateHeaders
-            (
-                this ApiController controller
-            )
+        public static string AggregateHeaders(this ApiController controller)
         {
             Validate.IsNotNull(controller);
 
@@ -317,10 +225,7 @@
         /// </summary>
         /// <param name="controller">The controller reference</param>
         /// <returns>The user agent value that was found</returns>
-        public static string GetUserAgent
-            (
-                this ApiController controller
-            )
+        public static string GetUserAgent(this ApiController controller)
         {
             Validate.IsNotNull(controller);
 

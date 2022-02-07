@@ -4,9 +4,6 @@
     using System;
     using System.Collections.Generic;
     
-    /// <summary>
-    /// Represents various extension methods for aggregate roots
-    /// </summary>
     public static class AggregateRootExtensions
     {
         /// <summary>

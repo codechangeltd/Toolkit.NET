@@ -2,9 +2,6 @@
 {
     using CodeChange.Toolkit.Culture;
 
-    /// <summary>
-    /// Various extension methods for manipulating date time values
-    /// </summary>
     public static class DateTimeExtensions
     {
         /// <summary>

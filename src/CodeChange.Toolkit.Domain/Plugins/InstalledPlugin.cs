@@ -13,18 +13,11 @@
     /// </summary>
     public class InstalledPlugin : IAggregateRoot
 	{
-		/// <summary>
-		/// Default protected parameter less constructor for the ORM to initialise the entity
-		/// </summary>
 		protected InstalledPlugin()
         {
             this.UnpublishedEvents = new List<IDomainEvent>();
         }
 
-        /// <summary>
-        /// Constructs a installed plug-in with the plug-in specified
-        /// </summary>
-        /// <param name="plugin">The plug-in</param>
         protected InstalledPlugin(IPlugin plugin)
 		{
 			Validate.IsNotNull(plugin);
@@ -37,17 +30,9 @@
 
 			SetPluginDetails(plugin);
 
-			this.UnpublishedEvents.Add
-			(
-				new PluginInstalledEvent(this)
-			);
+			this.UnpublishedEvents.Add(new PluginInstalledEvent(this));
 		}
 
-		/// <summary>
-		/// Creates a new installed plug-in with the plug-in specified
-		/// </summary>
-		/// <param name="plugin">The plug-in</param>
-		/// <returns>The installed plug-in that was created</returns>
 		public static InstalledPlugin CreateInstalledPlugin(IPlugin plugin)
 		{
 			return new InstalledPlugin(plugin);
@@ -63,19 +48,16 @@
 		/// </summary>
 		public string LookupKey { get; protected set; }
 
-		/// <summary>
-		/// Gets the aggregate entities unique key value
-		/// </summary>
-		/// <returns>The key value</returns>
-		public virtual string GetKeyValue()
-		{
-			return this.LookupKey;
-		}
+        /// <summary>
+        /// Gets the aggregate entities unique key value
+        /// </summary>
+        /// <returns>The key value</returns>
+        public virtual string GetKeyValue() => this.LookupKey;
 
-		/// <summary>
-		/// Gets or sets the date the aggregate was created
-		/// </summary>
-		public DateTime DateCreated { get; set; }
+        /// <summary>
+        /// Gets or sets the date the aggregate was created
+        /// </summary>
+        public DateTime DateCreated { get; set; }
 
 		/// <summary>
 		/// Gets or sets the date the aggregate was last modified
@@ -109,10 +91,7 @@
 
 			if (String.IsNullOrEmpty(plugin.Name))
 			{
-				throw new InvalidOperationException
-                (
-                    "The plug-in name cannot be null or empty."
-                );
+				throw new InvalidOperationException("The plug-in name cannot be null or empty.");
 			}
 
 			var pluginType = plugin.GetType();

@@ -9,9 +9,6 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Represents an EF Core implementation for the domain event log repository
-    /// </summary>
     public sealed class DomainEventLogRepository : RepositoryBase<DomainEventLog>, IDomainEventLogRepository
     {
         public DomainEventLogRepository(DbContext context)

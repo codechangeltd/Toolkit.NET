@@ -1,8 +1,5 @@
 ﻿namespace System
 {
-    /// <summary>
-    /// Provides various extensions methods for the double-precision floating point numbers
-    /// </summary>
     public static class DoubleExtensions
     {
         /// <summary>

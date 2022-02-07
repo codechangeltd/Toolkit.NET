@@ -13,12 +13,6 @@
     /// </summary>
     public class DomainEventLogDetail : IAggregateEntity
     {
-        /// <summary>
-        /// Constructs the domain event log detail
-        /// </summary>
-        /// <param name="log">The domain event log</param>
-        /// <param name="model">The model</param>
-        /// <param name="property">The property information</param>
         protected internal DomainEventLogDetail(DomainEventLog log, object model, PropertyInfo property)
         {
             Validate.IsNotNull(log);
@@ -30,24 +24,12 @@
             PopulateDetails(model, property);
         }
 
-        /// <summary>
-        /// Constructs the domain event log detail
-        /// </summary>
-        /// <param name="parent">The parent log detail</param>
-        /// <param name="model">The model</param>
-        /// <param name="property">The property information</param>
         protected internal DomainEventLogDetail(DomainEventLogDetail parent, object model, PropertyInfo property)
             : this(parent.Log, model, property)
         {
             this.Parent = parent;
         }
 
-        /// <summary>
-        /// Constructs the domain event log detail
-        /// </summary>
-        /// <param name="parent">The parent log detail</param>
-        /// <param name="propertyName">The property name</param>
-        /// <param name="propertyValue">The property value</param>
         protected internal DomainEventLogDetail(DomainEventLogDetail parent, string propertyName, string propertyValue)
         {
             Validate.IsNotNull(parent);

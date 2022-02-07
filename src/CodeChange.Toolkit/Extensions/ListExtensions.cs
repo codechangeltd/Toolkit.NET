@@ -2,9 +2,6 @@
 {
     using System;
 
-    /// <summary>
-    /// Various extension methods for manipulating lists
-    /// </summary>
     public static class ListExtensions
     {
         /// <summary>

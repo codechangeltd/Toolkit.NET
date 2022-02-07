@@ -3,9 +3,6 @@
     using System;
     using System.Linq;
 
-    /// <summary>
-    /// Represents various extension methods for the IPlugin interface
-    /// </summary>
     public static class PluginExtensions
     {
         /// <summary>

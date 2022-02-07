@@ -10,9 +10,6 @@
     using System.Threading;
     using System.Web;
 
-    /// <summary>
-    /// Provides various extension methods for the String class
-    /// </summary>
     public static class StringExtensions
     {
         /// <summary>
