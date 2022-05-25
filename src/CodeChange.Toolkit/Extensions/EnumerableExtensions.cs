@@ -14,11 +14,6 @@
         /// <param name="column">The name of the column to sort by</param>
         /// <param name="direction">The sort direction</param>
         /// <returns>An ordered enumerable of items</returns>
-        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
-        /// <exception cref="System.Reflection.TargetException"></exception>
-        /// <exception cref="System.Reflection.TargetParameterCountException"></exception>
-        /// <exception cref="MethodAccessException"></exception>
-        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
         public static IOrderedEnumerable<T> Sort<T>
             (
                 this IEnumerable<T> list,
@@ -29,7 +24,7 @@
             Validate.IsNotNull(list);
             Validate.IsNotEmpty(column);
 
-            Func<T, object> selector = (_ => _.GetType().GetProperty(column).GetValue(_, null));
+            object selector(T x) => x!.GetType().GetProperty(column)!.GetValue(x, null)!;
 
             return direction == ListSortDirection.Ascending
                 ? list.OrderBy(selector)

@@ -9,6 +9,8 @@
     /// </summary>
     public class PersonBirth : ValueObject
     {
+        protected PersonBirth() { }
+
         private PersonBirth(DateTime birthDate, string birthPlace)
         {
             BirthDate = birthDate;

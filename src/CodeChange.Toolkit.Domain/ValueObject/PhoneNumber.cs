@@ -10,7 +10,7 @@
     /// </summary>
     public class PhoneNumber : ValueObject
     {
-        private PhoneNumber()
+        protected PhoneNumber()
         {
             Number = String.Empty;
             HasValue = false;

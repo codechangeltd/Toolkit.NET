@@ -10,7 +10,7 @@
     {
         public DomainEventLogDetailConfiguration()
         {
-            this.HasKey
+            HasKey
             (
                 m => new
                 {
@@ -19,7 +19,7 @@
                 }
             );
 
-            this.HasRequired(m => m.Log)
+            HasRequired(m => m.Log)
                 .WithMany(m => m.Details)
                 .HasForeignKey(m => new { m.LogId })
                 .WillCascadeOnDelete();

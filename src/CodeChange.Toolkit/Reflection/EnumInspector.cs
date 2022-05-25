@@ -9,10 +9,7 @@
         /// </summary>
         /// <param name="e">The enum</param>
         /// <returns>A collection of matching enum info</returns>
-        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
-        /// <exception cref="System.TypeLoadException"></exception>
-        /// <exception cref="System.InvalidOperationException"></exception>
-        public IEnumerable<EnumItemInfo> GetEnumInfo(Enum e)
+        public static IEnumerable<EnumItemInfo> GetEnumInfo(Enum e)
         {
             Validate.IsNotNull(e);
 
@@ -24,19 +21,13 @@
         /// </summary>
         /// <param name="enumType">The enum type</param>
         /// <returns>A collection of matching enum info</returns>
-        /// <exception cref="System.Reflection.AmbiguousMatchException"></exception>
-        /// <exception cref="System.TypeLoadException"></exception>
-        /// <exception cref="System.InvalidOperationException"></exception>
-        public IEnumerable<EnumItemInfo> GetEnumInfo(Type enumType)
+        public static IEnumerable<EnumItemInfo> GetEnumInfo(Type enumType)
         {
             Validate.IsNotNull(enumType);
 
             if (false == enumType.IsEnum)
             {
-                throw new ArgumentException
-                (
-                    $"The type {enumType.Name} is not a valid enum."
-                );
+                throw new ArgumentException($"The type {enumType.Name} is not a valid enum.");
             }
 
             var enumInfo = new List<EnumItemInfo>();
@@ -45,12 +36,10 @@
             foreach (var entry in enumValues)
             {
                 var value = (int)entry;
-                var name = entry.ToString();
+                var name = entry.ToString()!;
                 var description = entry.GetDescription();
 
-                var info = new EnumItemInfo(value, name, description);
-
-                enumInfo.Add(info);
+                enumInfo.Add(new EnumItemInfo(value, name, description));
             }
 
             return enumInfo;

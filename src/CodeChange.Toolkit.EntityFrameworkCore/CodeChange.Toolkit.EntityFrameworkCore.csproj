@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing Entity Framework Core tools, base classes and interface implementations.</Description>
-    <Copyright>Copyright © Code Change Ltd 2021</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2022</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>5.1.0</AssemblyVersion>
-    <Version>5.1.0</Version>
+    <AssemblyVersion>6.0.0</AssemblyVersion>
+    <Version>6.0.0</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Added missing cancellation tokens to RepositoryBase and upgraded EF Core package version.</PackageReleaseNotes>
+    <PackageReleaseNotes>Complete overhaul of the code-base, including removing redundant code, plus upgraded to .NET 6 and C# 10.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.27.2" />
-    <PackageReference Include="Humanizer.Core" Version="2.10.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.13" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.29.1" />
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.5" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="Paginator.NET.EntityFrameworkCore" Version="1.0.0" />
   </ItemGroup>

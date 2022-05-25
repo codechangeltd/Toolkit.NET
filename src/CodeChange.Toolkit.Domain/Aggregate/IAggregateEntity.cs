@@ -1,24 +1,25 @@
 ﻿namespace CodeChange.Toolkit.Domain.Aggregate
 {
+    using System;
+
     /// <summary>
     /// Defines a contract for all domain aggregate entity implementations
     /// </summary>
     public interface IAggregateEntity
     {
         /// <summary>
-        /// A database auto generated ID value, used internally for persistence
+        /// A key value for the entity, this must be unique for each entity of the same type
         /// </summary>
-        long ID { get; }
+        string Key { get; }
 
         /// <summary>
-        /// A lookup key value for the entity, this must be unique for each entity of the same type
+        /// Gets the date and time the aggregate was created
         /// </summary>
-        string LookupKey { get; }
+        DateTime DateCreated { get; }
 
         /// <summary>
-        /// Gets the aggregate entities unique key value
+        /// Gets the date and time the aggregate was last modified
         /// </summary>
-        /// <returns>The key value</returns>
-        string GetKeyValue();
+        DateTime DateModified { get; }
     }
 }

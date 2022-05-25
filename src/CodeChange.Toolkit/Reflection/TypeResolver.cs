@@ -14,8 +14,7 @@
         /// </summary>
         /// <param name="className">The class name</param>
         /// <returns>A collection of matching class types</returns>
-        /// <exception cref="System.AppDomainUnloadedException"></exception>
-        public Type[] FindTypesByName(string className)
+        public static Type[] FindTypesByName(string className)
         {
             Validate.IsNotEmpty(className);
             
@@ -30,8 +29,7 @@
         /// <param name="className">The class name</param>
         /// <param name="namespaceSearch">The assembly namespace</param>
         /// <returns>A collection of matching class types</returns>
-        /// <exception cref="System.AppDomainUnloadedException"></exception>
-        public Type[] FindTypesByName(string className, string namespaceSearch)
+        public static Type[] FindTypesByName(string className, string namespaceSearch)
         {
             Validate.IsNotEmpty(className);
             Validate.IsNotEmpty(namespaceSearch);
@@ -40,9 +38,9 @@
 
             var filteredAssemblies = allAssemblies.Where
             (
-                _ => _.GetLoadableTypes().Any
+                assembly => assembly.GetLoadableTypes().Any
                 (
-                    t => t.Namespace != null && t.Namespace.StartsWith(namespaceSearch)
+                    type => type.Namespace != null && type.Namespace.StartsWith(namespaceSearch)
                 )
             );
 
@@ -55,7 +53,7 @@
         /// <param name="className">The class name</param>
         /// <param name="assemblies">The assemblies to scan</param>
         /// <returns>A collection of matching class types</returns>
-        public Type[] FindTypesByName(string className, params Assembly[] assemblies)
+        public static Type[] FindTypesByName(string className, params Assembly[] assemblies)
         {
             Validate.IsNotEmpty(className);
             Validate.IsNotNull(assemblies);

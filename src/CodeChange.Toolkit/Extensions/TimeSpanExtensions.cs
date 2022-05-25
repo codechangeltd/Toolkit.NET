@@ -28,14 +28,7 @@
                 template = "{3}.{4} seconds";
             }
 
-            return template.With
-            (
-                span.Days,
-                span.Hours,
-                span.Minutes,
-                span.Seconds,
-                span.Milliseconds
-            );
+            return template.With(span.Days, span.Hours, span.Minutes, span.Seconds, span.Milliseconds);
         }
     }
 }

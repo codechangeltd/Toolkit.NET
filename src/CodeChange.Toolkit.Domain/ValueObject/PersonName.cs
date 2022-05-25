@@ -12,15 +12,15 @@
     /// </summary>
     public class PersonName : ValueObject
     {
-        private PersonName() { }
+        protected PersonName() { }
 
         private PersonName
             (
                 string firstName,
-                string middleName,
+                string? middleName,
                 string lastName,
-                string title = null,
-                string suffix = null
+                string? title = null,
+                string? suffix = null
             )
         {
             FirstName = firstName;
@@ -33,19 +33,13 @@
         public static Result<PersonName> Create
             (
                 string firstName,
-                string middleName,
+                string? middleName,
                 string lastName,
-                string title = null,
-                string suffix = null
+                string? title = null,
+                string? suffix = null
             )
         {
-            var allNames = new string[]
-            {
-                firstName,
-                middleName,
-                lastName
-            };
-
+            var allNames = new string?[] { firstName, middleName, lastName };
             var allEmpty = allNames.All(name => String.IsNullOrWhiteSpace(name));
 
             if (allEmpty)
@@ -150,10 +144,10 @@
         }
 
         public string FirstName { get; private set; }
-        public string MiddleName { get; private set; }
+        public string? MiddleName { get; private set; }
         public string LastName { get; private set; }
-        public string Title { get; private set; }
-        public string Suffix { get; private set; }
+        public string? Title { get; private set; }
+        public string? Suffix { get; private set; }
 
         /// <summary>
         /// Gets a display name for presentation purposes (excluding title and suffix)

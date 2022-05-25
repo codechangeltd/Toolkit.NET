@@ -17,8 +17,8 @@
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);
 
-            this.Name = name;
-            this.ValueType = valueType;
+            Name = name;
+            ValueType = valueType;
         }
 
         /// <summary>
@@ -33,10 +33,10 @@
             Validate.IsNotEmpty(name);
             Validate.IsNotNull(valueType);
 
-            this.Name = name;
-            this.ValueType = valueType;
-            this.DefaultValue = defaultValue;
-            this.AllowNull = allowNull;
+            Name = name;
+            ValueType = valueType;
+            DefaultValue = defaultValue;
+            AllowNull = allowNull;
         }
 
         /// <summary>

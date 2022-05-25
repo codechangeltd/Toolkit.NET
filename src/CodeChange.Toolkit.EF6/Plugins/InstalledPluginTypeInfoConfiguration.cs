@@ -11,7 +11,7 @@
         public InstalledPluginTypeInfoConfiguration()
             : base()
         {
-            this.HasKey
+            HasKey
             (
                 m => new
                 {
@@ -20,7 +20,7 @@
                 }
             );
 
-            this.HasRequired(m => m.InstalledPlugin)
+            HasRequired(m => m.InstalledPlugin)
                 .WithMany(m => m.AssemblyTypes)
                 .HasForeignKey(m => new { m.InstalledPluginId })
                 .WillCascadeOnDelete();

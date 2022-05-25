@@ -37,7 +37,7 @@
         {
             Validate.IsNotEmpty(pluginName);
 
-            return this.GetAll().Any
+            return GetAll().Any
             (
                 m => m.PluginName == pluginName
             );
@@ -69,7 +69,7 @@
                 );
             }
 
-            this.AddEntity(plugin);
+            AddEntity(plugin);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@
         {
             Validate.IsNotEmpty(pluginName);
 
-            var plugin = this.GetAll().FirstOrDefault
+            var plugin = GetAll().FirstOrDefault
             (
                 m => m.PluginName == pluginName
             );
@@ -107,7 +107,7 @@
         /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetAllInstallations()
         {
-            return this.GetAll().OrderBy
+            return GetAll().OrderBy
             (
                 a => a.PluginName
             );
@@ -123,7 +123,7 @@
         {
             var typeName = typeof(T).Name;
 
-            var query = this.GetAll().Where
+            var query = GetAll().Where
             (
                 m => m.PluginInterfaceTypeName == typeName
             );
@@ -137,7 +137,7 @@
         /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetEnabledInstallations()
         {
-            var query = this.GetAll().Where
+            var query = GetAll().Where
             (
                 m => false == m.Disabled
             );
@@ -151,7 +151,7 @@
         /// <returns>A collection of matching installed plug-ins</returns>
         public IEnumerable<InstalledPlugin> GetDisabledInstallations()
         {
-            var plugins = this.GetAll().Where
+            var plugins = GetAll().Where
             (
                 m => m.Disabled
             );
@@ -168,7 +168,7 @@
                 InstalledPlugin plugin
             )
         {
-            this.UpdateEntity(plugin);
+            UpdateEntity(plugin);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@
         {
             var plugin = GetInstallation(pluginName);
 
-            this.RemoveEntity(plugin);
+            RemoveEntity(plugin);
         }
     }
 }

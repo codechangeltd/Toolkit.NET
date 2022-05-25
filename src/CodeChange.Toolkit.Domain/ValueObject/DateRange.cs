@@ -9,7 +9,7 @@
     /// </summary>
     public class DateRange : ValueObject
     {
-        private DateRange() { }
+        protected DateRange() { }
 
         private DateRange(DateTime startDate, DateTime? endDate = null)
         {

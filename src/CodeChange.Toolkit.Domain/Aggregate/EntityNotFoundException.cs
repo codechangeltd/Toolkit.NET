@@ -15,7 +15,7 @@
         public EntityNotFoundException(string entityKey)
             : base($"No entity was found matching the key '{entityKey}'.")
         {
-            this.EntityKey = entityKey;
+            EntityKey = entityKey;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@
         {
             Validate.IsNotEmpty(entityKey);
 
-            this.EntityKey = entityKey;
+            EntityKey = entityKey;
         }
 
         /// <summary>

@@ -11,13 +11,11 @@
         /// </summary>
         /// <param name="assembly">The assembly</param>
         /// <returns>The assembly path</returns>
-        /// <exception cref="System.Security.SecurityException"></exception>
-        /// <exception cref="PathTooLongException"></exception>
         public static string GetFullPath(this Assembly assembly)
         {
             Validate.IsNotNull(assembly);
 
-            var assemblyPath = new Uri(assembly.CodeBase).AbsolutePath;
+            var assemblyPath = new Uri(assembly.Location).AbsolutePath;
 
             assemblyPath = Uri.UnescapeDataString(assemblyPath);
             assemblyPath = Path.GetFullPath(assemblyPath);
@@ -50,7 +48,7 @@
             }
             catch (ReflectionTypeLoadException ex)
             {
-                return ex.Types.Where(_ => _ != null).ToArray();
+                return ex.Types.Where(x => x != null).ToArray()!;
             }
         }
     }

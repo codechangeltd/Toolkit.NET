@@ -4,9 +4,9 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Defines the interface for all domain aggregate root implementations
+    /// Defines a contract for all domain aggregate roots
     /// </summary>
-    public interface IAggregateRoot : IAggregateEntity, ILoggingInfo
+    public interface IAggregateRoot : IAggregateEntity
     {
         /// <summary>
         /// Gets a list of unpublished domain events

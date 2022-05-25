@@ -101,7 +101,7 @@
                 _actionParameters = new List<WebApiPluginParameterInfo>();
             }
 
-            var matchFound = this.Parameters.Any
+            var matchFound = Parameters.Any
             (
                 _ => _.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
             );
@@ -126,7 +126,7 @@
         {
             Validate.IsNotEmpty(name);
 
-            var parameter = this.Parameters.FirstOrDefault
+            var parameter = Parameters.FirstOrDefault
             (
                 _ => _.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
             );
@@ -180,7 +180,7 @@
         {
             Validate.IsNotNull(parameterValues);
 
-            var parameters = this.Parameters;
+            var parameters = Parameters;
 
             if (parameters.Length == 0)
             {

@@ -11,7 +11,7 @@
         /// <param name="request">The HTTP request message</param>
         /// <param name="key">The key of the header value to get</param>
         /// <returns>The header value found</returns>
-        public static string GetHeader(this HttpResponseMessage request, string key)
+        public static string? GetHeader(this HttpResponseMessage request, string key)
         {
             Validate.IsNotNull(request);
 
@@ -19,11 +19,11 @@
 
             if (false == headerFound)
             {
-                return null;
+                return default;
             }
             else
             {
-                return keys.First();
+                return keys?.First();
             }
         }
     }

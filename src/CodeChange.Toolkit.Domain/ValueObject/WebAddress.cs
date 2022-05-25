@@ -9,7 +9,7 @@
     /// </summary>
     public class WebAddress : ValueObject
     {
-        private WebAddress() { }
+        protected WebAddress() { }
 
         private WebAddress(string url)
         {

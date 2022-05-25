@@ -19,7 +19,7 @@
         public AggregateEntityTypeConfiguration()
             : base()
         {
-            this.Property(m => m.ID).HasDatabaseGeneratedOption
+            Property(m => m.ID).HasDatabaseGeneratedOption
             (
                 DatabaseGeneratedOption.Identity
             );
@@ -30,7 +30,7 @@
             };
 
             // Apply a maximum length and an index to the lookup key
-            this.Property(m => m.LookupKey)
+            Property(m => m.LookupKey)
                 .HasMaxLength(150)
                 .HasColumnAnnotation
                 (
@@ -38,7 +38,7 @@
                     new IndexAnnotation(indexAttribute)
                 );
 
-            this.Map
+            Map
             (
                 m =>
                 {

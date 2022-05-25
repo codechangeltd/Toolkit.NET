@@ -15,7 +15,7 @@
         /// </summary>
         public StringToBooleanConverter()
         {
-            this.AcceptedTrueValues = this.DefaultAcceptedTrueValues;
+            AcceptedTrueValues = DefaultAcceptedTrueValues;
         }
 
         /// <summary>
@@ -24,7 +24,7 @@
         /// <param name="acceptedTrueValues">An array of accepted true values</param>
         public StringToBooleanConverter(string[] acceptedTrueValues)
         {
-            this.AcceptedTrueValues = acceptedTrueValues ?? this.DefaultAcceptedTrueValues;
+            AcceptedTrueValues = acceptedTrueValues ?? DefaultAcceptedTrueValues;
         }
 
         /// <summary>
@@ -37,13 +37,13 @@
         /// </summary>
         /// <param name="value">The value to convert</param>
         /// <returns>True, if an accepted value was matched; otherwise false</returns>
-        public bool Convert(string value)
+        public bool Convert(string? value)
         {
             bool result = false;
 
             if (false == String.IsNullOrEmpty(value))
             {
-                foreach (var comparer in this.AcceptedTrueValues)
+                foreach (var comparer in AcceptedTrueValues)
                 {
                     var comparerFound = value.Trim().StartsWith(comparer, StringComparison.OrdinalIgnoreCase);
 

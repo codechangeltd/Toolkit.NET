@@ -29,18 +29,14 @@
         /// </summary>
         /// <param name="obj">The object to check</param>
         /// <returns>True, if the object has all empty properties; otherwise false</returns>
-        /// <exception cref="TargetException"></exception>
-        /// <exception cref="TargetParameterCountException"></exception>
-        /// <exception cref="System.MethodAccessException"></exception>
-        /// <exception cref="TargetInvocationException"></exception>
         public static bool HasNonEmptyProperties(this object obj)
         {
             var type = obj.GetType();
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             var hasProperty = properties
-                .Select(_ => _.GetValue(obj, null))
-                .Any(_ => _ != null && false == _.GetType().IsEnum && false == _.IsNullOrEmpty());
+                .Select(x => x.GetValue(obj, null))
+                .Any(x => x != null && false == x.GetType().IsEnum && false == x.IsNullOrEmpty());
 
             return hasProperty;
         }
@@ -50,10 +46,6 @@
         /// </summary>
         /// <param name="obj">The object to generate the hash code for</param>
         /// <returns>The hash code that was generated</returns>
-        /// <exception cref="TargetException"></exception>
-        /// <exception cref="TargetParameterCountException"></exception>
-        /// <exception cref="System.MethodAccessException"></exception>
-        /// <exception cref="TargetInvocationException"></exception>
         public static int GenerateHashCode(this object obj)
         {
             if (obj == null || false == obj.HasNonEmptyProperties())
@@ -93,7 +85,7 @@
                             // Currently only supports string collections as anything else is too complex
                             if (propertyValue is IEnumerable<string>)
                             {
-                                foreach (var value in (propertyValue as IEnumerable<string>))
+                                foreach (var value in propertyValue as IEnumerable<string>)
                                 {
                                     result = (result * 397) ^ value.GetHashCode();
                                 }

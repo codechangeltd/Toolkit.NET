@@ -11,17 +11,17 @@
 
         public TypeConverterChecker(TFrom from)
         {
-            this.CanConvert = false;
+            CanConvert = false;
 
             // Check for string to numeric type conversions first
             if (typeof(TFrom) == typeof(string) && typeof(TTo).IsNumericType())
             {
-                if (from.IsNumeric())
+                if (from != null && from.IsNumeric())
                 {
                     try
                     {
                         Convert.ChangeType(from, typeof(TTo));
-                        this.CanConvert = true;
+                        CanConvert = true;
                     }
                     catch { }
                 }
@@ -30,8 +30,8 @@
             {
                 try
                 {
-                    var to = (TTo)(dynamic)from;
-                    this.CanConvert = true;
+                    //var to = (TTo)(dynamic)from;
+                    CanConvert = true;
                 }
                 catch { }
             }

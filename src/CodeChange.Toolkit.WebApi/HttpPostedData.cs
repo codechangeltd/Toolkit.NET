@@ -1,44 +1,26 @@
-﻿namespace System.Web.Http
+﻿namespace System.Web.Http;
+
+/// <summary>
+/// Represents the posted data split into fields and files
+/// </summary>
+/// <param name="Fields">The fields in the posted data</param>
+/// <param name="Files">The files in the posted data</param>
+public record class HttpPostedData(IDictionary<string, HttpPostedField> Fields, IDictionary<string, HttpPostedFile> Files)
 {
-    using System.Collections.Generic;
-    using System.Net;
-
     /// <summary>
-    /// Represents the posted data split into fields and files
+    /// Gets a specific file that is required
     /// </summary>
-    public class HttpPostedData
+    /// <param name="name">The name of the file to get</param>
+    /// <returns>The matching file</returns>
+    public HttpPostedFile GetRequiredFile(string name)
     {
-        public HttpPostedData(IDictionary<string, HttpPostedField> fields, IDictionary<string, HttpPostedFile> files)
+        if (Files.ContainsKey(name))
         {
-            this.Fields = fields;
-            this.Files = files;
+            return Files[name];
         }
-
-        /// <summary>
-        /// Gets the fields in the posted data
-        /// </summary>
-        public IDictionary<string, HttpPostedField> Fields { get; }
-
-        /// <summary>
-        /// Gets the files in the posted data
-        /// </summary>
-        public IDictionary<string, HttpPostedFile> Files { get; }
-
-        /// <summary>
-        /// Gets a specific file that is required
-        /// </summary>
-        /// <param name="name">The name of the file to get</param>
-        /// <returns>The matching file</returns>
-        public HttpPostedFile GetRequiredFile(string name)
+        else
         {
-            if (this.Files.ContainsKey(name))
-            {
-                return this.Files[name];
-            }
-            else
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+            throw new HttpResponseException(HttpStatusCode.BadRequest);
         }
     }
 }

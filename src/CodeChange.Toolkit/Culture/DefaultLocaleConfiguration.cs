@@ -25,8 +25,8 @@
             Validate.IsNotNull(timeZone);
             Validate.IsNotNull(culture);
 
-            this.DefaultTimeZone = timeZone;
-            this.DefaultCulture = culture;
+            DefaultTimeZone = timeZone;
+            DefaultCulture = culture;
         }
 
         /// <summary>
@@ -48,13 +48,10 @@
         {
             if (offset < -840 || offset > 720)
             {
-                throw new ArgumentException
-                (
-                    "The timezone offset must be between -14 and 12 hours."
-                );
+                throw new ArgumentException("The timezone offset must be between -14 and 12 hours.");
             }
 
-            this.TimeZoneOffset = offset;
+            TimeZoneOffset = offset;
         }
 
         /// <summary>

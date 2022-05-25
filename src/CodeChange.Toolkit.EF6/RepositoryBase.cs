@@ -21,8 +21,8 @@
         {
             Validate.IsNotNull(context);
 
-            this.ReadContext = context;
-            this.WriteContext = context;
+            ReadContext = context;
+            WriteContext = context;
         }
 
         public RepositoryBase(DbContext readContext, DbContext writeContext)
@@ -30,8 +30,8 @@
             Validate.IsNotNull(readContext);
             Validate.IsNotNull(writeContext);
 
-            this.ReadContext = readContext;
-            this.WriteContext = writeContext;
+            ReadContext = readContext;
+            WriteContext = writeContext;
         }
 
         /// <summary>
@@ -84,7 +84,7 @@
                 entity.DateCreated = DateTime.UtcNow;
                 entity.DateModified = DateTime.UtcNow;
 
-                this.WriteContext.Set<TRoot>().Add(entity);
+                WriteContext.Set<TRoot>().Add(entity);
             }
             else
             {
@@ -101,7 +101,7 @@
         /// <param name="entity">The entity to add or update</param>
         protected virtual void AddOrUpdateEntity(TRoot entity)
         {
-            var context = this.WriteContext;
+            var context = WriteContext;
             var set = context.Set<TRoot>();
 
             var attached = set.Local.Any
@@ -148,7 +148,7 @@
                 return false;
             }
 
-            var set = this.WriteContext.Set<TRoot>();
+            var set = WriteContext.Set<TRoot>();
 
             var attached = set.Local.Any
             (
@@ -187,7 +187,7 @@
             {
                 // FALLBACK: if we can't find the entity in the database 
                 // then try to find it in the change trackers added entries.
-                var tracker = this.WriteContext.ChangeTracker;
+                var tracker = WriteContext.ChangeTracker;
 
                 var addedEntities = tracker.Entries<TRoot>()
                     .Where(_ => _.State == EntityState.Added)
@@ -242,7 +242,7 @@
         /// <returns>A collection of all aggregate root entities in the database</returns>
         protected virtual IQueryable<TRoot> GetAll(bool useEagerLoading = false)
         {
-            var set = this.ReadContext.Set<TRoot>();
+            var set = ReadContext.Set<TRoot>();
             var query = (IQueryable<TRoot>)set;
 
             if (useEagerLoading)
@@ -263,7 +263,7 @@
 
             var key = entity.GetKeyValue();
             var lookupEntity = GetEntityByLookupKey(key);
-            var context = this.WriteContext;
+            var context = WriteContext;
 
             if (lookupEntity != null && lookupEntity.ID != entity.ID)
             {
@@ -321,7 +321,7 @@
 
             entity.Destroy();
 
-            var context = this.WriteContext;
+            var context = WriteContext;
             var entry = context.Entry(entity);
 
             // Ensure the entity has been attached to the object state manager
@@ -340,7 +340,7 @@
         /// <returns>The query, with eager loading applied</returns>
         protected virtual IQueryable<TRoot> ApplyEagerLoading(IQueryable<TRoot> query)
         {
-            var properties = this.NavigationProperties;
+            var properties = NavigationProperties;
 
             if (properties != null)
             {
@@ -365,7 +365,7 @@
             try
             {
                 // Get the meta data associated with the entity
-                var context = this.WriteContext;
+                var context = WriteContext;
                 var objectContext = ((IObjectContextAdapter)context).ObjectContext;
                 var objectSet = objectContext.CreateObjectSet<TRoot>();
                 var entitySetElementType = objectSet.EntitySet.ElementType;

@@ -10,7 +10,7 @@
     /// </summary>
     public class Email : ValueObject
     {
-        private Email() { }
+        protected Email() { }
 
         private Email(string email)
         {

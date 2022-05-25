@@ -13,6 +13,6 @@
         /// </summary>
         /// <param name="value">The value to convert</param>
         /// <returns>The value that was converted to type TTo</returns>
-        TTo Convert(TFrom value);
+        TTo? Convert(TFrom? value);
     }
 }

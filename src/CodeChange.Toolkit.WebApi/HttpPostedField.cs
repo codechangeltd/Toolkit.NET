@@ -1,24 +1,8 @@
-﻿namespace System.Web.Http
-{
-    /// <summary>
-    /// Represents a single posted field
-    /// </summary>
-    public class HttpPostedField
-    {
-        public HttpPostedField(string name, string value)
-        {
-            this.Name = name;
-            this.Value = value;
-        }
+﻿namespace System.Web.Http;
 
-        /// <summary>
-        /// Gets the name of the field
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Gets the field value
-        /// </summary>
-        public string Value { get; }
-    }
-}
+/// <summary>
+/// Represents a single posted field
+/// </summary>
+/// <param name="Name">The name of the field</param>
+/// <param name="Value">The field value</param>
+public record class HttpPostedField(string Name, string Value);

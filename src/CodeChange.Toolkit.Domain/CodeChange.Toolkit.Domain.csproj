@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
     <Copyright>Copyright © Code Change Ltd 2022</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>4.4.0</AssemblyVersion>
-    <Version>4.4.0</Version>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
+    <Version>5.0.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit.Domain/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Introduced IDomainService interface.</PackageReleaseNotes>
+	<PackageReleaseNotes>Complete overhaul of the code-base, including removing redundant code, plus upgraded to .NET 6 and C# 10.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BinaryFog.NameParser" Version="3.2.3" />
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.27.2" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.29.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
