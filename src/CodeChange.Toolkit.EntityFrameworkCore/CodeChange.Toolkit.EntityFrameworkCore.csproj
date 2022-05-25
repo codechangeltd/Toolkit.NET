@@ -12,7 +12,6 @@
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/codechangeltd/Toolkit.NET/master/src/CodeChange.Toolkit/Icon.png</PackageIconUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <PackageReleaseNotes>Complete overhaul of the code-base, including removing redundant code, plus upgraded to .NET 6 and C# 10.</PackageReleaseNotes>
