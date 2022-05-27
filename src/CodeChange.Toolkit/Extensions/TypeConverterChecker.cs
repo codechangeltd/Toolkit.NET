@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TFrom">The convert from type</typeparam>
     /// <typeparam name="TTo">The convert to type</typeparam>
-    internal class TypeConverterChecker<TFrom, TTo>
+    public class TypeConverterChecker<TFrom, TTo>
     {
         public bool CanConvert { get; private set; }
 
@@ -30,7 +30,7 @@
             {
                 try
                 {
-                    //var to = (TTo)(dynamic)from;
+                    var to = (TTo)(dynamic)from!;
                     CanConvert = true;
                 }
                 catch { }
