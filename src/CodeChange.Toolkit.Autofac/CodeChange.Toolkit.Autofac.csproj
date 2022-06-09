@@ -18,10 +18,10 @@
     <Tags>CodeChange Toolkit Autofac .NET DOTNET C#</Tags>
   </PropertyGroup>
     <ItemGroup>
-	    <None Include="Icon.png" Pack="true" PackagePath=""/>
+	    <None Include="Icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="Autofac" Version="6.4.0" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.1.2" />
   </ItemGroup>
   <ItemGroup>

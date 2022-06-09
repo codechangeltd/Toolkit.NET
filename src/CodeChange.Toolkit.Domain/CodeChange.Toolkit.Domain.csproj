@@ -7,24 +7,25 @@
     <Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
     <Copyright>Copyright © Code Change Ltd 2022</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>5.0.0</AssemblyVersion>
-    <Version>5.0.0</Version>
+    <AssemblyVersion>5.1.0</AssemblyVersion>
+    <Version>5.1.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-	<PackageReleaseNotes>Complete overhaul of the code-base, including removing redundant code, plus upgraded to .NET 6 and C# 10.</PackageReleaseNotes>
+	<PackageReleaseNotes>Integrated ICommand and ICommandHander with MediatR.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BinaryFog.NameParser" Version="3.2.3" />
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.29.1" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.29.2" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Icon.png" Pack="true" PackagePath=""/>
+    <None Include="Icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

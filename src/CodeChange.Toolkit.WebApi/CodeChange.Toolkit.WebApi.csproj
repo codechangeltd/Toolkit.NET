@@ -18,12 +18,12 @@
 		<Tags>CodeChange Toolkit WebApi Web API .NET DOTNET C#</Tags>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Include="Icon.png" Pack="true" PackagePath=""/>
+		<None Include="Icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
-		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.8" />
-		<PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.8" />
+		<PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.9" />
+		<PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.9" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 	</ItemGroup>
 	<ItemGroup>
