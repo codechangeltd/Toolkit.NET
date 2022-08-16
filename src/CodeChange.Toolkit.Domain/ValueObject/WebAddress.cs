@@ -1,9 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
-    
     /// <summary>
     /// Represents a website address
     /// </summary>
@@ -39,9 +35,9 @@
             }
         }
 
-        public string Address { get; private set; }
-        public string Scheme { get; private set; }
-        public string Host { get; private set; }
+        public string Address { get; private set; } = default!;
+        public string Scheme { get; private set; } = default!;
+        public string Host { get; private set; } = default!;
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

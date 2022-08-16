@@ -1,9 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Represents a single date range value
     /// </summary>

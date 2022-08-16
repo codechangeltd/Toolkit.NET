@@ -1,8 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -54,9 +51,9 @@
             }
         }
 
-        public string Address { get; private set; }
-        public string Host { get; private set; }
-        public string User { get; private set; }
+        public string Address { get; private set; } = default!;
+        public string Host { get; private set; } = default!;
+        public string User { get; private set; } = default!;
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

@@ -1,12 +1,7 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
     using BinaryFog.NameParser;
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
+    
     /// <summary>
     /// Represents a persons full name
     /// </summary>
@@ -105,7 +100,7 @@
                     }
                 }
 
-                return Create(firstName, middleName, lastName, title, suffix);
+                return Create(firstName!, middleName, lastName!, title, suffix);
             }
         }
 
@@ -114,13 +109,13 @@
         /// </summary>
         public virtual void AutoFormat()
         {
-            FirstName = CorrectCase(FirstName);
+            FirstName = CorrectCase(FirstName)!;
             MiddleName = CorrectCase(MiddleName);
-            LastName = CorrectCase(LastName);
+            LastName = CorrectCase(LastName)!;
             Title = CorrectCase(Title);
             Suffix = CorrectCase(Suffix);
 
-            static string CorrectCase(string name)
+            static string? CorrectCase(string? name)
             {
                 if (String.IsNullOrEmpty(name))
                 {
@@ -143,9 +138,9 @@
             }
         }
 
-        public string FirstName { get; private set; }
+        public string FirstName { get; private set; } = default!;
         public string? MiddleName { get; private set; }
-        public string LastName { get; private set; }
+        public string LastName { get; private set; } = default!;
         public string? Title { get; private set; }
         public string? Suffix { get; private set; }
 
@@ -164,7 +159,7 @@
         /// </summary>
         /// <param name="words">The words to concatenate</param>
         /// <returns>The concatenated string</returns>
-        private string Concat(params string[] words)
+        private static string Concat(params string?[] words)
         {
             var builder = new StringBuilder();
 
@@ -182,10 +177,10 @@
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return FirstName.ToUpper();
-            yield return MiddleName.ToUpper();
+            yield return MiddleName?.ToUpper() ?? String.Empty;
             yield return LastName.ToUpper();
-            yield return Title.ToUpper();
-            yield return Suffix.ToUpper();
+            yield return Title?.ToUpper() ?? String.Empty;
+            yield return Suffix?.ToUpper() ?? String.Empty;
         }
 
         public override string ToString()

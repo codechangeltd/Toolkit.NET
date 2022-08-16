@@ -1,9 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
-    
     /// <summary>
     /// Represents a persons birth record (i.e. the date and place they were born)
     /// </summary>
@@ -11,13 +7,13 @@
     {
         protected PersonBirth() { }
 
-        private PersonBirth(DateTime birthDate, string birthPlace)
+        private PersonBirth(DateTime birthDate, string? birthPlace)
         {
             BirthDate = birthDate;
             BirthPlace = birthPlace;
         }
 
-        public static Result<PersonBirth> Create(DateTime birthDate, string birthPlace)
+        public static Result<PersonBirth> Create(DateTime birthDate, string? birthPlace = null)
         {
             if (birthDate == default || birthDate > DateTime.Today)
             {
@@ -64,12 +60,12 @@
         /// <summary>
         /// Gets the persons birth place (e.g. hospital or address)
         /// </summary>
-        public string BirthPlace { get; }
+        public string? BirthPlace { get; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return BirthDate;
-            yield return BirthPlace;
+            yield return BirthPlace ?? String.Empty;
         }
 
         public override string ToString()

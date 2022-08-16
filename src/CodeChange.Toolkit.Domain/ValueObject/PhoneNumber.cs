@@ -1,10 +1,5 @@
 ﻿namespace CodeChange.Toolkit.Domain
 {
-    using CSharpFunctionalExtensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     /// <summary>
     /// Represents a telephone number
     /// </summary>
