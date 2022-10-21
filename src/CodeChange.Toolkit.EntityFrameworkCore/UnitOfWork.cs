@@ -2,32 +2,56 @@
 
 using Nito.AsyncEx.Synchronous;
 using System.Data;
+using System.Data.SqlClient;
 
 /// <summary>
 /// Represents an Entity Framework Core Unit of Work implementation
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly DbContext _context;
+    private readonly DbContext[] _contexts;
     private readonly IEventDispatcher _eventDispatcher;
     private readonly IDomainEventLogger _eventLogger;
 
     public UnitOfWork(DbContext context, IEventDispatcher eventDispatcher, IDomainEventLogger eventLogger)
     {
-        Validate.IsNotNull(context);
-        Validate.IsNotNull(eventDispatcher);
-        Validate.IsNotNull(eventLogger);
-
-        _context = context;
+        _contexts = new DbContext[] { context };
         _eventDispatcher = eventDispatcher;
         _eventLogger = eventLogger;
     }
 
+    public UnitOfWork(IEventDispatcher eventDispatcher, IDomainEventLogger eventLogger, params DbContext[] contexts)
+    {
+        // NOTE:
+        // Ensure the connection string is the same withing each context,
+        // because we cannot currently handle distributed transactions.
+
+        if (contexts.Length < 1)
+        {
+            throw new ArgumentException("At least one DbContext is required.");
+        }
+
+        var firstConnectionString = contexts.First().Database.GetConnectionString();
+        var allHaveSameConnection = contexts.All(x => x.Database.GetConnectionString() == firstConnectionString);
+
+        if (false == allHaveSameConnection)
+        {
+            throw new ArgumentException("The connection string must be the same for each DbContext.");
+        }
+
+        _eventDispatcher = eventDispatcher;
+        _eventLogger = eventLogger;
+        _contexts = contexts;
+    }
+
     public void RefreshAll()
     {
-        foreach (var entity in _context.ChangeTracker.Entries())
+        foreach (var context in _contexts)
         {
-            entity.Reload();
+            foreach (var entity in context.ChangeTracker.Entries())
+            {
+                entity.Reload();
+            }
         }
     }
 
@@ -35,9 +59,12 @@ public class UnitOfWork : IUnitOfWork
     {
         var tasks = new List<Task>();
 
-        foreach (var entity in _context.ChangeTracker.Entries())
+        foreach (var context in _contexts)
         {
-            tasks.Add(entity.ReloadAsync(cancellationToken));
+            foreach (var entity in context.ChangeTracker.Entries())
+            {
+                tasks.Add(entity.ReloadAsync(cancellationToken));
+            }
         }
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -45,31 +72,38 @@ public class UnitOfWork : IUnitOfWork
 
     public int SaveChanges()
     {
-        return SaveChangesAsync(_context).WaitAndUnwrapException();
+        return SaveChangesAsync(_contexts).WaitAndUnwrapException();
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await SaveChangesAsync(_context, cancellationToken).ConfigureAwait(false);
+        return await SaveChangesAsync(_contexts, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<int> SaveChangesAsync(DbContext context, CancellationToken cancellationToken = default)
+    private async Task<int> SaveChangesAsync(DbContext[] contexts, CancellationToken cancellationToken = default)
     {
-        Validate.IsNotNull(context);
-
         var success = false;
         var rows = default(int);
 
-        var aggregates = _context.GetPendingAggregates().ToArray();
+        var aggregates = contexts.GetPendingAggregates();
 
         await ProcessPreTransactionEvents().ConfigureAwait(false);
 
-        using (var transaction = context.Database.BeginTransaction())
+        var connectionString = contexts.First().Database.GetConnectionString();
+
+        using (var connection = new SqlConnection(connectionString))
+        using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
         {
             try
             {
-                rows = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                transaction.Commit();
+                foreach (var context in contexts)
+                {
+                    await context.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
+                    rows += await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                }
+
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
                 success = true;
             }
             catch (Exception ex)
@@ -110,7 +144,7 @@ public class UnitOfWork : IUnitOfWork
 
                 await ProcessEventQueue(eventQueue, true).ConfigureAwait(false);
 
-                aggregates = _context.GetPendingAggregates().ToArray();
+                aggregates = contexts.GetPendingAggregates();
                 eventQueue = CreateQueue().Remove(preProcessItems);
             }
         }

@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.5" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="Paginator.NET.EntityFrameworkCore" Version="1.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit.Domain\CodeChange.Toolkit.Domain.csproj" />

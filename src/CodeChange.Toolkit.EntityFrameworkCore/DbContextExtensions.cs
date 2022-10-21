@@ -13,10 +13,8 @@
         /// </summary>
         /// <param name="context">The DbContext</param>
         /// <returns>A collection of aggregate roots</returns>
-        public static IEnumerable<IAggregateRoot> GetPendingAggregates(this DbContext context)
+        public static IAggregateRoot[] GetPendingAggregates(this DbContext context)
         {
-            Validate.IsNotNull(context);
-
             var entries = context.ChangeTracker
                 .Entries()
                 .Where(x => x.Entity.GetType().ImplementsInterface(typeof(IAggregateRoot)))
@@ -29,7 +27,24 @@
                 aggregates.Add((IAggregateRoot)entry.Entity);
             }
 
-            return aggregates;
+            return aggregates.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all aggregates that are pending saving from multiple database contexts
+        /// </summary>
+        /// <param name="contexts">The DbContext collection</param>
+        /// <returns>A collection of aggregate roots</returns>
+        public static IAggregateRoot[] GetPendingAggregates(this IEnumerable<DbContext> contexts)
+        {
+            var aggregates = new List<IAggregateRoot>();
+
+            foreach (var context in contexts)
+            {
+                aggregates.AddRange(GetPendingAggregates(context));
+            }
+
+            return aggregates.ToArray();
         }
     }
 }
