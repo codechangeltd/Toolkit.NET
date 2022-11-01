@@ -15,7 +15,7 @@ public class UnitOfWork : IUnitOfWork
 
     public UnitOfWork(DbContext context, IEventDispatcher eventDispatcher, IDomainEventLogger eventLogger)
     {
-        _contexts = new DbContext[] { context };
+        _contexts = new DbContext[1] { context };
         _eventDispatcher = eventDispatcher;
         _eventLogger = eventLogger;
     }

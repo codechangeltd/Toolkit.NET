@@ -17,8 +17,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
 
     public RepositoryBase(DbContext context)
     {
-        Validate.IsNotNull(context);
-
         _readSet = context.Set<TRoot>();
         _writeSet = context.Set<TRoot>();
 
@@ -28,9 +26,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
 
     public RepositoryBase(DbContext readContext, DbContext writeContext)
     {
-        Validate.IsNotNull(readContext);
-        Validate.IsNotNull(writeContext);
-
         _readSet = readContext.Set<TRoot>();
         _writeSet = writeContext.Set<TRoot>();
 
@@ -39,12 +34,12 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     }
 
     /// <summary>
-    /// Gets a the read-only database context
+    /// Gets the read-only database context
     /// </summary>
     public DbContext ReadContext { get; }
 
     /// <summary>
-    /// Gets a the write-only database context
+    /// Gets the write-only database context
     /// </summary>
     public DbContext WriteContext { get; }
 
@@ -55,13 +50,26 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     {
         get
         {
-            if (_navigationProperties == null)
-            {
-                _navigationProperties = GetNavigationProperties();
-            }
+            _navigationProperties ??= GetNavigationProperties();
 
             return _navigationProperties;
         }
+    }
+
+    /// <summary>
+    /// Uses reflection to get a list of navigation properties for the entity specified
+    /// </summary>
+    /// <returns>A list of matching navigation property</returns>
+    protected List<PropertyInfo> GetNavigationProperties()
+    {
+        var entityType = typeof(TRoot);
+
+        var properties = ReadContext.Model
+            .GetEntityTypes()
+            .Where(x => x.DefiningEntityType?.ClrType == entityType)
+            .SelectMany(x => x.GetNavigations().Select(nav => nav.PropertyInfo));
+
+        return properties.Where(info => info != null).ToList()!;
     }
 
     /// <summary>
@@ -90,8 +98,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     /// <returns>The result of the operation</returns>
     protected virtual async Task<Result> AddEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
     {
-        Validate.IsNotNull(entity);
-
         var key = entity.Key;
         var usedTask = KeyUsedAsync(key, cancellationToken);
         var hasBeenUsed = await usedTask.ConfigureAwait(false);
@@ -176,7 +182,7 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     /// <returns>True, if the key has already been used; otherwise false</returns>
     protected virtual async Task<bool> KeyUsedAsync(string key, CancellationToken cancellationToken = default)
     {
-        if (String.IsNullOrEmpty(key))
+        if (String.IsNullOrWhiteSpace(key))
         {
             return false;
         }
@@ -216,8 +222,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
             CancellationToken cancellationToken = default
         )
     {
-        Validate.IsNotEmpty(key);
-
         return await GetEntityAsync(x => x.Key == key, useEagerLoading, cancellationToken).ConfigureAwait(false);
     }
 
@@ -424,8 +428,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     /// <returns>The result of the operation</returns>
     protected virtual async Task<Result> UpdateEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
     {
-        Validate.IsNotNull(entity);
-
         var key = entity.Key;
         var countTask = CountAsync(x => x.Key == key, cancellationToken);
 
@@ -486,8 +488,6 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     /// <returns>The result of the operation</returns>
     protected virtual void RemoveEntity(TRoot entity)
     {
-        Validate.IsNotNull(entity);
-
         entity.Destroy();
 
         var dbEntry = WriteContext.Entry(entity);
@@ -517,21 +517,5 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
         }
 
         return query;
-    }
-
-    /// <summary>
-    /// Uses reflection to get a list of navigation properties for the entity specified
-    /// </summary>
-    /// <returns>A list of matching navigation property</returns>
-    protected List<PropertyInfo> GetNavigationProperties()
-    {
-        var entityType = typeof(TRoot);
-
-        var properties = ReadContext.Model
-            .GetEntityTypes()
-            .Where(x => x.DefiningEntityType.ClrType == entityType)
-            .SelectMany(x => x.GetNavigations().Select(nav => nav.PropertyInfo));
-
-        return properties.ToList();
     }
 }
