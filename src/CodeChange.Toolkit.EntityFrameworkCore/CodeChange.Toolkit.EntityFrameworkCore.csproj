@@ -8,13 +8,13 @@
     <Copyright>Copyright © Code Change Ltd 2022</Copyright>
     <Authors>Code Change Ltd</Authors>
     <AssemblyVersion>7.0.0</AssemblyVersion>
-    <Version>7.0.0-beta1</Version>
+    <Version>7.0.0-beta3</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Redesigned UnitOfWork to use multiple DbContext's under a single transaction.</PackageReleaseNotes>
+    <PackageReleaseNotes>Redesigned UnitOfWork to use multiple DbContext's under a single transaction. Fixed SaveChangesAsync bug by opening the connection before creating the transaction.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
   </PropertyGroup>
   <ItemGroup>

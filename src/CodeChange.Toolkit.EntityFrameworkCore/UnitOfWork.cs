@@ -89,15 +89,23 @@ public class UnitOfWork : IUnitOfWork
 
         await ProcessPreTransactionEvents().ConfigureAwait(false);
 
-        var connectionString = contexts.First().Database.GetConnectionString();
+        var connection = contexts.First().Database.GetDbConnection();
 
-        using (var connection = new SqlConnection(connectionString))
-        using (var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted))
+        try
+        {
+            await connection.OpenAsync(cancellationToken);
+        }
+        catch { }
+
+        using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
         {
             try
             {
+
                 foreach (var context in contexts)
                 {
+                    context.Database.SetDbConnection(connection);
+
                     await context.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
                     rows += await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 }
