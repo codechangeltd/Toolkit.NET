@@ -2,7 +2,6 @@
 
 using Nito.AsyncEx.Synchronous;
 using System.Data;
-using System.Data.SqlClient;
 
 /// <summary>
 /// Represents an Entity Framework Core Unit of Work implementation
@@ -91,17 +90,23 @@ public class UnitOfWork : IUnitOfWork
 
         var connection = contexts.First().Database.GetDbConnection();
 
-        try
+        if (connection.State == ConnectionState.Closed)
         {
             await connection.OpenAsync(cancellationToken);
         }
-        catch { }
+        else if (connection.State == ConnectionState.Connecting
+            || connection.State == ConnectionState.Broken
+            || connection.State == ConnectionState.Executing)
+        {
+            //throw new Exception($"Connection state is: '{connection.State}'");
+
+            // TODO: Is this a transient error problem? Do we need to handle it?
+        }
 
         using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
         {
             try
             {
-
                 foreach (var context in contexts)
                 {
                     context.Database.SetDbConnection(connection);
