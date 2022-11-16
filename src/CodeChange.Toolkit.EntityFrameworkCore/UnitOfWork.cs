@@ -110,7 +110,10 @@ public class UnitOfWork : IUnitOfWork
                 foreach (var context in contexts)
                 {
                     context.Database.SetDbConnection(connection);
+                }
 
+                foreach (var context in contexts)
+                {
                     await context.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
                     rows += await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 }
