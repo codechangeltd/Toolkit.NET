@@ -88,43 +88,30 @@ public class UnitOfWork : IUnitOfWork
 
         await ProcessPreTransactionEvents().ConfigureAwait(false);
 
-        var connection = contexts.First().Database.GetDbConnection();
-
-        if (connection.State == ConnectionState.Closed)
+        foreach (var context in contexts)
         {
-            await connection.OpenAsync(cancellationToken);
-        }
-        else if (connection.State == ConnectionState.Connecting
-            || connection.State == ConnectionState.Broken
-            || connection.State == ConnectionState.Executing)
-        {
-            //throw new Exception($"Connection state is: '{connection.State}'");
-
-            // TODO: Is this a transient error problem? Do we need to handle it?
+            await context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
         }
 
-        using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
+        try
         {
-            try
+            foreach (var context in contexts)
             {
-                foreach (var context in contexts)
-                {
-                    context.Database.SetDbConnection(connection);
-                }
+                rows += await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
 
-                foreach (var context in contexts)
-                {
-                    await context.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
-                    rows += await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                }
-
-                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var context in contexts)
+            {
+                await context.Database.CommitTransactionAsync(cancellationToken).ConfigureAwait(false);
 
                 success = true;
             }
-            catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            foreach (var context in contexts)
             {
-                transaction.Rollback();
+                await context.Database.RollbackTransactionAsync(cancellationToken).ConfigureAwait(false);
 
                 if (ex is DBConcurrencyException)
                 {
@@ -135,9 +122,9 @@ public class UnitOfWork : IUnitOfWork
 
                     await RefreshAllAsync(cancellationToken).ConfigureAwait(false);
                 }
-
-                throw;
             }
+
+            throw;
         }
 
         if (success)
