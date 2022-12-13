@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing various extensions and tools built on top of the .NET Framework Class Library.</Description>
     <Copyright>Copyright © Code Change Ltd 2022</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>4.0.1</AssemblyVersion>
-    <Version>4.0.1</Version>
+    <AssemblyVersion>4.1.0</AssemblyVersion>
+    <Version>4.1.0</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-	  <PackageReleaseNotes>Fix for TypeConverterChecker.</PackageReleaseNotes>
+	  <PackageReleaseNotes>Upgraded to .NET 7.0 and latest NuGet package versions.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 </Project>

@@ -66,7 +66,7 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
 
         var properties = ReadContext.Model
             .GetEntityTypes()
-            .Where(x => x.DefiningEntityType?.ClrType == entityType)
+            .Where(x => x.ClrType == entityType)
             .SelectMany(x => x.GetNavigations().Select(nav => nav.PropertyInfo));
 
         return properties.Where(info => info != null).ToList()!;
@@ -85,10 +85,7 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     /// </summary>
     /// <param name="entity">The entity to add</param>
     /// <returns>The result of the operation</returns>
-    protected virtual Result AddEntity(TRoot entity)
-    {
-        return AddEntityAsync(entity).WaitAndUnwrapException();
-    }
+    protected virtual Result AddEntity(TRoot entity) => AddEntityAsync(entity).WaitAndUnwrapException();
 
     /// <summary>
     /// Asynchronously adds a new entity to the set in the database context
