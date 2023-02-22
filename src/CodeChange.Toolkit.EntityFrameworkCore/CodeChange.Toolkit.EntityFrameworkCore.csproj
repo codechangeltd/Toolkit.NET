@@ -5,16 +5,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing Entity Framework Core tools, base classes and interface implementations.</Description>
-    <Copyright>Copyright © Code Change Ltd 2022</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2023</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>7.1.0</AssemblyVersion>
-    <Version>7.1.0</Version>
+    <AssemblyVersion>7.1.1</AssemblyVersion>
+    <Version>7.1.1</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageReleaseNotes>Upgraded to .NET 7.0 and EF Core 7.0.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed bug in UoW where multiple tasks being awaited caused concurrency exceptions.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
   </PropertyGroup>
   <ItemGroup>

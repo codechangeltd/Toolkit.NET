@@ -158,10 +158,7 @@ public class UnitOfWork : IUnitOfWork
 
             foreach (var aggregate in aggregates)
             {
-                if (aggregate.UnpublishedEvents != null)
-                {
-                    aggregate.UnpublishedEvents.Clear();
-                }
+                aggregate.UnpublishedEvents?.Clear();
             }
 
             await ProcessEventQueue(eventQueue).ConfigureAwait(false);
@@ -177,30 +174,22 @@ public class UnitOfWork : IUnitOfWork
     /// <param name="queue">The event queue to process</param>
     private async Task ProcessEventQueue(IEventQueue queue, bool preTransaction = false)
     {
-        var queueTasks = new List<Task>();
-
         while (false == queue.IsEmpty())
         {
             var nextItem = queue.GetNext();
-            var dispatchTask = _eventDispatcher.DispatchAsync(nextItem.Event, preTransaction);
+            var @event = nextItem.Event;
 
-            queueTasks.Add(dispatchTask);
+            await _eventDispatcher.DispatchAsync(@event, preTransaction).ConfigureAwait(false);
 
             // We don't want to log pre-transaction events
             if (false == preTransaction)
             {
-                var logTask = _eventLogger.LogEventAsync
-                (
-                    nextItem.AggregateKey,
-                    nextItem.AggregateType,
-                    nextItem.Event
-                );
+                var key = nextItem.AggregateKey;
+                var type = nextItem.AggregateType;
 
-                queueTasks.Add(logTask);
+                await _eventLogger.LogEventAsync(key, type, @event).ConfigureAwait(false);
             }
         }
-
-        await Task.WhenAll(queueTasks).ConfigureAwait(false);
     }
 
     public void Dispose()
