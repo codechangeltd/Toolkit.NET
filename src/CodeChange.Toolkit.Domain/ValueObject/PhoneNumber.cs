@@ -52,14 +52,11 @@
         public string Number { get; private set; }
         public bool HasValue { get; private set; }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Number.ToUpper();
         }
 
-        public override string ToString()
-        {
-            return Number;
-        }
+        public override string ToString() => Number;
     }
 }

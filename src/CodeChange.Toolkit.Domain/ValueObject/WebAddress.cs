@@ -39,14 +39,11 @@
         public string Scheme { get; private set; } = default!;
         public string Host { get; private set; } = default!;
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Address.ToUpper();
         }
 
-        public override string ToString()
-        {
-            return Address;
-        }
+        public override string ToString() => Address;
     }
 }

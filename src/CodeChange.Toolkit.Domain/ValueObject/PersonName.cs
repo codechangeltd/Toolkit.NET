@@ -174,7 +174,7 @@
             return builder.ToString().Trim();
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return FirstName.ToUpper();
             yield return MiddleName?.ToUpper() ?? String.Empty;
@@ -183,9 +183,6 @@
             yield return Suffix?.ToUpper() ?? String.Empty;
         }
 
-        public override string ToString()
-        {
-            return DisplayName;
-        }
+        public override string ToString() => DisplayName;
     }
 }

@@ -5,23 +5,23 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing Autofac tools and interface implementations.</Description>
-    <Copyright>Copyright © Code Change Ltd 2022</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2023</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>3.1.0</AssemblyVersion>
-    <Version>3.1.0</Version>
+    <AssemblyVersion>3.2.0</AssemblyVersion>
+    <Version>3.2.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-	<PackageReleaseNotes>Upgraded to .NET 7.0 and latest NuGet package versions.</PackageReleaseNotes>
+	<PackageReleaseNotes>Upgraded all NuGet packages to their versions.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Autofac .NET DOTNET C#</Tags>
   </PropertyGroup>
     <ItemGroup>
 	    <None Include="Icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Autofac" Version="7.0.1" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.1.2" />
   </ItemGroup>
   <ItemGroup>

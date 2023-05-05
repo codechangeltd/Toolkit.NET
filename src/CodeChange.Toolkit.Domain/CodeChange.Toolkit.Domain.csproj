@@ -5,22 +5,22 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Toolkit.NET</Product>
     <Description>A library containing domain interfaces, base classes and tools for Domain Driven Design (DDD) projects.</Description>
-    <Copyright>Copyright © Code Change Ltd 2022</Copyright>
+    <Copyright>Copyright © Code Change Ltd 2023</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>5.2.0</AssemblyVersion>
-    <Version>5.2.0</Version>
+    <AssemblyVersion>5.3.0</AssemblyVersion>
+    <Version>5.3.0</Version>
     <licenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</licenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-	<PackageReleaseNotes>Upgraded to .NET 7.0 and latest NuGet package versions.</PackageReleaseNotes>
+	<PackageReleaseNotes>Upgraded all NuGet packages to their versions.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit Domain DDD .NET DOTNET C#</Tags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BinaryFog.NameParser" Version="3.2.3" />
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.37.0" />
-    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.38.1" />
+    <PackageReference Include="MediatR" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeChange.Toolkit\CodeChange.Toolkit.csproj" />

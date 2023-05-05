@@ -34,10 +34,7 @@
         /// Calculates the persons age at the current date and time
         /// </summary>
         /// <returns>The age calculated</returns>
-        public int CalculateAge()
-        {
-            return CalculateAge(DateTime.UtcNow);
-        }
+        public int CalculateAge() => CalculateAge(DateTime.UtcNow);
 
         /// <summary>
         /// Calculates the persons age for a given date and time
@@ -62,15 +59,12 @@
         /// </summary>
         public string? BirthPlace { get; }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return BirthDate;
             yield return BirthPlace ?? String.Empty;
         }
 
-        public override string ToString()
-        {
-            return BirthDate.ToLongDateString();
-        }
+        public override string ToString() => BirthDate.ToLongDateString();
     }
 }

@@ -37,7 +37,7 @@
             return date >= StartDate && date <= EndDate;
         }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return StartDate;
             yield return EndDate;
