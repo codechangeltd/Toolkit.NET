@@ -32,7 +32,7 @@
         }
 
         /// <summary>
-        /// Gets the next domain event in the queue
+        /// The next domain event in the queue
         /// </summary>
         /// <returns>The queued item</returns>
         public EventQueueItem GetNext()

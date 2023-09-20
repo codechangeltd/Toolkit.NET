@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a persons birth record (i.e. the date and place they were born)
     /// </summary>
-    public class PersonBirth : ValueObject
+    public class PersonBirth : ValueObject, ICloneable
     {
         protected PersonBirth() { }
 
@@ -26,7 +26,7 @@
         }
 
         /// <summary>
-        /// Gets the persons birth date
+        /// The persons birth date
         /// </summary>
         public DateTime BirthDate { get; }
 
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        /// Gets the persons birth place (e.g. hospital or address)
+        /// The persons birth place (e.g. hospital or address)
         /// </summary>
         public string? BirthPlace { get; }
 
@@ -64,6 +64,8 @@
             yield return BirthDate;
             yield return BirthPlace ?? String.Empty;
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString() => BirthDate.ToLongDateString();
     }

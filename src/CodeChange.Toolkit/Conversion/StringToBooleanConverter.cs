@@ -28,7 +28,7 @@
         }
 
         /// <summary>
-        /// Gets the accepted true values that have been supplied
+        /// The accepted true values that have been supplied
         /// </summary>
         public string[] AcceptedTrueValues { get; private set; }
 

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a website address
     /// </summary>
-    public class WebAddress : ValueObject
+    public class WebAddress : ValueObject, ICloneable
     {
         protected WebAddress() { }
 
@@ -35,14 +35,16 @@
             }
         }
 
-        public string Address { get; private set; } = default!;
-        public string Scheme { get; private set; } = default!;
-        public string Host { get; private set; } = default!;
+        public string Address { get; private init; } = default!;
+        public string Scheme { get; private init; } = default!;
+        public string Host { get; private init; } = default!;
 
         protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Address.ToUpper();
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString() => Address;
     }

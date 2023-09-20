@@ -65,7 +65,7 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    /// Gets the default value for a type at runtime
+    /// The default value for a type at runtime
     /// </summary>
     /// <param name="type">The type to get the default value for</param>
     /// <returns>The default value</returns>
@@ -213,7 +213,7 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    /// Gets the enumerable type from a collection type
+    /// The enumerable type from a collection type
     /// </summary>
     /// <param name="collectionType">The collection type</param>
     /// <returns>The enumerable type found</returns>

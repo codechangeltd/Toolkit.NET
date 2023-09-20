@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a telephone number
     /// </summary>
-    public class PhoneNumber : ValueObject
+    public class PhoneNumber : ValueObject, ICloneable
     {
         protected PhoneNumber()
         {
@@ -49,13 +49,15 @@
             return new PhoneNumber();
         }
 
-        public string Number { get; private set; }
-        public bool HasValue { get; private set; }
+        public string Number { get; private init; }
+        public bool HasValue { get; private init; }
 
         protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Number.ToUpper();
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString() => Number;
     }

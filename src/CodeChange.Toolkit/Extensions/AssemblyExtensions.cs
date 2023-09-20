@@ -7,7 +7,7 @@
     public static class AssemblyExtensions
     {
         /// <summary>
-        /// Gets the full path to the assembly in standard Windows form
+        /// The full path to the assembly in standard Windows form
         /// </summary>
         /// <param name="assembly">The assembly</param>
         /// <returns>The assembly path</returns>

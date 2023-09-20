@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents a persons full name
     /// </summary>
-    public class PersonName : ValueObject
+    public class PersonName : ValueObject, ICloneable
     {
         protected PersonName() { }
 
@@ -107,13 +107,16 @@
         /// <summary>
         /// Auto formats the person name to ensure it uses title case
         /// </summary>
-        public virtual void AutoFormat()
+        public PersonName AutoFormat()
         {
-            FirstName = CorrectCase(FirstName)!;
-            MiddleName = CorrectCase(MiddleName);
-            LastName = CorrectCase(LastName)!;
-            Title = CorrectCase(Title);
-            Suffix = CorrectCase(Suffix);
+            return new PersonName()
+            {
+                FirstName = CorrectCase(FirstName)!,
+                MiddleName = CorrectCase(MiddleName),
+                LastName = CorrectCase(LastName)!,
+                Title = CorrectCase(Title),
+                Suffix = CorrectCase(Suffix)
+            };
 
             static string? CorrectCase(string? name)
             {
@@ -138,11 +141,11 @@
             }
         }
 
-        public string FirstName { get; private set; } = default!;
-        public string? MiddleName { get; private set; }
-        public string LastName { get; private set; } = default!;
-        public string? Title { get; private set; }
-        public string? Suffix { get; private set; }
+        public string FirstName { get; private init; } = default!;
+        public string? MiddleName { get; private init; }
+        public string LastName { get; private init; } = default!;
+        public string? Title { get; private init; }
+        public string? Suffix { get; private init; }
 
         /// <summary>
         /// Gets a display name for presentation purposes (excluding title and suffix)
@@ -150,7 +153,7 @@
         public string DisplayName => Concat(FirstName, MiddleName, LastName);
 
         /// <summary>
-        /// Gets the full name of the person (including title and suffix)
+        /// The full name of the person (including title and suffix)
         /// </summary>
         public string FullName => Concat(Title, FirstName, MiddleName, LastName, Suffix);
 
@@ -182,6 +185,8 @@
             yield return Title?.ToUpper() ?? String.Empty;
             yield return Suffix?.ToUpper() ?? String.Empty;
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString() => DisplayName;
     }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 public static class EnumExtensions
 {
     /// <summary>
-    /// Gets the description of an enum value using the description attribute or real value
+    /// The description of an enum value using the description attribute or real value
     /// </summary>
     /// <param name="value">The enum value to get the description for</param>
     /// <returns>A string describing the enum</returns>

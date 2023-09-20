@@ -34,12 +34,12 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     }
 
     /// <summary>
-    /// Gets the read-only database context
+    /// The read-only database context
     /// </summary>
     public DbContext ReadContext { get; }
 
     /// <summary>
-    /// Gets the write-only database context
+    /// The write-only database context
     /// </summary>
     public DbContext WriteContext { get; }
 
@@ -96,12 +96,11 @@ public abstract class RepositoryBase<TRoot> where TRoot : class, IAggregateRoot
     protected virtual async Task<Result> AddEntityAsync(TRoot entity, CancellationToken cancellationToken = default)
     {
         var key = entity.Key;
-        var usedTask = KeyUsedAsync(key, cancellationToken);
-        var hasBeenUsed = await usedTask.ConfigureAwait(false);
+        var hasBeenUsed = await KeyUsedAsync(key, cancellationToken).ConfigureAwait(false);
 
         if (false == hasBeenUsed)
         {
-            _writeSet.Add(entity);
+            await _writeSet.AddAsync(entity, cancellationToken);
 
             return Result.Success();
         }

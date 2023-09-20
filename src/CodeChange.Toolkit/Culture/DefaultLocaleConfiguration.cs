@@ -30,7 +30,7 @@
         }
 
         /// <summary>
-        /// Gets the time zone offset value (in minutes)
+        /// The time zone offset value (in minutes)
         /// </summary>
         public int? TimeZoneOffset { get; private set; }
 
@@ -60,7 +60,7 @@
         public TimeZoneInfo DefaultTimeZone { get; private set; }
 
         /// <summary>
-        /// Gets the default culture to use
+        /// The default culture to use
         /// </summary>
         public CultureInfo DefaultCulture { get; private set; }
     }

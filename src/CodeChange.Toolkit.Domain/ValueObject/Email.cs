@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents a persons email address
     /// </summary>
-    public class Email : ValueObject
+    public class Email : ValueObject, ICloneable
     {
         protected Email() { }
 
@@ -51,14 +51,16 @@
             }
         }
 
-        public string Address { get; private set; } = default!;
-        public string Host { get; private set; } = default!;
-        public string User { get; private set; } = default!;
+        public string Address { get; private init; } = default!;
+        public string Host { get; private init; } = default!;
+        public string User { get; private init; } = default!;
 
         protected override IEnumerable<IComparable> GetEqualityComponents()
         {
             yield return Address.ToUpper();
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString() => Address;
     }

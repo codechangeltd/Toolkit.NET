@@ -34,7 +34,7 @@ public class DomainEventLogDetail
     }
 
     /// <summary>
-    /// Gets the parent detail
+    /// The parent detail
     /// </summary>
     public virtual DomainEventLogDetail? Parent { get; protected set; }
 
@@ -160,12 +160,12 @@ public class DomainEventLogDetail
     }
 
     /// <summary>
-    /// Gets the property name
+    /// The property name
     /// </summary>
     public string PropertyName { get; protected set; } = default!;
 
     /// <summary>
-    /// Gets the name of the property type
+    /// The name of the property type
     /// </summary>
     public string PropertyTypeName { get; protected set; } = default!;
 

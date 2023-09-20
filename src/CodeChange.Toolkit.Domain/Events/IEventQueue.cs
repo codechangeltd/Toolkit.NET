@@ -17,7 +17,7 @@
         void Add(string aggregateKey, Type aggregateType, IDomainEvent @event);
 
         /// <summary>
-        /// Gets the next domain event in the queue
+        /// The next domain event in the queue
         /// </summary>
         /// <returns>The queued item</returns>
         EventQueueItem GetNext();

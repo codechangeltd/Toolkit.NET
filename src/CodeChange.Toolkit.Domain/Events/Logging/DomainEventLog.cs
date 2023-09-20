@@ -44,17 +44,17 @@
         }
 
         /// <summary>
-        /// Gets the aggregate roots key
+        /// The aggregate roots key
         /// </summary>
         public string AggregateKey { get; protected set; }
 
         /// <summary>
-        /// Gets the name of the aggregate root type
+        /// The name of the aggregate root type
         /// </summary>
         public string AggregateTypeName { get; protected set; }
 
         /// <summary>
-        /// Gets the name of the domain events type
+        /// The name of the domain events type
         /// </summary>
         public string EventTypeName { get; protected set; }
 

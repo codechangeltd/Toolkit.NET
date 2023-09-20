@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a single date range value
     /// </summary>
-    public class DateRange : ValueObject
+    public class DateRange : ValueObject, ICloneable
     {
         protected DateRange() { }
 
@@ -42,6 +42,8 @@
             yield return StartDate;
             yield return EndDate;
         }
+
+        public object Clone() => MemberwiseClone();
 
         public override string ToString()
         {

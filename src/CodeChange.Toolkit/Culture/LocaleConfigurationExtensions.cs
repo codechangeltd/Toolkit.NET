@@ -5,7 +5,7 @@
     public static class LocaleConfigurationExtensions
     {
         /// <summary>
-        /// Gets the local date and time
+        /// The local date and time
         /// </summary>
         /// <param name="locale">The locale configuration</param>
         /// <returns>The date and time</returns>
@@ -15,7 +15,7 @@
         }
 
         /// <summary>
-        /// Gets the local date without the time component
+        /// The local date without the time component
         /// </summary>
         /// <param name="locale">The locale configuration</param>
         /// <returns>The date</returns>

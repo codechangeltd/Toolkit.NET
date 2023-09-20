@@ -49,7 +49,7 @@ public static class HttpContentExtensions
     }
 
     /// <summary>
-    /// Gets the field collection as a name value collection
+    /// The field collection as a name value collection
     /// </summary>
     /// <param name="postedData">The HTTP posted data</param>
     /// <returns>The name value collection</returns>

@@ -25,7 +25,7 @@ public class SimpleEntityToDtoMapper : IEntityToDtoMapper
     }
 
     /// <summary>
-    /// Gets the locale configuration for the culture
+    /// The locale configuration for the culture
     /// </summary>
     protected ILocaleConfiguration LocaleConfiguration { get; set; }
 

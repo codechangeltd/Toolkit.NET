@@ -501,7 +501,7 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Gets the line number from the position specified in a string
+    /// The line number from the position specified in a string
     /// </summary>
     /// <param name="value">The string value to get the line number from</param>
     /// <param name="position">The position to get the line number for</param>

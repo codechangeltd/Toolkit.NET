@@ -94,7 +94,7 @@ public static class HttpRequestMessageExtensions
     }
 
     /// <summary>
-    /// Gets the referrer URL for the current request
+    /// The referrer URL for the current request
     /// </summary>
     /// <param name="request">The HTTP request message</param>
     /// <returns>The referrer URL</returns>
@@ -104,7 +104,7 @@ public static class HttpRequestMessageExtensions
     }
 
     /// <summary>
-    /// Gets the requested URL for the current request
+    /// The requested URL for the current request
     /// </summary>
     /// <param name="request">The HTTP request message</param>
     /// <returns>The requested URL</returns>
@@ -114,7 +114,7 @@ public static class HttpRequestMessageExtensions
     }
 
     /// <summary>
-    /// Gets the user agent from the HTTP request message
+    /// The user agent from the HTTP request message
     /// </summary>
     /// <param name="request">The HTTP request message</param>
     /// <returns>The user agent</returns>

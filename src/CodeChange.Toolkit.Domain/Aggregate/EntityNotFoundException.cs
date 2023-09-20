@@ -32,7 +32,7 @@
         }
 
         /// <summary>
-        /// Gets the key of the entity that was not found
+        /// The key of the entity that was not found
         /// </summary>
         public string EntityKey { get; private set; }
     }

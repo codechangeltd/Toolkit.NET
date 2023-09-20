@@ -13,12 +13,12 @@
         string Key { get; }
 
         /// <summary>
-        /// Gets the date and time the aggregate was created
+        /// The date and time the aggregate was created
         /// </summary>
         DateTime DateCreated { get; }
 
         /// <summary>
-        /// Gets the date and time the aggregate was last modified
+        /// The date and time the aggregate was last modified
         /// </summary>
         DateTime DateModified { get; }
     }

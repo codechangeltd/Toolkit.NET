@@ -8,7 +8,7 @@ using System.Web.Helpers;
 public static class ControllerExtensions
 {
     /// <summary>
-    /// Gets the image that was uploaded to the controller during a request
+    /// The image that was uploaded to the controller during a request
     /// </summary>
     /// <param name="_">The controller</param>
     /// <returns>The image that was uploaded</returns>
@@ -111,7 +111,7 @@ public static class ControllerExtensions
     }
 
     /// <summary>
-    /// Gets the referrer URL for the current request
+    /// The referrer URL for the current request
     /// </summary>
     /// <param name="controller">The controller reference</param>
     /// <returns>The referrer URL</returns>
@@ -123,7 +123,7 @@ public static class ControllerExtensions
     }
 
     /// <summary>
-    /// Gets the requested URL for the current request
+    /// The requested URL for the current request
     /// </summary>
     /// <param name="controller">The controller reference</param>
     /// <returns>The requested URL</returns>
@@ -159,7 +159,7 @@ public static class ControllerExtensions
     }
 
     /// <summary>
-    /// Gets the user agent from the current request
+    /// The user agent from the current request
     /// </summary>
     /// <param name="controller">The controller reference</param>
     /// <returns>The user agent value that was found</returns>

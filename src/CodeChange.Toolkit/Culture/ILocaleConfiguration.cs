@@ -9,7 +9,7 @@
     public interface ILocaleConfiguration
     {
         /// <summary>
-        /// Gets the time zone offset value (in minutes)
+        /// The time zone offset value (in minutes)
         /// </summary>
         int? TimeZoneOffset { get; }
 
@@ -20,12 +20,12 @@
         void SetTimeZoneOffset(int offset);
 
         /// <summary>
-        /// Gets the default time zone to use
+        /// The default time zone to use
         /// </summary>
         TimeZoneInfo DefaultTimeZone { get; }
 
         /// <summary>
-        /// Gets the default culture to use
+        /// The default culture to use
         /// </summary>
         CultureInfo DefaultCulture { get; }
     }
