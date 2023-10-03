@@ -7,21 +7,21 @@
     <Description>A library containing Entity Framework Core tools, base classes and interface implementations.</Description>
     <Copyright>Copyright © Code Change Ltd 2023</Copyright>
     <Authors>Code Change Ltd</Authors>
-    <AssemblyVersion>7.2.0</AssemblyVersion>
-    <Version>7.2.0</Version>
+    <AssemblyVersion>7.2.1</AssemblyVersion>
+    <Version>7.2.1</Version>
     <LicenseUrl>https://github.com/codechangeltd/Toolkit.NET/blob/master/LICENSE</LicenseUrl>
     <PackageProjectUrl>https://github.com/codechangeltd/Toolkit.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/codechangeltd/Toolkit.NET</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-	<PackageReleaseNotes>Upgraded all NuGet packages to their versions.</PackageReleaseNotes>
+	<PackageReleaseNotes>Upgraded NuGet packages.</PackageReleaseNotes>
     <Tags>CodeChange Toolkit .NET DOTNET ENTITY FRAMEWORK CORE C#</Tags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.38.1" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.2" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.11" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="Paginator.NET.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
